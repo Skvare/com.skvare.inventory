@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryCategory</class>
+  <name>civicrm_inventory_category</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <uniqueName>inventory_category_id</uniqueName>
+    <required>true</required>
+    <comment>Unique InventoryCategory ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>parent_id</name>
+    <uniqueName>inventory_category_parent_id</uniqueName>
+    <type>int unsigned</type>
+    <comment>FK to Parent Category</comment>
+  </field>
+  <foreignKey>
+    <name>parent_id</name>
+    <table>civicrm_inventory_category</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>title</name>
+    <title>Title</title>
+    <uniqueName>inventory_category_title</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>meta_title</name>
+    <title>Meta Title</title>
+    <uniqueName>inventory_category_meta_title</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>slug</name>
+    <title>Slug</title>
+    <uniqueName>inventory_category_slug</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>content</name>
+    <title>content</title>
+    <uniqueName>inventory_category_content</uniqueName>
+    <type>text</type>
+    <comment>Category Content.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+</table>

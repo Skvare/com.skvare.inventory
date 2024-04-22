@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>Inventory</class>
+  <name>civicrm_inventory</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <uniqueName>inventory_id</uniqueName>
+    <required>true</required>
+    <comment>Inventory ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>quantity_available</name>
+    <type>int unsigned</type>
+    <title>Quantity Available</title>
+    <comment>The quantity on hand.</comment>
+    <uniqueName>inventory_quantity_available</uniqueName>
+  </field>
+  <field>
+    <name>minimum_quantity_stock_level</name>
+    <type>int unsigned</type>
+    <title>Minimum Stock Level</title>
+    <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
+    <uniqueName>inventory_minimum_quantity_stock_level</uniqueName>
+  </field>
+  <field>
+    <name>maximum_quantity_stock_level</name>
+    <type>int unsigned</type>
+    <title>Maximum Stock Level</title>
+    <comment>The maximum number of units desired in stock, i.e. to avoid overstocking.</comment>
+    <uniqueName>inventory_maximum_quantity_stock_level</uniqueName>
+  </field>
+  <field>
+    <name>reorder_point</name>
+    <type>int unsigned</type>
+    <title>Minimum Stock Level</title>
+    <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
+    <uniqueName>inventory_reorder_point</uniqueName>
+  </field>
+</table>

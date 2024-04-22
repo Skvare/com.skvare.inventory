@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryProduct</class>
+  <name>civicrm_inventory_product</name>
+  <comment>Product table.</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <uniqueName>inventory_product_id</uniqueName>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryProduct ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>product_code</name>
+    <title>Product Code</title>
+    <comment>Product Code SKU.</comment>
+    <uniqueName>inventory_product_code</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>external_code</name>
+    <title>External Code</title>
+    <uniqueName>inventory_external_code</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_name</name>
+    <title>Product Name</title>
+    <uniqueName>inventory_product_name</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_description</name>
+    <title>Product Description</title>
+    <uniqueName>inventory_product_description</uniqueName>
+    <type>varchar</type>
+    <length>512</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_note</name>
+    <title>Product Note</title>
+    <uniqueName>inventory_product_note</uniqueName>
+    <type>text</type>
+    <comment>Product details.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_category_id</name>
+    <title>Product Category</title>
+    <uniqueName>inventory_product_category_id</uniqueName>
+    <type>int unsigned</type>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <comment>FK to Category</comment>
+  </field>
+  <foreignKey>
+    <name>product_category_id</name>
+    <table>civicrm_inventory_category</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>address_id</name>
+    <uniqueName>inventory_product_address_id</uniqueName>
+    <title>Product Location</title>
+    <type>int unsigned</type>
+    <comment>Product Location</comment>
+    <html>
+      <label>Location</label>
+    </html>
+    <add>5.63</add>
+    <export>true</export>
+  </field>
+  <foreignKey>
+    <name>address_id</name>
+    <table>civicrm_address</table>
+    <key>id</key>
+    <add>2.2</add>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+</table>

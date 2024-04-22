@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryProductMeta</class>
+  <name>civicrm_inventory_product_meta</name>
+  <comment>Product Meta details.</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <uniqueName>inventory_product_meta_id</uniqueName>
+    <required>true</required>
+    <comment>Unique InventoryProductMeta ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>product_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Product</comment>
+  </field>
+  <foreignKey>
+    <name>product_id</name>
+    <table>civicrm_inventory_product</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+    <name>product_meta_key</name>
+    <title>Product Meta Key</title>
+    <uniqueName>inventory_product_meta_key</uniqueName>
+    <type>varchar</type>
+    <length>512</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_meta_key</name>
+    <title>Product Key</title>
+    <uniqueName>inventory_product_meta_key</uniqueName>
+    <type>varchar</type>
+    <length>50</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_meta_content</name>
+    <title>Product Content</title>
+    <uniqueName>inventory_product_meta_content</uniqueName>
+    <type>text</type>
+    <comment>Product Meta Content.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+</table>
