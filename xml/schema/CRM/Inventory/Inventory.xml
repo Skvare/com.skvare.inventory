@@ -4,7 +4,7 @@
   <base>CRM/Inventory</base>
   <class>Inventory</class>
   <name>civicrm_inventory</name>
-  <comment>FIXME</comment>
+  <comment>Product Inventory</comment>
   <log>true</log>
 
   <field>
@@ -21,6 +21,28 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
+  <field>
+    <name>product_variant_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+  </field>
+  <foreignKey>
+    <name>product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>warehouse_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+  </field>
+  <foreignKey>
+    <name>warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
   <field>
     <name>quantity_available</name>
     <type>int unsigned</type>
@@ -45,8 +67,30 @@
   <field>
     <name>reorder_point</name>
     <type>int unsigned</type>
-    <title>Minimum Stock Level</title>
+    <title>ReOrder Point</title>
     <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
     <uniqueName>inventory_reorder_point</uniqueName>
+  </field>
+  <field>
+    <name>row</name>
+    <title>Row in Warehouse</title>
+    <uniqueName>inventory_warehouse_row</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>shelf</name>
+    <title>shelf Warehouse</title>
+    <uniqueName>inventory_warehouse_shelf</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
   </field>
 </table>

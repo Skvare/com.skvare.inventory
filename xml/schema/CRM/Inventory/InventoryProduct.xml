@@ -37,7 +37,7 @@
   <field>
     <name>external_code</name>
     <title>External Code</title>
-    <uniqueName>inventory_external_code</uniqueName>
+    <uniqueName>inventory_product_external_code</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
@@ -62,6 +62,17 @@
     <uniqueName>inventory_product_description</uniqueName>
     <type>varchar</type>
     <length>512</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_brand</name>
+    <title>Product Brand</title>
+    <uniqueName>inventory_product_brand</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
     <required>false</required>
     <export>true</export>
     <import>true</import>
@@ -98,22 +109,16 @@
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
-    <name>address_id</name>
-    <uniqueName>inventory_product_address_id</uniqueName>
-    <title>Product Location</title>
-    <type>int unsigned</type>
-    <comment>Product Location</comment>
-    <html>
-      <label>Location</label>
-    </html>
-    <add>5.63</add>
+    <name>is_disable</name>
+    <title>Is Disable</title>
+    <uniqueName>inventory_product_is_disable</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
     <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
   </field>
-  <foreignKey>
-    <name>address_id</name>
-    <table>civicrm_address</table>
-    <key>id</key>
-    <add>2.2</add>
-    <onDelete>SET NULL</onDelete>
-  </foreignKey>
-</table>
+
+ </table>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventorySalesDetail</class>
+  <name>civicrm_inventory_sales_detail</name>
+  <comment>Sale order details</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique Inventory Sales Detail ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>sales_id</name>
+    <title>Sales ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Sales</comment>
+  </field>
+  <foreignKey>
+    <name>sales_id</name>
+    <table>civicrm_inventory_sales</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+    <name>product_variant_id</name>
+    <title>Product Variant ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+  </field>
+  <foreignKey>
+    <name>product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>product_quantity</name>
+    <type>int unsigned</type>
+    <title>Product quantity</title>
+    <comment>The quantity sold.</comment>
+    <uniqueName>inventory_quantity_available</uniqueName>
+  </field>
+  <field>
+    <name>warehouse_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+  </field>
+  <foreignKey>
+    <name>warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>product_unique_id</name>
+    <uniqueName>inventory_orderdetail_product_unique_id</uniqueName>
+    <title>Product Unique ID</title>
+    <type>varchar</type>
+    <comment>e.g IMEI (International Mobile Equipment Identity) number .</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>purchase_price</name>
+    <uniqueName>inventory_orderdetail_purchase_price</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Product Purchase price</comment>
+    <html>
+      <type>Text</type>
+      <label>Purchase Price</label>
+    </html>
+  </field>
+</table>

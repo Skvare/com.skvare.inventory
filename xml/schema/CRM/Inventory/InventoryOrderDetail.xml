@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryOrderDetail</class>
+  <name>civicrm_inventory_order_detail</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryOrderDetail ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>order_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Order</comment>
+  </field>
+  <foreignKey>
+    <name>order_id</name>
+    <table>civicrm_inventory_order</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+    <name>product_variant_id</name>
+    <title>Product Variant ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+  </field>
+  <foreignKey>
+    <name>product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>provider_id</name>
+    <title>Provider ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Provider</comment>
+  </field>
+  <foreignKey>
+    <name>provider_id</name>
+    <table>civicrm_inventory_provider</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>warehouse_id</name>
+    <title>Warehouse ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+  </field>
+  <foreignKey>
+    <name>warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>order_quantity</name>
+    <type>int unsigned</type>
+    <title>Order Quantity</title>
+    <comment>Order quantiy to provider</comment>
+    <uniqueName>inventory_orderdetail_order_quantity</uniqueName>
+  </field>
+  <field>
+    <name>expected_date</name>
+    <title>Expected Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/expected(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>actual_date</name>
+    <title>Actual Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/atual(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+</table>

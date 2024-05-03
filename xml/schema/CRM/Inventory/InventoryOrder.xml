@@ -2,16 +2,16 @@
 
 <table>
   <base>CRM/Inventory</base>
-  <class>InventorySales</class>
-  <name>civicrm_inventory_sales</name>
-  <comment>FIXME</comment>
+  <class>InventoryOrder</class>
+  <name>civicrm_inventory_order</name>
+  <comment>Orderdetail from provider</comment>
   <log>true</log>
 
   <field>
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Unique InventorySales ID</comment>
+    <comment>Unique Inventory Order ID</comment>
     <html>
       <type>Number</type>
     </html>
@@ -20,9 +20,21 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
+  <field>
+    <name>order_date</name>
+    <title>Order Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/order(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
   <field>
     <name>contact_id</name>
+    <title>Order Created By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
   </field>
@@ -32,16 +44,5 @@
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
-  <field>
-    <name>sale_date</name>
-    <title>Sale Date</title>
-    <type>datetime</type>
-    <import>true</import>
-    <headerPattern>/sale(.?date)?/i</headerPattern>
-    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
-    <html>
-      <type>Select Date</type>
-      <formatType>activityDateTime</formatType>
-    </html>
-  </field>
+
 </table>

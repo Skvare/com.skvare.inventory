@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryProductVariant</class>
+  <name>civicrm_inventory_product_variant</name>
+  <comment>Product Variant table</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <uniqueName>inventory_product_variant_id</uniqueName>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique Inventory Product Variant ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>product_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Product</comment>
+  </field>
+  <foreignKey>
+    <name>product_id</name>
+    <table>civicrm_inventory_product</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>listed_price</name>
+    <uniqueName>inventory_product_variant_listed_price</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Product listed price</comment>
+    <html>
+      <type>Text</type>
+      <label>Listed Price</label>
+    </html>
+  </field>
+  <field>
+    <name>current_price</name>
+    <uniqueName>inventory_product_variant_current_price</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Product Current price</comment>
+    <html>
+      <type>Text</type>
+      <label>Curent Price</label>
+    </html>
+  </field>
+  <field>
+    <name>product_variant_details</name>
+    <title>Product Variant Details</title>
+    <uniqueName>inventory_product_variant_details</uniqueName>
+    <type>text</type>
+    <comment>Product Variant details.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>is_disable</name>
+    <title>Is Disable</title>
+    <uniqueName>inventory_product_variant_is_disable</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>packed_weight</name>
+    <title>Packed Weight</title>
+    <uniqueName>inventory_product_weight</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Weight</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Weight</label>
+    </html>
+  </field>
+
+  <field>
+    <name>packed_height</name>
+    <title>Packed Height</title>
+    <uniqueName>inventory_product_height</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Height</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Height</label>
+    </html>
+  </field>
+
+  <field>
+    <name>packed_width</name>
+    <title>Packed Width</title>
+    <uniqueName>inventory_product_width</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Width</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Width</label>
+    </html>
+  </field>
+
+  <field>
+    <name>packed_depth</name>
+    <title>Packed Depth</title>
+    <uniqueName>inventory_product_depth</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Depth</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Depth</label>
+    </html>
+  </field>
+
+  <field>
+    <name>image_thumbnail</name>
+    <title>Thumbnail Image</title>
+    <uniqueName>inventory_product_thumbnail</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>image_actual</name>
+    <title>Image</title>
+    <uniqueName>inventory_product_image</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+</table>
