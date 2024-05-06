@@ -86,11 +86,22 @@
       <type>CheckBox</type>
     </html>
   </field>
-
+  <field>
+    <name>is_discontinued</name>
+    <title>Is Discontinued</title>
+    <uniqueName>inventory_product_variant_is_discontinued</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
   <field>
     <name>packed_weight</name>
     <title>Packed Weight</title>
-    <uniqueName>inventory_product_weight</uniqueName>
+    <uniqueName>inventory_product_variant_weight</uniqueName>
     <type>decimal</type>
     <required>false</required>
     <import>true</import>
@@ -105,7 +116,7 @@
   <field>
     <name>packed_height</name>
     <title>Packed Height</title>
-    <uniqueName>inventory_product_height</uniqueName>
+    <uniqueName>inventory_product_variant_height</uniqueName>
     <type>decimal</type>
     <required>false</required>
     <import>true</import>
@@ -120,7 +131,7 @@
   <field>
     <name>packed_width</name>
     <title>Packed Width</title>
-    <uniqueName>inventory_product_width</uniqueName>
+    <uniqueName>inventory_product_variant_width</uniqueName>
     <type>decimal</type>
     <required>false</required>
     <import>true</import>
@@ -135,7 +146,7 @@
   <field>
     <name>packed_depth</name>
     <title>Packed Depth</title>
-    <uniqueName>inventory_product_depth</uniqueName>
+    <uniqueName>inventory_product_variant_depth</uniqueName>
     <type>decimal</type>
     <required>false</required>
     <import>true</import>
@@ -150,7 +161,7 @@
   <field>
     <name>image_thumbnail</name>
     <title>Thumbnail Image</title>
-    <uniqueName>inventory_product_thumbnail</uniqueName>
+    <uniqueName>inventory_product_variant_thumbnail</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
@@ -161,7 +172,19 @@
   <field>
     <name>image_actual</name>
     <title>Image</title>
-    <uniqueName>inventory_product_image</uniqueName>
+    <uniqueName>inventory_product_variant_image</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>uom</name>
+    <title>Unit of Measure</title>
+    <uniqueName>inventory_product_variant_uom</uniqueName>
+    <comment>Feet, pounds, and gallons are all examples of units of measure.</comment>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>

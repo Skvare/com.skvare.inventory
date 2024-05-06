@@ -2,12 +2,12 @@
 namespace Civi\Api4;
 
 /**
- * InventoryProvider entity.
+ * InventoryWarehouseTransfer entity.
  *
  * Provided by the FIXME extension.
  *
  * @package Civi\Api4
  */
-class InventoryProvider extends Generic\DAOEntity {
+class InventoryWarehouseTransfer extends Generic\DAOEntity {
 
 }

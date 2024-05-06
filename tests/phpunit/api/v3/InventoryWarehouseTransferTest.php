@@ -6,10 +6,10 @@ use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
- * InventoryWarehouseStockTransactions API Test Case
+ * InventoryWarehouseTransfer API Test Case
  * @group headless
  */
-class api_v3_InventoryWarehouseStockTransactionsTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_InventoryWarehouseTransferTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -29,8 +29,8 @@ class api_v3_InventoryWarehouseStockTransactionsTest extends \PHPUnit\Framework\
    * The setup() method is executed before the test is executed (optional).
    */
   public function setUp(): void {
-    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventoryWarehouseStockTransactions');
-    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventoryWarehouseStockTransactions' . ' not found.');
+    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventoryWarehouseTransfer');
+    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventoryWarehouseTransfer' . ' not found.');
     parent::setUp();
   }
 
@@ -51,16 +51,16 @@ class api_v3_InventoryWarehouseStockTransactionsTest extends \PHPUnit\Framework\
     // Boilerplate entity has one data field -- 'contact_id'.
     // Put some data in, read it back out, and delete it.
 
-    $created = $this->callAPISuccess('InventoryWarehouseStockTransactions', 'create', [
+    $created = $this->callAPISuccess('InventoryWarehouseTransfer', 'create', [
       'contact_id' => 1,
     ]);
     $this->assertTrue(is_numeric($created['id']));
 
-    $get = $this->callAPISuccess('InventoryWarehouseStockTransactions', 'get', []);
+    $get = $this->callAPISuccess('InventoryWarehouseTransfer', 'get', []);
     $this->assertEquals(1, $get['count']);
     $this->assertEquals(1, $get['values'][$created['id']]['contact_id']);
 
-    $this->callAPISuccess('InventoryWarehouseStockTransactions', 'delete', [
+    $this->callAPISuccess('InventoryWarehouseTransfer', 'delete', [
       'id' => $created['id'],
     ]);
   }

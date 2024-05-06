@@ -1,17 +1,17 @@
 <?php
 use CRM_Inventory_ExtensionUtil as E;
 
-class CRM_Inventory_BAO_InventoryProvider extends CRM_Inventory_DAO_InventoryProvider {
+class CRM_Inventory_BAO_InventorySupplier extends CRM_Inventory_DAO_InventorySupplier {
 
   /**
-   * Create a new InventoryProvider based on array-data
+   * Create a new InventorySupplier based on array-data
    *
    * @param array $params key-value pairs
-   * @return CRM_Inventory_DAO_InventoryProvider|NULL
+   * @return CRM_Inventory_DAO_InventorySupplier|NULL
    *
   public static function create($params) {
-    $className = 'CRM_Inventory_DAO_InventoryProvider';
-    $entityName = 'InventoryProvider';
+    $className = 'CRM_Inventory_DAO_InventorySupplier';
+    $entityName = 'InventorySupplier';
     $hook = empty($params['id']) ? 'create' : 'edit';
 
     CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);

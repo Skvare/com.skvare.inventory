@@ -44,4 +44,17 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
+
+  <field>
+    <name>status_id</name>
+    <uniqueName>inventory_sales_status_id</uniqueName>
+    <title>Sales Status</title>
+    <type>varchar</type>
+    <comment>Sales Status</comment>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
 </table>

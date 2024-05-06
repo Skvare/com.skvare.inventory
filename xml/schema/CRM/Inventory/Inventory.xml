@@ -81,6 +81,7 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <comment>Use to locate the item in warehouse</comment>
   </field>
   <field>
     <name>shelf</name>
@@ -92,5 +93,6 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <comment>Use to locate the item in warehouse</comment>
   </field>
 </table>

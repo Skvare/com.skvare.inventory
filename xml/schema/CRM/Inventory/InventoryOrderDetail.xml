@@ -45,14 +45,14 @@
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
-    <name>provider_id</name>
-    <title>Provider ID</title>
+    <name>supplier_id</name>
+    <title>Supplier ID</title>
     <type>int unsigned</type>
-    <comment>FK to Provider</comment>
+    <comment>FK to Supplier</comment>
   </field>
   <foreignKey>
-    <name>provider_id</name>
-    <table>civicrm_inventory_provider</table>
+    <name>supplier_id</name>
+    <table>civicrm_inventory_supplier</table>
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
@@ -66,13 +66,13 @@
     <name>warehouse_id</name>
     <table>civicrm_inventory_warehouse</table>
     <key>id</key>
-    <onDelete>SET NULL</onDelete>
+    <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
     <name>order_quantity</name>
     <type>int unsigned</type>
     <title>Order Quantity</title>
-    <comment>Order quantiy to provider</comment>
+    <comment>Order quantiy to supplier</comment>
     <uniqueName>inventory_orderdetail_order_quantity</uniqueName>
   </field>
   <field>

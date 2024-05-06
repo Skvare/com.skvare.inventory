@@ -5,10 +5,10 @@ use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
- * InventoryProvider API Test Case
+ * InventorySupplier API Test Case
  * @group headless
  */
-class api_v3_InventoryProviderTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_InventorySupplierTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -28,8 +28,8 @@ class api_v3_InventoryProviderTest extends \PHPUnit\Framework\TestCase implement
    * The setup() method is executed before the test is executed (optional).
    */
   public function setUp() {
-    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventoryProvider');
-    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventoryProvider' . ' not found.');
+    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventorySupplier');
+    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventorySupplier' . ' not found.');
     parent::setUp();
   }
 
@@ -50,16 +50,16 @@ class api_v3_InventoryProviderTest extends \PHPUnit\Framework\TestCase implement
     // Boilerplate entity has one data field -- 'contact_id'.
     // Put some data in, read it back out, and delete it.
 
-    $created = $this->callAPISuccess('InventoryProvider', 'create', [
+    $created = $this->callAPISuccess('InventorySupplier', 'create', [
       'contact_id' => 1,
     ]);
     $this->assertTrue(is_numeric($created['id']));
 
-    $get = $this->callAPISuccess('InventoryProvider', 'get', []);
+    $get = $this->callAPISuccess('InventorySupplier', 'get', []);
     $this->assertEquals(1, $get['count']);
     $this->assertEquals(1, $get['values'][$created['id']]['contact_id']);
 
-    $this->callAPISuccess('InventoryProvider', 'delete', [
+    $this->callAPISuccess('InventorySupplier', 'delete', [
       'id' => $created['id'],
     ]);
   }

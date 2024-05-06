@@ -2,19 +2,19 @@
 use CRM_Inventory_ExtensionUtil as E;
 
 /**
- * InventoryProvider.create API specification (optional).
+ * InventoryWarehouseTransfer.create API specification (optional).
  * This is used for documentation and validation.
  *
  * @param array $spec description of fields supported by this API call
  *
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
-function _civicrm_api3_inventory_provider_create_spec(&$spec) {
+function _civicrm_api3_inventory_warehouse_transfer_create_spec(&$spec) {
   // $spec['some_parameter']['api.required'] = 1;
 }
 
 /**
- * InventoryProvider.create API.
+ * InventoryWarehouseTransfer.create API.
  *
  * @param array $params
  *
@@ -23,12 +23,12 @@ function _civicrm_api3_inventory_provider_create_spec(&$spec) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_provider_create($params) {
-  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params, 'InventoryProvider');
+function civicrm_api3_inventory_warehouse_transfer_create($params) {
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params, 'InventoryWarehouseTransfer');
 }
 
 /**
- * InventoryProvider.delete API.
+ * InventoryWarehouseTransfer.delete API.
  *
  * @param array $params
  *
@@ -37,12 +37,12 @@ function civicrm_api3_inventory_provider_create($params) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_provider_delete($params) {
+function civicrm_api3_inventory_warehouse_transfer_delete($params) {
   return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**
- * InventoryProvider.get API.
+ * InventoryWarehouseTransfer.get API.
  *
  * @param array $params
  *
@@ -51,6 +51,6 @@ function civicrm_api3_inventory_provider_delete($params) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_provider_get($params) {
-  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, TRUE, 'InventoryProvider');
+function civicrm_api3_inventory_warehouse_transfer_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, TRUE, 'InventoryWarehouseTransfer');
 }

@@ -3,8 +3,8 @@
 // https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
 return [
   [
-    'name' => 'InventoryWarehouseStockTransactions',
-    'class' => 'CRM_Inventory_DAO_InventoryWarehouseStockTransactions',
-    'table' => 'civicrm_inventory_warehouse',
+    'name' => 'InventorySupplier',
+    'class' => 'CRM_Inventory_DAO_InventorySupplier',
+    'table' => 'civicrm_inventory_supplierr',
   ],
 ];

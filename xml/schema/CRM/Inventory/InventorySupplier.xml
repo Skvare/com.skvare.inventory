@@ -2,17 +2,17 @@
 
 <table>
   <base>CRM/Inventory</base>
-  <class>InventoryProvider</class>
-  <name>civicrm_inventory_provider</name>
+  <class>InventorySupplier</class>
+  <name>civicrm_inventory_supplier</name>
   <comment>FIXME</comment>
   <log>true</log>
 
   <field>
     <name>id</name>
     <type>int unsigned</type>
-    <uniqueName>inventory_provider_id</uniqueName>
+    <uniqueName>inventory_supplier_id</uniqueName>
     <required>true</required>
-    <comment>Inventory Provider ID</comment>
+    <comment>Inventory Supplier ID</comment>
     <html>
       <type>Number</type>
     </html>
@@ -23,9 +23,9 @@
   </primaryKey>
 
   <field>
-    <name>provider_name</name>
-    <title>Provider Name</title>
-    <uniqueName>inventory_provider_name</uniqueName>
+    <name>supplier_name</name>
+    <title>Supplier Name</title>
+    <uniqueName>inventory_supplier_name</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>true</required>
@@ -35,12 +35,12 @@
   </field>
   <field>
     <name>address_id</name>
-    <uniqueName>inventory_provider_address_id</uniqueName>
-    <title>Provider Location</title>
+    <uniqueName>inventory_supplier_address_id</uniqueName>
+    <title>Supplier Location</title>
     <type>int unsigned</type>
-    <comment>Provider Location</comment>
+    <comment>Supplier Location</comment>
     <html>
-      <label>Provider Location</label>
+      <label>Supplier Location</label>
     </html>
     <add>5.63</add>
     <export>true</export>
@@ -49,11 +49,11 @@
     <name>address_id</name>
     <table>civicrm_address</table>
     <key>id</key>
-    <add>2.2</add>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
     <name>contact_id</name>
+    <title>Supplier Name</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
   </field>
@@ -61,7 +61,7 @@
     <name>contact_id</name>
     <table>civicrm_contact</table>
     <key>id</key>
-    <onDelete>CASCADE</onDelete>
+    <onDelete>RESTRICT</onDelete>
   </foreignKey>
 
 </table>

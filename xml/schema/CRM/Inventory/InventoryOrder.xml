@@ -4,7 +4,7 @@
   <base>CRM/Inventory</base>
   <class>InventoryOrder</class>
   <name>civicrm_inventory_order</name>
-  <comment>Orderdetail from provider</comment>
+  <comment>Orderdetail from supplier</comment>
   <log>true</log>
 
   <field>
@@ -41,6 +41,19 @@
   <foreignKey>
     <name>contact_id</name>
     <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>supplier_id</name>
+    <title>Supplier Contact</title>
+    <type>int unsigned</type>
+    <comment>FK to Supplier</comment>
+  </field>
+  <foreignKey>
+    <name>supplier_id</name>
+    <table>civicrm_inventory_supplier</table>
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>

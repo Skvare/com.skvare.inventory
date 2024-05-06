@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryWarehouseTransfer</class>
+  <name>civicrm_inventory_warehouse_transfer</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique Inventory Warehouse Transfer ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>lot_id</name>
+    <uniqueName>inventory_warehouse_transfer_lot_id</uniqueName>
+    <title>Product Lot ID</title>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_variant_id</name>
+    <uniqueName>inventory_warehouse_tranfer_product_variant_id</uniqueName>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+  </field>
+  <foreignKey>
+    <name>product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>from_warehouse_id</name>
+    <uniqueName>inventory_warehouse_tranfer_from_warehouse_id</uniqueName>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+  </field>
+  <foreignKey>
+    <name>from_warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>to_warehouse_id</name>
+    <uniqueName>inventory_warehouse_tranfer_to_warehouse_id</uniqueName>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+  </field>
+  <foreignKey>
+    <name>to_warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>from_contact_id</name>
+    <uniqueName>inventory_warehouse_tranfer_from_contact_id</uniqueName>
+    <title>Operation performed By</title>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+  </field>
+  <foreignKey>
+    <name>from_contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>to_contact_id</name>
+    <uniqueName>inventory_warehouse_tranfer_to_contact_id</uniqueName>
+    <title>Recivied By</title>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+  </field>
+  <foreignKey>
+    <name>to_contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>created_date</name>
+    <uniqueName>inventory_warehouse_tranfer_created_date</uniqueName>
+    <title>Created Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/action(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>status_id</name>
+    <uniqueName>inventory_warehouse_tranfer_status_id</uniqueName>
+    <title>Transaction Status</title>
+    <type>varchar</type>
+    <comment>IN = into location, OUT = OUT of location</comment>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>status_date</name>
+    <title>Status Date</title>
+    <uniqueName>inventory_warehouse_tranfer_status_date</uniqueName>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/action(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+
+  <field>
+    <name>from_stock_quantity</name>
+    <type>int unsigned</type>
+    <title>Product Stock Quantity Sent</title>
+    <comment>The quantity sent.</comment>
+    <uniqueName>from_stock_quantity</uniqueName>
+  </field>
+
+  <field>
+    <name>received_stock_quantity</name>
+    <type>int unsigned</type>
+    <title>Product Stock Quantity Received</title>
+    <comment>The quantity Received.</comment>
+    <uniqueName>received_stock_quantity</uniqueName>
+  </field>
+</table>
