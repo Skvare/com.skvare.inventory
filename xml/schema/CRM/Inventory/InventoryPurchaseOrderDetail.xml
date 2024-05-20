@@ -2,8 +2,8 @@
 
 <table>
   <base>CRM/Inventory</base>
-  <class>InventoryOrderDetail</class>
-  <name>civicrm_inventory_order_detail</name>
+  <class>InventoryPurchaseOrderDetail</class>
+  <name>civicrm_inventory_purchase_order_detail</name>
   <comment>FIXME</comment>
   <log>true</log>
 
@@ -11,7 +11,7 @@
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Unique InventoryOrderDetail ID</comment>
+    <comment>Unique InventoryPurchaseOrderDetail ID</comment>
     <html>
       <type>Number</type>
     </html>
@@ -28,7 +28,7 @@
   </field>
   <foreignKey>
     <name>order_id</name>
-    <table>civicrm_inventory_order</table>
+    <table>civicrm_inventory_purchase_order</table>
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
@@ -100,3 +100,4 @@
     </html>
   </field>
 </table>
+

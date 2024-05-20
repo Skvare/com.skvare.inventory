@@ -2,16 +2,16 @@
 
 <table>
   <base>CRM/Inventory</base>
-  <class>InventoryOrder</class>
-  <name>civicrm_inventory_order</name>
-  <comment>Orderdetail from supplier</comment>
+  <class>InventoryPurchaseOrder</class>
+  <name>civicrm_inventory_purchase_order</name>
+  <comment>FIXME</comment>
   <log>true</log>
 
   <field>
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Unique Inventory Order ID</comment>
+    <comment>Unique InventoryPurchaseOrder ID</comment>
     <html>
       <type>Number</type>
     </html>
@@ -20,6 +20,7 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
+
   <field>
     <name>order_date</name>
     <title>Order Date</title>

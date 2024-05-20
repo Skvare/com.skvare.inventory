@@ -2,19 +2,19 @@
 use CRM_Inventory_ExtensionUtil as E;
 
 /**
- * InventoryOrder.create API specification (optional).
+ * InventoryProductMembership.create API specification (optional).
  * This is used for documentation and validation.
  *
  * @param array $spec description of fields supported by this API call
  *
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
-function _civicrm_api3_inventory_order_create_spec(&$spec) {
+function _civicrm_api3_inventory_product_membership_create_spec(&$spec) {
   // $spec['some_parameter']['api.required'] = 1;
 }
 
 /**
- * InventoryOrder.create API.
+ * InventoryProductMembership.create API.
  *
  * @param array $params
  *
@@ -23,12 +23,12 @@ function _civicrm_api3_inventory_order_create_spec(&$spec) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_order_create($params) {
-  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params, 'InventoryOrder');
+function civicrm_api3_inventory_product_membership_create($params) {
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params, 'InventoryProductMembership');
 }
 
 /**
- * InventoryOrder.delete API.
+ * InventoryProductMembership.delete API.
  *
  * @param array $params
  *
@@ -37,12 +37,12 @@ function civicrm_api3_inventory_order_create($params) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_order_delete($params) {
+function civicrm_api3_inventory_product_membership_delete($params) {
   return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**
- * InventoryOrder.get API.
+ * InventoryProductMembership.get API.
  *
  * @param array $params
  *
@@ -51,6 +51,6 @@ function civicrm_api3_inventory_order_delete($params) {
  *
  * @throws API_Exception
  */
-function civicrm_api3_inventory_order_get($params) {
-  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, TRUE, 'InventoryOrder');
+function civicrm_api3_inventory_product_membership_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, TRUE, 'InventoryProductMembership');
 }

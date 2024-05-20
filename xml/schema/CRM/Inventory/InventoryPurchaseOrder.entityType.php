@@ -3,8 +3,8 @@
 // https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
 return [
   [
-    'name' => 'InventoryOrder',
-    'class' => 'CRM_Inventory_DAO_InventoryOrder',
-    'table' => 'civicrm_inventory_order',
+    'name' => 'InventoryPurchaseOrder',
+    'class' => 'CRM_Inventory_DAO_InventoryPurchaseOrder',
+    'table' => 'civicrm_inventory_purchase_order',
   ],
 ];

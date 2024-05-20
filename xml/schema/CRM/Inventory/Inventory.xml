@@ -22,16 +22,16 @@
     <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-    <name>product_variant_id</name>
-    <type>int unsigned</type>
-    <comment>FK to Product Variant</comment>
+    <name>product_variant_code</name>
+    <title>Product Variant Code</title>
+    <uniqueName>inventory_product_variant_code</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
   </field>
-  <foreignKey>
-    <name>product_variant_id</name>
-    <table>civicrm_inventory_product_variant</table>
-    <key>id</key>
-    <onDelete>SET NULL</onDelete>
-  </foreignKey>
   <field>
     <name>warehouse_id</name>
     <type>int unsigned</type>

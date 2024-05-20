@@ -6,7 +6,6 @@
   <name>civicrm_inventory_product_variant</name>
   <comment>Product Variant table</comment>
   <log>true</log>
-
   <field>
     <name>id</name>
     <uniqueName>inventory_product_variant_id</uniqueName>
@@ -21,7 +20,6 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
   <field>
     <name>product_id</name>
     <type>int unsigned</type>
@@ -33,7 +31,6 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
-
   <field>
     <name>listed_price</name>
     <uniqueName>inventory_product_variant_listed_price</uniqueName>
@@ -59,6 +56,30 @@
       <type>Text</type>
       <label>Curent Price</label>
     </html>
+  </field>
+  <field>
+    <name>product_variant_code</name>
+    <title>Product Variant Code</title>
+    <uniqueName>inventory_product_variant_code</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>product_variant_unique_id</name>
+    <uniqueName>inventory_product_variant_unique_id</uniqueName>
+    <title>Product Variant Unique ID</title>
+    <type>varchar</type>
+    <comment>e.g IMEI (International Mobile Equipment Identity) number .</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
   </field>
   <field>
     <name>product_variant_details</name>
@@ -112,7 +133,6 @@
       <label>Packed Weight</label>
     </html>
   </field>
-
   <field>
     <name>packed_height</name>
     <title>Packed Height</title>
@@ -127,7 +147,6 @@
       <label>Packed Height</label>
     </html>
   </field>
-
   <field>
     <name>packed_width</name>
     <title>Packed Width</title>
@@ -142,7 +161,6 @@
       <label>Packed Width</label>
     </html>
   </field>
-
   <field>
     <name>packed_depth</name>
     <title>Packed Depth</title>
@@ -157,7 +175,6 @@
       <label>Packed Depth</label>
     </html>
   </field>
-
   <field>
     <name>image_thumbnail</name>
     <title>Thumbnail Image</title>
@@ -185,6 +202,18 @@
     <title>Unit of Measure</title>
     <uniqueName>inventory_product_variant_uom</uniqueName>
     <comment>Feet, pounds, and gallons are all examples of units of measure.</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>product_variant_status</name>
+    <title>Product Status</title>
+    <uniqueName>inventory_product_variant_status</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>

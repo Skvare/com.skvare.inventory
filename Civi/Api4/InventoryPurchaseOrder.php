@@ -2,12 +2,12 @@
 namespace Civi\Api4;
 
 /**
- * InventoryOrder entity.
+ * InventoryPurchaseOrder entity.
  *
  * Provided by the FIXME extension.
  *
  * @package Civi\Api4
  */
-class InventoryOrder extends Generic\DAOEntity {
+class InventoryPurchaseOrder extends Generic\DAOEntity {
 
 }

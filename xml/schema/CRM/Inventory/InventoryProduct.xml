@@ -33,7 +33,6 @@
     <import>true</import>
     <add>5.63</add>
   </field>
-
   <field>
     <name>external_code</name>
     <title>External Code</title>

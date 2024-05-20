@@ -6,10 +6,10 @@ use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
- * InventoryOrder API Test Case
+ * InventoryPurchaseOrderDetail API Test Case
  * @group headless
  */
-class api_v3_InventoryOrderTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class api_v3_InventoryPurchaseOrderDetailTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use \Civi\Test\Api3TestTrait;
 
   /**
@@ -29,8 +29,8 @@ class api_v3_InventoryOrderTest extends \PHPUnit\Framework\TestCase implements H
    * The setup() method is executed before the test is executed (optional).
    */
   public function setUp(): void {
-    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventoryOrder');
-    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventoryOrder' . ' not found.');
+    $table = CRM_Core_DAO_AllCoreTables::getTableForEntityName('InventoryPurchaseOrderDetail');
+    $this->assertTrue($table && CRM_Core_DAO::checkTableExists($table), 'There was a problem with extension installation. Table for ' . 'InventoryPurchaseOrderDetail' . ' not found.');
     parent::setUp();
   }
 
@@ -51,16 +51,16 @@ class api_v3_InventoryOrderTest extends \PHPUnit\Framework\TestCase implements H
     // Boilerplate entity has one data field -- 'contact_id'.
     // Put some data in, read it back out, and delete it.
 
-    $created = $this->callAPISuccess('InventoryOrder', 'create', [
+    $created = $this->callAPISuccess('InventoryPurchaseOrderDetail', 'create', [
       'contact_id' => 1,
     ]);
     $this->assertTrue(is_numeric($created['id']));
 
-    $get = $this->callAPISuccess('InventoryOrder', 'get', []);
+    $get = $this->callAPISuccess('InventoryPurchaseOrderDetail', 'get', []);
     $this->assertEquals(1, $get['count']);
     $this->assertEquals(1, $get['values'][$created['id']]['contact_id']);
 
-    $this->callAPISuccess('InventoryOrder', 'delete', [
+    $this->callAPISuccess('InventoryPurchaseOrderDetail', 'delete', [
       'id' => $created['id'],
     ]);
   }
