@@ -70,6 +70,19 @@
   </field>
 
   <field>
+    <name>product_variant_phone_number</name>
+    <uniqueName>inventory_product_variant_phone_number</uniqueName>
+    <title>Phone Number</title>
+    <type>varchar</type>
+    <comment>Phone number linked with device.</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
     <name>product_variant_unique_id</name>
     <uniqueName>inventory_product_variant_unique_id</uniqueName>
     <title>Product Variant Unique ID</title>
@@ -175,6 +188,146 @@
       <label>Packed Depth</label>
     </html>
   </field>
+
+  <field>
+    <name>product_variant_battery</name>
+    <uniqueName>inventory_product_variant_battery</uniqueName>
+    <title>Product Battery</title>
+    <type>varchar</type>
+    <comment>Battery backup time.</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>product_variant_speed</name>
+    <uniqueName>inventory_product_variant_speed</uniqueName>
+    <title>Product Speed</title>
+    <type>varchar</type>
+    <comment>Device Speed.</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>antenna</name>
+    <title>Antenna</title>
+    <uniqueName>inventory_product_antenna</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>tether</name>
+    <title>Tether</title>
+    <uniqueName>inventory_product_tether</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>powerbank</name>
+    <title>Power Bank</title>
+    <uniqueName>inventory_product_powerbank</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>batteryless</name>
+    <title>Battery Less</title>
+    <uniqueName>inventory_product_batteryless</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>network_4g</name>
+    <title>Network 4g</title>
+    <uniqueName>inventory_product_network_4g</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>network_5g</name>
+    <title>Network 5g</title>
+    <uniqueName>inventory_product_network_5g</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>has_sim</name>
+    <title>Has SIM</title>
+    <uniqueName>inventory_product_has_sim</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>has_device</name>
+    <title>Has Device</title>
+    <uniqueName>inventory_product_has_device</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>warranty_type_id</name>
+    <title>Warranty Type</title>
+    <uniqueName>inventory_product_warranty_type_id</uniqueName>
+    <type>int unsigned</type>
+    <required>false</required>
+    <export>true</export>
+  </field>
+
   <field>
     <name>image_thumbnail</name>
     <title>Thumbnail Image</title>
@@ -221,4 +374,21 @@
     <import>true</import>
     <add>5.63</add>
   </field>
+
+  <field>
+    <name>replaced_product_id</name>
+    <type>int unsigned</type>
+    <title>Replaced Product ID</title>
+    <comment>Optional Product.</comment>
+    <export>true</export>
+    <html>
+      <label>Primary Product</label>
+    </html>
+  </field>
+  <foreignKey>
+    <name>replaced_product_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <extension key="com.skvare.inventory" type="module">
   <file>inventory</file>
-  <name>FIXME</name>
-  <description>FIXME</description>
+  <name>Inventory System</name>
+  <description>Inventory System</description>
   <license>AGPL-3.0</license>
   <maintainer>
     <author>Sunil Pawar</author>

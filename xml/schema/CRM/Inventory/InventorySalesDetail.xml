@@ -76,4 +76,95 @@
       <label>Purchase Price</label>
     </html>
   </field>
+
+  <field>
+    <name>product_title</name>
+    <title>Product Title</title>
+    <uniqueName>inventory_salesdetail_product_title</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>product_sub_title</name>
+    <title>Product Sub-Title</title>
+    <uniqueName>inventory_salesdetail_product_sub_title</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>additional_details</name>
+    <title>Product Additional Details</title>
+    <uniqueName>inventory_sales_detail_additional</uniqueName>
+    <type>text</type>
+    <comment>Additional product details</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>membership_id</name>
+    <uniqueName>inventory_sales_membership_id</uniqueName>
+    <title>Membership ID</title>
+    <html>
+      <label>Membership</label>
+    </html>
+    <type>int unsigned</type>
+    <comment>Membership Associated with product.</comment>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <foreignKey>
+    <name>membership_id</name>
+    <table>civicrm_membership</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>contribution_id</name>
+    <title>Contribution ID</title>
+    <required>false</required>
+    <type>int unsigned</type>
+    <comment>FK to contribution table.</comment>
+    <html>
+      <label>Contribution</label>
+      <type>EntityRef</type>
+    </html>
+  </field>
+  <foreignKey>
+    <name>contribution_id</name>
+    <table>civicrm_contribution</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>type</name>
+    <title>Product Type</title>
+    <uniqueName>inventory_salesdetail_type</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
 </table>

@@ -50,11 +50,101 @@
     <uniqueName>inventory_sales_status_id</uniqueName>
     <title>Sales Status</title>
     <type>varchar</type>
-    <comment>Sales Status</comment>
+    <comment>Sales Status: 'placed', 'shipped', 'completed'</comment>
     <length>100</length>
     <required>true</required>
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+  </field>
+
+  <field>
+    <name>is_shipping_required</name>
+    <title>Is Shipping Required</title>
+    <uniqueName>inventory_sales_is_shipping_required</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>shipment_id</name>
+    <type>int unsigned</type>
+    <comment>FK to shipments</comment>
+  </field>
+  <foreignKey>
+    <name>shipment_id</name>
+    <table>civicrm_inventory_shipment</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>is_paid</name>
+    <title>Is Paid</title>
+    <uniqueName>inventory_sales_is_paid</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>is_fulfilled</name>
+    <title>Is fulfilled</title>
+    <uniqueName>inventory_sales_is_fulfilled</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>needs_assignment</name>
+    <title>Needs Assignment</title>
+    <uniqueName>inventory_sales_needs_assignment</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>has_assignment</name>
+    <title>Has Assignment</title>
+    <uniqueName>inventory_sales_has_assignment</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>is_tracking_sent</name>
+    <title>Tracking Sent?</title>
+    <uniqueName>inventory_sales_is_tracking_sent</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
   </field>
 </table>

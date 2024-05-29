@@ -11,7 +11,7 @@
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Unique InventoryProductMembership ID</comment>
+    <comment>Unique Inventory Product Membership ID</comment>
     <html>
       <type>Number</type>
     </html>
@@ -20,6 +20,49 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
+  <field>
+    <name>product_variant_code</name>
+    <title>Product Variant Code</title>
+    <uniqueName>inventory_product_mapping_variant_code</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <field>
+    <name>product_name</name>
+    <title>Product Name</title>
+    <uniqueName>inventory_product_name</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>membership_type_id</name>
+    <uniqueName>inventory_membership_type_id</uniqueName>
+    <title>Membership ID</title>
+    <html>
+      <label>Membership Type</label>
+    </html>
+    <type>int unsigned</type>
+    <comment>Membership Type Associated with product.</comment>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <foreignKey>
+    <name>membership_type_id</name>
+    <table>civicrm_membership_type</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 
   <field>
     <name>contact_id</name>
