@@ -4,7 +4,7 @@
   <base>CRM/Inventory</base>
   <class>InventoryShipment</class>
   <name>civicrm_inventory_shipment</name>
-  <comment>FIXME</comment>
+  <comment>Shipment Details</comment>
   <log>true</log>
 
   <field>
@@ -25,6 +25,7 @@
     <name>contact_id</name>
     <type>int unsigned</type>
     <title>Created By</title>
+    <uniqueName>inventory_shipment_contact_id</uniqueName>
     <html>
       <label>Created By</label>
     </html>
@@ -41,6 +42,7 @@
     <name>created_date</name>
     <title>Created Date</title>
     <type>timestamp</type>
+    <uniqueName>inventory_shipment_created_date</uniqueName>
     <comment>When was the shipment was created.</comment>
     <import>true</import>
     <headerPattern>/created(.?date)?/i</headerPattern>
@@ -59,6 +61,7 @@
   <field>
     <name>modified_id</name>
     <title>Modified By Contact ID</title>
+    <uniqueName>inventory_shipment_modified_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Contact ID of person under whose credentials this data modification was made.</comment>
     <html>
@@ -75,6 +78,7 @@
   <field>
     <name>updated_date</name>
     <title>Updated date</title>
+    <uniqueName>inventory_shipment_updated_date</uniqueName>
     <type>timestamp</type>
     <default>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</default>
     <import>true</import>
@@ -93,8 +97,9 @@
   </index>
 
   <field>
-    <name>shipped_at</name>
+    <name>shipped_date</name>
     <title>Shipped At</title>
+    <uniqueName>inventory_shipment_shippe_date</uniqueName>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/shipped(.?date)?/i</headerPattern>

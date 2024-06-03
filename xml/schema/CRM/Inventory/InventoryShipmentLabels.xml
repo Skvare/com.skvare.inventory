@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryShipmentLabels</class>
+  <name>civicrm_inventory_shipment_labels</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryShipmentLabels ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>created_date</name>
+    <title>Created Date</title>
+    <uniqueName>inventory_shipment_label_created_date</uniqueName>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/created(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+
+  <field>
+    <name>updated_date</name>
+    <title>Updated Date</title>
+    <uniqueName>inventory_shipment_label_updated_date</uniqueName>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/updated(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+
+  <field>
+    <name>sales_id</name>
+    <title>Sales ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Sales</comment>
+  </field>
+  <foreignKey>
+    <name>sales_id</name>
+    <table>civicrm_inventory_sales</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>is_valid</name>
+    <title>Is Valid?</title>
+    <uniqueName>inventory_shipment_label_is_valid</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>is_paid</name>
+    <title>Is Paid?</title>
+    <uniqueName>inventory_shipment_label__is_paid</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>has_error</name>
+    <title>Has Error?</title>
+    <uniqueName>inventory_shipment_label_has_error</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>provider</name>
+    <title>Shipment Provider</title>
+    <uniqueName>inventory_shipment_label_provider</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>amount</name>
+    <uniqueName>inventory_shipment_label_amount</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Shipment Amount</comment>
+    <html>
+      <type>Text</type>
+      <label>Label Amount</label>
+    </html>
+  </field>
+
+  <field>
+    <name>currency</name>
+    <title>Currency</title>
+    <uniqueName>inventory_shipment_label_currency</uniqueName>
+    <type>varchar</type>
+    <length>4</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+
+  <field>
+    <name>resource_id</name>
+    <title>Resource ID</title>
+    <uniqueName>inventory_shipment_label_resource_id</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>tracking_id</name>
+    <title>Tracking ID</title>
+    <uniqueName>inventory_shipment_label_tracking_id</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>shipment</name>
+    <title>Shipment Details</title>
+    <uniqueName>inventory_shipment_label_shipment</uniqueName>
+    <type>text</type>
+    <comment>Shipment details.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+  <field>
+    <name>purchase</name>
+    <title>Shipment Label Purchase</title>
+    <uniqueName>inventory_shipment_label_purchase</uniqueName>
+    <type>text</type>
+    <comment>Shipment Purchase details.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+
+
+
+
+
+
+
+
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>
