@@ -131,7 +131,6 @@
       <type>CheckBox</type>
     </html>
   </field>
-
   <field>
     <name>image_actual</name>
     <title>Image</title>

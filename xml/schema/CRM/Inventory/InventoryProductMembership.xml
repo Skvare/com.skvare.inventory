@@ -6,7 +6,6 @@
   <name>civicrm_inventory_product_membership</name>
   <comment>FIXME</comment>
   <log>true</log>
-
   <field>
     <name>id</name>
     <type>int unsigned</type>
@@ -21,9 +20,9 @@
     <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-    <name>product_variant_code</name>
-    <title>Product Variant Code</title>
-    <uniqueName>inventory_product_mapping_variant_code</uniqueName>
+    <name>product_variant_sku_code</name>
+    <title>Product Variant SKU Code</title>
+    <uniqueName>inventory_product_variant_sku_code</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
@@ -42,7 +41,6 @@
     <import>true</import>
     <add>5.63</add>
   </field>
-
   <field>
     <name>membership_type_id</name>
     <uniqueName>inventory_membership_type_id</uniqueName>
@@ -63,7 +61,6 @@
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
-
   <field>
     <name>contact_id</name>
     <type>int unsigned</type>
@@ -75,5 +72,4 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
-
 </table>

@@ -6,7 +6,6 @@
   <name>civicrm_inventory_product_changelog</name>
   <comment>FIXME</comment>
   <log>true</log>
-
   <field>
     <name>id</name>
     <type>int unsigned</type>
@@ -20,7 +19,6 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
   <field>
     <name>contact_id</name>
     <type>int unsigned</type>
@@ -33,7 +31,6 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
-
   <field>
     <name>product_variant_id</name>
     <title>Product Variant ID</title>
@@ -46,7 +43,6 @@
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
-
   <field>
     <name>batch_id</name>
     <type>int unsigned</type>
@@ -54,7 +50,6 @@
     <title>Batch ID</title>
     <comment>FK to Contact</comment>
   </field>
-
   <field>
     <name>created_date</name>
     <title>Created Date</title>
@@ -67,7 +62,6 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
-
   <field>
     <name>status_id</name>
     <uniqueName>inventory_product_changelog_status_id</uniqueName>
@@ -80,5 +74,4 @@
     <import>true</import>
     <add>5.63</add>
   </field>
-
 </table>

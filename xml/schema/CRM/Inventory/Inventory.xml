@@ -6,7 +6,6 @@
   <name>civicrm_inventory</name>
   <comment>Product Inventory</comment>
   <log>true</log>
-
   <field>
     <name>id</name>
     <type>int unsigned</type>
@@ -22,9 +21,9 @@
     <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-    <name>product_variant_code</name>
+    <name>product_variant_sku_code</name>
     <title>Product Variant Code</title>
-    <uniqueName>inventory_product_variant_code</uniqueName>
+    <uniqueName>inventory_product_variant_sku_code</uniqueName>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
