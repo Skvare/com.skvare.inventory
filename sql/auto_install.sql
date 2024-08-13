@@ -81,7 +81,7 @@ CREATE TABLE `civicrm_inventory_product` (
   `is_discontinued` tinyint NULL DEFAULT 0,
   `image_actual` varchar(100) NULL COMMENT 'File url.',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_product_product_category_id FOREIGN KEY (`product_category_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE SET NULL
+  CONSTRAINT FK_civicrm_inventory_product_product_category_id FOREIGN KEY (`product_category_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE RESTRICT
 )
 ENGINE=InnoDB;
 
@@ -99,7 +99,7 @@ CREATE TABLE `civicrm_inventory_product_membership` (
   `membership_type_id` int unsigned NOT NULL COMMENT 'Membership Type Associated with product.',
   `contact_id` int unsigned COMMENT 'FK to Contact',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_product_membership_membership_type_id FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_inventory_product_membership_membership_type_id FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type`(`id`) ON DELETE RESTRICT,
   CONSTRAINT FK_civicrm_inventory_product_membership_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
 )
 ENGINE=InnoDB;

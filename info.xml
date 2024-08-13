@@ -30,6 +30,7 @@
     <angularModule>crmInventory</angularModule>
     <format>23.02.1</format>
   </civix>
+  <upgrader>CRM_Inventory_Upgrader</upgrader>
   <mixins>
     <mixin>entity-types-php@1.0.0</mixin>
   </mixins>

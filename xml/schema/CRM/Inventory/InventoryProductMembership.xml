@@ -59,7 +59,7 @@
     <name>membership_type_id</name>
     <table>civicrm_membership_type</table>
     <key>id</key>
-    <onDelete>SET NULL</onDelete>
+    <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
     <name>contact_id</name>
