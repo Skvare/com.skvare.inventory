@@ -100,10 +100,13 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'bao' => 'CRM_Member_BAO_MembershipType',
       'localizable' => 1,
       'html' => [
-        'type' => 'Text',
+        'type' => 'Select',
+        'multiple' => TRUE,
         'label' => ts("Shipable To Country."),
       ],
+      'pseudoconstant' => [
+        'callback' => 'CRM_Inventory_Utils::membershipTypeShipableTo',
+      ],
     ];
-
   };
 }
