@@ -59,3 +59,51 @@ function inventory_civicrm_enable() {
 //  ]);
 //  _inventory_civix_navigationMenu($menu);
 //}
+
+/**
+ * Implementation of hook_civicrm_permission.
+ *
+ * @param array $permissions Does not contain core perms -- only extension-defined perms.
+ */
+function inventory_civicrm_permission(array &$permissions) {
+  if (CRM_Core_Config::singleton()->userPermissionClass->isModulePermissionSupported()) {
+    $permissions = array_merge($permissions, CRM_Inventory_Permission::getInventoryPermissions());
+  }
+}
+
+
+/**
+ * Implements hook_civicrm_entityType().
+ */
+function inventory_civicrm_entityTypes(&$entityTypes) {
+  $entityTypes['CRM_Member_DAO_MembershipType']['fields_callback'][]
+    = function ($class, &$fields) {
+    $fields['shippable_to'] = [
+      'name' => 'shippable_to',
+      'type' => CRM_Utils_Type::T_STRING,
+      'title' => ts('Membership Shipable to Country'),
+      'description' => 'List of country where this membership is shipable.',
+      'localizable' => 0,
+      'maxlength' => 128,
+      'size' => CRM_Utils_Type::HUGE,
+      'usage' => [
+        'import' => TRUE,
+        'export' => TRUE,
+        'duplicate_matching' => FALSE,
+        'token' => TRUE,
+      ],
+      'import' => TRUE,
+      'where' => 'civicrm_membership_type.shippable_to',
+      'export' => TRUE,
+      'table_name' => 'civicrm_membership_type',
+      'entity' => 'MembershipType',
+      'bao' => 'CRM_Member_BAO_MembershipType',
+      'localizable' => 1,
+      'html' => [
+        'type' => 'Text',
+        'label' => ts("Shipable To Country."),
+      ],
+    ];
+
+  };
+}

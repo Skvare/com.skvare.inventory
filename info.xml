@@ -33,5 +33,7 @@
   <upgrader>CRM_Inventory_Upgrader</upgrader>
   <mixins>
     <mixin>entity-types-php@1.0.0</mixin>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
   </mixins>
 </extension>
