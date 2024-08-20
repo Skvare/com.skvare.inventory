@@ -192,12 +192,14 @@ function inventory_civicrm_navigationMenu(&$menu) {
  */
 function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $permissions['warehouse'] = [
+    'default' => [['access warehouse', 'create warehouse', 'edit warehouse']],
     'get' => [['access warehouse',]],
     'delete' => [['access warehouse', 'delete warehouse',]],
     'create' => [['access warehouse', 'create warehouse',]],
     'update' => [['access warehouse', 'edit warehouse',]],
   ];
   $permissions['inventory_product'] = [
+    'default' => [['access inventory product', 'create inventory product', 'edit inventory product',]],
     'get' => [['access inventory product',]],
     'delete' => [['access inventory product', 'delete inventory product',]],
     'create' => [['access inventory product', 'create inventory product',]],
@@ -205,6 +207,7 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
   ];
 
   $permissions['inventory_product_variant'] = [
+    'default' => [['access inventory product', 'create inventory product', 'edit inventory product',]],
     'get' => [['access inventory product',]],
     'delete' => [['access inventory product', 'delete inventory product',]],
     'create' => [['access inventory product', 'create inventory product',]],
@@ -212,6 +215,7 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
   ];
 
   $permissions['inventory_sales'] = [
+    'default' => [['access inventory sales', 'create inventory sales', 'edit inventory sales']],
     'get' => [['access inventory sales',]],
     'delete' => [['access inventory sales', 'delete inventory sales',]],
     'create' => [['access inventory sales', 'create inventory sales',]],
@@ -219,6 +223,7 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
   ];
 
   $permissions['inventory_shipment'] = [
+    'default' => [['access shipment', 'create shipment', 'edit shipment']],
     'get' => [['access shipment',]],
     'delete' => [['access shipment', 'delete shipment',]],
     'create' => [['access shipment', 'create shipment',]],
@@ -226,10 +231,11 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
   ];
 
   $permissions['inventory'] = [
+    'default' => [['access Inventory', 'administer Inventory']],
     'get' => [['access Inventory',]],
-    'delete' => [['access Inventory', 'access Inventory',]],
-    'create' => [['access Inventory', 'access Inventory',]],
-    'update' => [['access Inventory', 'access Inventory',]],
+    'delete' => [['access Inventory', 'administer Inventory',]],
+    'create' => [['access Inventory', 'administer Inventory',]],
+    'update' => [['access Inventory', 'administer Inventory',]],
   ];
   // allow fairly liberal access to the InventoryProduct, InventoryProductVariant.
   if (_inventory_ApiCall($entity, $action)) {
