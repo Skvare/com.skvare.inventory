@@ -12,4 +12,10 @@
     <title>Inventory Product</title>
     <access_arguments>access My Contact Product</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/setting</path>
+    <page_callback>CRM_Inventory_Form_Setting</page_callback>
+    <title>Setting</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

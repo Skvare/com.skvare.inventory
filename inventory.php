@@ -44,23 +44,6 @@ function inventory_civicrm_enable() {
 //}
 
 /**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- */
-//function inventory_civicrm_navigationMenu(&$menu) {
-//  _inventory_civix_insert_navigation_menu($menu, 'Mailings', [
-//    'label' => E::ts('New subliminal message'),
-//    'name' => 'mailing_subliminal_message',
-//    'url' => 'civicrm/mailing/subliminal',
-//    'permission' => 'access CiviMail',
-//    'operator' => 'OR',
-//    'separator' => 0,
-//  ]);
-//  _inventory_civix_navigationMenu($menu);
-//}
-
-/**
  * Implementation of hook_civicrm_permission.
  *
  * @param array $permissions Does not contain core perms -- only extension-defined perms.
@@ -76,7 +59,12 @@ function inventory_civicrm_permission(array &$permissions) {
  * Implements hook_civicrm_entityType().
  */
 function inventory_civicrm_entityTypes(&$entityTypes) {
-  $entityTypes['CRM_Member_DAO_MembershipType']['fields_callback'][]
+  $civiVersion = CRM_Utils_System::version();
+  $type = 'CRM_Member_DAO_MembershipType';
+  if (version_compare($civiVersion, '5.75.0') >= 0) {
+    $type = 'MembershipType';
+  }
+  $entityTypes[$type]['fields_callback'][]
     = function ($class, &$fields) {
     $fields['shippable_to'] = [
       'name' => 'shippable_to',
@@ -86,12 +74,6 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'localizable' => 0,
       'maxlength' => 128,
       'size' => CRM_Utils_Type::HUGE,
-      'usage' => [
-        'import' => TRUE,
-        'export' => TRUE,
-        'duplicate_matching' => FALSE,
-        'token' => TRUE,
-      ],
       'import' => TRUE,
       'where' => 'civicrm_membership_type.shippable_to',
       'export' => TRUE,
@@ -99,6 +81,9 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'entity' => 'MembershipType',
       'bao' => 'CRM_Member_BAO_MembershipType',
       'localizable' => 1,
+      'input_attrs' => [
+        'multiple' => '1',
+      ],
       'html' => [
         'type' => 'Select',
         'multiple' => TRUE,
@@ -109,4 +94,119 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       ],
     ];
   };
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
+ */
+function inventory_civicrm_navigationMenu(&$menu) {
+  $parentMenu = [[
+    'attributes' => [
+      'label' => E::ts('Inventory'),
+      'name' => 'inventory_main',
+      'url' => NULL,
+      'operator' => NULL,
+      'separator' => 0,
+      'active' => 1,
+      'icon' => 'crm-i fa-ticket',
+      'weight' => 35,
+      'permission' => 'access Inventory'
+    ]]];
+  array_splice($menu, 6, 0, $parentMenu);
+
+  _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
+    'label' => E::ts('Dashboard'),
+    'name' => 'inventory_dashboard',
+    'url' => 'civicrm/inventory',
+    'permission' => NULL,
+    'operator' => NULL,
+    'separator' => 0,
+    'permission' => 'access Inventory'
+  ]);
+
+  _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
+    'label' => E::ts('Inventory Settings'),
+    'name' => 'inventory_settings',
+    'url' => 'civicrm/inventory/setting',
+    'permission' => NULL,
+    'operator' => NULL,
+    'separator' => 1,
+    'permission' => 'administer Inventory'
+  ]);
+
+  _inventory_civix_navigationMenu($menu);
+}
+
+/**
+ * Implements hook_civicrm_alterAPIPermissions().
+ *
+ * Set Inventory permissions for APIv3.
+ */
+function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  $permissions['warehouse'] = [
+    'get' => [['access warehouse',]],
+    'delete' => [['access warehouse', 'delete warehouse',]],
+    'create' => [['access warehouse', 'create warehouse',]],
+    'update' => [['access warehouse', 'edit warehouse',]],
+  ];
+  $permissions['inventory_product'] = [
+    'get' => [['access inventory product',]],
+    'delete' => [['access inventory product', 'delete inventory product',]],
+    'create' => [['access inventory product', 'create inventory product',]],
+    'update' => [['access inventory product', 'edit inventory product',]],
+  ];
+
+  $permissions['inventory_product_variant'] = [
+    'get' => [['access inventory product',]],
+    'delete' => [['access inventory product', 'delete inventory product',]],
+    'create' => [['access inventory product', 'create inventory product',]],
+    'update' => [['access inventory product', 'edit inventory product',]],
+  ];
+
+  $permissions['inventory_sales'] = [
+    'get' => [['access inventory sales',]],
+    'delete' => [['access inventory sales', 'delete inventory sales',]],
+    'create' => [['access inventory sales', 'create inventory sales',]],
+    'update' => [['access inventory sales', 'edit inventory sales']],
+  ];
+
+  $permissions['inventory_shipment'] = [
+    'get' => [['access shipment',]],
+    'delete' => [['access shipment', 'delete shipment',]],
+    'create' => [['access shipment', 'create shipment',]],
+    'update' => [['access shipment', 'edit shipment']],
+  ];
+
+  $permissions['inventory'] = [
+    'get' => [['access Inventory',]],
+    'delete' => [['access Inventory', 'access Inventory',]],
+    'create' => [['access Inventory', 'access Inventory',]],
+    'update' => [['access Inventory', 'access Inventory',]],
+  ];
+  // allow fairly liberal access to the InventoryProduct, InventoryProductVariant.
+  if (_inventory_ApiCall($entity, $action)) {
+    $params['check_permissions'] = FALSE;
+  }
+}
+
+/**
+ * This is a helper function to inventory_civicrm_alterAPIPermissions.
+ * @param string $entity
+ *   The noun in an API call (e.g., volunteer_project)
+ * @param string $action
+ *   The verb in an API call (e.g., get)
+ * @return boolean
+ *   True if the API call is of the type that the vol opps UI depends on.
+ */
+function _inventory_ApiCall($entity, $action) {
+  $actions = [
+    'get',
+    'getlist',
+    'getsingle',
+  ];
+  $entities = ['InventoryProduct', 'InventoryProductVariant'];
+
+  return (in_array($entity, $entities) && in_array($action, $actions));
 }
