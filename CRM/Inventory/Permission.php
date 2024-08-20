@@ -1,5 +1,9 @@
 <?php
 
+// phpcs:disable
+use CRM_Inventory_ExtensionUtil as E;
+// phpcs:enable
+
 class CRM_Inventory_Permission extends CRM_Core_Permission {
 
   /**
@@ -10,97 +14,97 @@ class CRM_Inventory_Permission extends CRM_Core_Permission {
    */
   public static function getInventoryPermissions() {
 
-    $prefix = ts('Inventory', ['domain' => 'com.skvare.inventory']) . ': ';
+    $prefix = E::ts('Inventory', ['domain' => 'com.skvare.inventory']) . ': ';
 
     return [
       // Acces Inventory Component.
       'access Inventory' => [
-        'label' => $prefix . ts('access Inventory', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Access Inventory Component', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access Inventory', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access Inventory Component', ['domain' => 'com.skvare.inventory']),
       ],
       'access My Contact Product' => [
-        'label' => $prefix . ts('access My Contact Product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Access my purchased product', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access My Contact Product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access my purchased product', ['domain' => 'com.skvare.inventory']),
       ],
       'access All Contact Product' => [
-        'label' => $prefix . ts('access All Contact Product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Access all purchased product', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access All Contact Product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access all purchased product', ['domain' => 'com.skvare.inventory']),
       ],
       // Inventory Admin.
       'administer Inventory' => [
-        'label' => $prefix . ts('administer Inventory', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('administer Inventory Component', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('administer Inventory', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('administer Inventory Component', ['domain' => 'com.skvare.inventory']),
       ],
       // Warehouse Entity type.
       'create warehouse' => [
-        'label' => $prefix . ts('create warehouse', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Create a new warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('create warehouse', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create a new warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'edit warehouse' => [
-        'label' => $prefix . ts('edit warehouse', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Edit a warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('edit warehouse', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit a warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'access warehouse' => [
-        'label' => $prefix . ts('access warehouse', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Access a warehouse record from Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access warehouse', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access a warehouse record from Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'delete warehouse' => [
-        'label' => $prefix . ts('delete warehouse', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('delete warehouse', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a warehouse record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
 
       // Inventory Product and variaant.
       'create inventory product' => [
-        'label' => $prefix . ts('create inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Create a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('create inventory product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create a inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'edit inventory product' => [
-        'label' => $prefix . ts('edit inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Edit a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('edit inventory product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit a inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'access inventory product' => [
-        'label' => $prefix . ts('access inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Get a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access inventory product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Get a inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'delete inventory product' => [
-        'label' => $prefix . ts('delete inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('delete inventory product', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
 
       // Inventory sales.
       'create inventory sales' => [
-        'label' => $prefix . ts('create inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('create inventory sales', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'edit inventory sales' => [
-        'label' => $prefix . ts('edit inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('edit inventory sales', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'access inventory sales' => [
-        'label' => $prefix . ts('access inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Access a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access inventory sales', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access a inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'delete inventory sales' => [
-        'label' => $prefix . ts('delete inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('delete inventory sales', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
 
       // Shipment and label
       'create shipment' => [
-        'label' => $prefix . ts('create shipment', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Create a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('create shipment', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'edit shipment' => [
-        'label' => $prefix . ts('edit shipment', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Edit a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('edit shipment', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'access shipment' => [
-        'label' => $prefix . ts('access shipment', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Edit a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('access shipment', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'delete shipment' => [
-        'label' => $prefix . ts('delete shipment', ['domain' => 'com.skvare.inventory']),
-        'description' => ts('Delete a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'label' => $prefix . E::ts('delete shipment', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
     ];
   }

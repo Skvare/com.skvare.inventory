@@ -4,7 +4,7 @@
     <path>civicrm/inventory</path>
     <page_callback>CRM_Inventory_Page_Dashboard</page_callback>
     <title>Inventory Dashboard</title>
-    <access_arguments>administer Inventory</access_arguments>
+    <access_arguments>access Inventory,administer Inventory</access_arguments>
   </item>
   <item>
     <path>civicrm/contact/inventory</path>
@@ -15,7 +15,13 @@
   <item>
     <path>civicrm/inventory/setting</path>
     <page_callback>CRM_Inventory_Form_Setting</page_callback>
-    <title>Setting</title>
-    <access_arguments>access CiviCRM</access_arguments>
+    <title>Inventory Setting</title>
+    <access_arguments>access Inventory,administer Inventory</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/inventory/shipping</path>
+    <page_callback>CRM_Inventory_Page_Shipping</page_callback>
+    <title>Shipping Dashboard</title>
+    <access_arguments>access Inventory,taccess shipment</access_arguments>
   </item>
 </menu>

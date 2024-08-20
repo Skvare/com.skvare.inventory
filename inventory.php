@@ -54,7 +54,6 @@ function inventory_civicrm_permission(array &$permissions) {
   }
 }
 
-
 /**
  * Implements hook_civicrm_entityType().
  */
@@ -66,6 +65,40 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
   }
   $entityTypes[$type]['fields_callback'][]
     = function ($class, &$fields) {
+    $fields['signup_fee'] = [
+      'name' => 'signup_fee',
+      'title' => ts('Signup Fee'),
+      'sql_type' => 'decimal(18,9)',
+      'type' => CRM_Utils_Type::T_FLOAT,
+      'input_type' => 'Text',
+      'description' => ts('This is the fee charged for the first time while buying the product.'),
+      'add' => '5.75',
+      'default' => '0',
+      'input_attrs' => [
+        'label' => ts('Signup Fee'),
+      ],
+      'where' => 'civicrm_membership_type.signup_fee',
+      'table_name' => 'civicrm_membership_type',
+      'entity' => 'MembershipType',
+      'bao' => 'CRM_Member_BAO_MembershipType',
+    ];
+    $fields['renewal_fee'] = [
+      'name' => 'renewal_fee',
+      'title' => ts('Renewal Fee'),
+      'sql_type' => 'decimal(18,9)',
+      'type' => CRM_Utils_Type::T_FLOAT,
+      'input_type' => 'Text',
+      'description' => ts('This fee will be charged for renewal of membership.'),
+      'add' => '5.75',
+      'default' => '0',
+      'input_attrs' => [
+        'label' => ts('Renewal Fee'),
+      ],
+      'where' => 'civicrm_membership_type.renewal_fee',
+      'table_name' => 'civicrm_membership_type',
+      'entity' => 'MembershipType',
+      'bao' => 'CRM_Member_BAO_MembershipType',
+    ];
     $fields['shippable_to'] = [
       'name' => 'shippable_to',
       'type' => CRM_Utils_Type::T_STRING,
@@ -92,6 +125,7 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'pseudoconstant' => [
         'callback' => 'CRM_Inventory_Utils::membershipTypeShipableTo',
       ],
+      'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
     ];
   };
 }
@@ -127,13 +161,25 @@ function inventory_civicrm_navigationMenu(&$menu) {
   ]);
 
   _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
+    'label' => E::ts('Shipping'),
+    'name' => 'inventory_shipping',
+    'url' => 'civicrm/inventory/shipping',
+    'permission' => NULL,
+    'operator' => NULL,
+    'separator' => 1,
+    'permission' => 'access shipment',
+    'icon' => 'crm-i fa-truck',
+  ]);
+
+  _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
     'label' => E::ts('Inventory Settings'),
     'name' => 'inventory_settings',
     'url' => 'civicrm/inventory/setting',
     'permission' => NULL,
     'operator' => NULL,
     'separator' => 1,
-    'permission' => 'administer Inventory'
+    'permission' => 'administer Inventory',
+    'icon' => 'crm-i fa-wrench',
   ]);
 
   _inventory_civix_navigationMenu($menu);
@@ -209,4 +255,36 @@ function _inventory_ApiCall($entity, $action) {
   $entities = ['InventoryProduct', 'InventoryProductVariant'];
 
   return (in_array($entity, $entities) && in_array($action, $actions));
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * Add Inventory related fields to form.
+ */
+function inventory_civicrm_buildForm($formName, &$form) {
+  if ($formName == 'CRM_Member_Form_MembershipType') {
+    $attributes = CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType');
+    $shippableTo = CRM_Inventory_Utils::membershipTypeShipableTo();
+    $form->addMoney('signup_fee',
+      ts('Signup Fee'),
+      FALSE,
+      $attributes['signup_fee'],
+      FALSE, 'currency', NULL, FALSE
+    );
+
+    $form->addMoney('renewal_fee',
+      ts('Renewal Fee'),
+      FALSE,
+      $attributes['renewal_fee'],
+      FALSE, 'currency', NULL, FALSE
+    );
+
+    $form->add('select', 'shippable_to', E::ts('Product Shippable to Country(s)'),
+      $shippableTo, FALSE, ['class' => 'crm-select2 huge', 'multiple' => 1]);
+    if ($form->_action & CRM_Core_Action::UPDATE) {
+      $membershipExtras = CRM_Inventory_Utils::getMembershipTypeSettings($form->_id);
+      $form->setDefaults($membershipExtras);
+    }
+  }
 }
