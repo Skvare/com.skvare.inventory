@@ -102,8 +102,8 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
     $fields['shippable_to'] = [
       'name' => 'shippable_to',
       'type' => CRM_Utils_Type::T_STRING,
-      'title' => ts('Membership Shipable to Country'),
-      'description' => 'List of country where this membership is shipable.',
+      'title' => ts('Membership Shippable to Country'),
+      'description' => 'List of country where this membership is shippable.',
       'localizable' => 0,
       'maxlength' => 128,
       'size' => CRM_Utils_Type::HUGE,
@@ -120,7 +120,7 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'html' => [
         'type' => 'Select',
         'multiple' => TRUE,
-        'label' => ts("Shipable To Country."),
+        'label' => ts("Shippable To Country."),
       ],
       'pseudoconstant' => [
         'callback' => 'CRM_Inventory_Utils::membershipTypeShipableTo',
