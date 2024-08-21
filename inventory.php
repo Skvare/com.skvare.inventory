@@ -77,6 +77,9 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'input_attrs' => [
         'label' => ts('Signup Fee'),
       ],
+      'html' => [
+        'type' => 'Text',
+      ],
       'where' => 'civicrm_membership_type.signup_fee',
       'table_name' => 'civicrm_membership_type',
       'entity' => 'MembershipType',
@@ -93,6 +96,9 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'default' => '0',
       'input_attrs' => [
         'label' => ts('Renewal Fee'),
+      ],
+      'html' => [
+        'type' => 'Text',
       ],
       'where' => 'civicrm_membership_type.renewal_fee',
       'table_name' => 'civicrm_membership_type',
