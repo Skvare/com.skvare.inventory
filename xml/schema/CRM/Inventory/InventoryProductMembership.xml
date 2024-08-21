@@ -52,8 +52,8 @@
     <uniqueName>inventory_membership_type_id</uniqueName>
     <title>Membership ID</title>
     <html>
+      <type>Select</type>
       <label>Membership Type</label>
-      <type>EntityRef</type>
     </html>
     <type>int unsigned</type>
     <comment>Membership Type Associated with product.</comment>
@@ -61,6 +61,11 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <pseudoconstant>
+      <table>civicrm_membership_type</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>name</labelColumn>
+    </pseudoconstant>
   </field>
   <foreignKey>
     <name>membership_type_id</name>

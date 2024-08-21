@@ -161,7 +161,9 @@
     <add>5.63</add>
     <comment>File url.</comment>
     <html>
-      <type>Text</type>
+      <type>File</type>
+      <size>30</size>
+      <label>Image</label>
     </html>
   </field>
  </table>

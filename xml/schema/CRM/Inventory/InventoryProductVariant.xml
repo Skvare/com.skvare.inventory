@@ -347,7 +347,9 @@
     <import>true</import>
     <add>5.63</add>
     <html>
-      <type>Text</type>
+      <type>File</type>
+      <size>30</size>
+      <label>Thumbnail Image</label>
     </html>
   </field>
   <field>
@@ -361,7 +363,9 @@
     <import>true</import>
     <add>5.63</add>
     <html>
-      <type>Text</type>
+      <type>File</type>
+      <size>30</size>
+      <label>Image</label>
     </html>
   </field>
   <field>
