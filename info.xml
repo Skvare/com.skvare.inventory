@@ -32,10 +32,10 @@
   </civix>
   <upgrader>CRM_Inventory_Upgrader</upgrader>
   <mixins>
-    <mixin>entity-types-php@1.0.0</mixin>
     <mixin>menu-xml@1.0.0</mixin>
     <mixin>afform-entity-php@1.0.0</mixin>
-    <mixin>smarty-v2@1.0.1</mixin>
+    <mixin>smarty-v2@1.0.3</mixin>
     <mixin>scan-classes@1.0.0</mixin>
+    <mixin>entity-types-php@2.0.0</mixin>
   </mixins>
 </extension>

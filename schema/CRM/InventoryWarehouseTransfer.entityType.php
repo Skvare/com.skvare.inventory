@@ -1,0 +1,158 @@
+<?php
+return [
+  'name' => 'InventoryWarehouseTransfer',
+  'table' => 'civicrm_inventory_warehouse_transfer',
+  'class' => 'CRM_Inventory_DAO_InventoryWarehouseTransfer',
+  'getInfo' => fn() => [
+    'title' => ts('Inventory Warehouse Transfer'),
+    'title_plural' => ts('Inventory Warehouse Transfers'),
+    'description' => ts('FIXME'),
+    'log' => TRUE,
+  ],
+  'getFields' => fn() => [
+    'id' => [
+      'title' => ts('ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'required' => TRUE,
+      'description' => ts('Unique Inventory Warehouse Transfer ID'),
+      'primary_key' => TRUE,
+      'auto_increment' => TRUE,
+    ],
+    'lot_id' => [
+      'title' => ts('Product Lot ID'),
+      'sql_type' => 'varchar(100)',
+      'input_type' => 'Text',
+      'required' => TRUE,
+      'add' => '5.63',
+      'unique_name' => 'inventory_warehouse_transfer_lot_id',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'maxlength' => 100,
+      ],
+    ],
+    'product_variant_id' => [
+      'title' => ts('Product Variant ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Product Variant'),
+      'unique_name' => 'inventory_warehouse_tranfer_product_variant_id',
+      'entity_reference' => [
+        'entity' => 'InventoryProductVariant',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'from_warehouse_id' => [
+      'title' => ts('From Warehouse ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Warehouse'),
+      'unique_name' => 'inventory_warehouse_tranfer_from_warehouse_id',
+      'entity_reference' => [
+        'entity' => 'InventoryWarehouse',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'to_warehouse_id' => [
+      'title' => ts('To Warehouse ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Warehouse'),
+      'unique_name' => 'inventory_warehouse_tranfer_to_warehouse_id',
+      'entity_reference' => [
+        'entity' => 'InventoryWarehouse',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'from_contact_id' => [
+      'title' => ts('Operation performed By'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Contact'),
+      'unique_name' => 'inventory_warehouse_tranfer_from_contact_id',
+      'entity_reference' => [
+        'entity' => 'Contact',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'to_contact_id' => [
+      'title' => ts('Recivied By'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Contact'),
+      'unique_name' => 'inventory_warehouse_tranfer_to_contact_id',
+      'entity_reference' => [
+        'entity' => 'Contact',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'created_date' => [
+      'title' => ts('Created Date'),
+      'sql_type' => 'datetime',
+      'input_type' => 'Select Date',
+      'unique_name' => 'inventory_warehouse_tranfer_created_date',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'format_type' => 'activityDateTime',
+      ],
+    ],
+    'status_id' => [
+      'title' => ts('Transaction Status'),
+      'sql_type' => 'varchar(100)',
+      'input_type' => 'Text',
+      'required' => TRUE,
+      'description' => ts('IN = into location, OUT = OUT of location'),
+      'add' => '5.63',
+      'unique_name' => 'inventory_warehouse_tranfer_status_id',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'maxlength' => 100,
+      ],
+    ],
+    'status_date' => [
+      'title' => ts('Status Date'),
+      'sql_type' => 'datetime',
+      'input_type' => 'Select Date',
+      'unique_name' => 'inventory_warehouse_tranfer_status_date',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'format_type' => 'activityDateTime',
+      ],
+    ],
+    'from_stock_quantity' => [
+      'title' => ts('Product Stock Quantity Sent'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The quantity sent.'),
+      'unique_name' => 'from_stock_quantity',
+    ],
+    'received_stock_quantity' => [
+      'title' => ts('Product Stock Quantity Received'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The quantity Received.'),
+      'unique_name' => 'received_stock_quantity',
+    ],
+  ],
+];

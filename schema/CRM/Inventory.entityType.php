@@ -1,0 +1,110 @@
+<?php
+return [
+  'name' => 'Inventory',
+  'table' => 'civicrm_inventory',
+  'class' => 'CRM_Inventory_DAO_Inventory',
+  'getInfo' => fn() => [
+    'title' => ts('Inventory'),
+    'title_plural' => ts('Inventories'),
+    'description' => ts('Product Inventory'),
+    'log' => TRUE,
+  ],
+  'getFields' => fn() => [
+    'id' => [
+      'title' => ts('ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'required' => TRUE,
+      'description' => ts('Inventory ID'),
+      'unique_name' => 'inventory_id',
+      'primary_key' => TRUE,
+      'auto_increment' => TRUE,
+    ],
+    'product_variant_sku_code' => [
+      'title' => ts('Product Variant Code'),
+      'sql_type' => 'varchar(100)',
+      'input_type' => 'Text',
+      'add' => '5.63',
+      'unique_name' => 'inventory_product_variant_sku_code',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'maxlength' => 100,
+      ],
+    ],
+    'warehouse_id' => [
+      'title' => ts('Warehouse ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => ts('FK to Warehouse'),
+      'entity_reference' => [
+        'entity' => 'InventoryWarehouse',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+    ],
+    'quantity_available' => [
+      'title' => ts('Quantity Available'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The quantity on hand.'),
+      'unique_name' => 'inventory_quantity_available',
+    ],
+    'minimum_quantity_stock_level' => [
+      'title' => ts('Minimum Stock Level'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The minimum number of units required to ensure no shortages occur at this warehouse.'),
+      'unique_name' => 'inventory_minimum_quantity_stock_level',
+    ],
+    'maximum_quantity_stock_level' => [
+      'title' => ts('Maximum Stock Level'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The maximum number of units desired in stock, i.e. to avoid overstocking.'),
+      'unique_name' => 'inventory_maximum_quantity_stock_level',
+    ],
+    'reorder_point' => [
+      'title' => ts('ReOrder Point'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'Number',
+      'description' => ts('The minimum number of units required to ensure no shortages occur at this warehouse.'),
+      'unique_name' => 'inventory_reorder_point',
+    ],
+    'row' => [
+      'title' => ts('Row in Warehouse'),
+      'sql_type' => 'varchar(256)',
+      'input_type' => 'Text',
+      'description' => ts('Use to locate the item in warehouse'),
+      'add' => '5.63',
+      'unique_name' => 'inventory_warehouse_row',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'maxlength' => 256,
+      ],
+    ],
+    'shelf' => [
+      'title' => ts('shelf Warehouse'),
+      'sql_type' => 'varchar(256)',
+      'input_type' => 'Text',
+      'description' => ts('Use to locate the item in warehouse'),
+      'add' => '5.63',
+      'unique_name' => 'inventory_warehouse_shelf',
+      'usage' => [
+        'import',
+        'export',
+        'duplicate_matching',
+      ],
+      'input_attrs' => [
+        'maxlength' => 256,
+      ],
+    ],
+  ],
+];
