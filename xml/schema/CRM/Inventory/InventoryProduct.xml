@@ -79,6 +79,32 @@
     </html>
   </field>
   <field>
+    <name>listed_price</name>
+    <uniqueName>inventory_product_listed_price</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>The amount that is shown to the user.</comment>
+    <html>
+      <type>Text</type>
+      <label>Listed Price</label>
+    </html>
+  </field>
+  <field>
+    <name>current_price</name>
+    <uniqueName>inventory_product_current_price</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>The fair market value of this item.</comment>
+    <html>
+      <type>Text</type>
+      <label>Current Price</label>
+    </html>
+  </field>
+  <field>
     <name>product_brand</name>
     <title>Product Brand</title>
     <uniqueName>inventory_product_brand</uniqueName>
@@ -88,8 +114,12 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <pseudoconstant>
+      <optionGroupName>product_brand</optionGroupName>
+    </pseudoconstant>
     <html>
-      <type>Text</type>
+      <type>Select</type>
+      <label>Product Brand</label>
     </html>
   </field>
   <field>
@@ -126,18 +156,6 @@
     <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
-    <name>is_disable</name>
-    <title>Is Disable</title>
-    <uniqueName>inventory_product_is_disable</uniqueName>
-    <type>boolean</type>
-    <default>0</default>
-    <required>false</required>
-    <export>true</export>
-    <html>
-      <type>CheckBox</type>
-    </html>
-  </field>
-  <field>
     <name>is_discontinued</name>
     <title>Is Discontinued</title>
     <uniqueName>inventory_product_is_discontinued</uniqueName>
@@ -165,5 +183,454 @@
       <size>30</size>
       <label>Image</label>
     </html>
+  </field>
+  <field>
+    <name>image_thumbnail</name>
+    <title>Thumbnail Image</title>
+    <uniqueName>inventory_product_thumbnail</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>File</type>
+      <size>30</size>
+      <label>Thumbnail Image</label>
+    </html>
+  </field>
+  <field>
+    <name>packed_weight</name>
+    <title>Packed Weight</title>
+    <uniqueName>inventory_product_variant_weight</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Weight</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Weight</label>
+    </html>
+  </field>
+  <field>
+    <name>packed_height</name>
+    <title>Packed Height</title>
+    <uniqueName>inventory_product_variant_height</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Height</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Height</label>
+    </html>
+  </field>
+  <field>
+    <name>packed_width</name>
+    <title>Packed Width</title>
+    <uniqueName>inventory_product_variant_width</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Width</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Width</label>
+    </html>
+  </field>
+  <field>
+    <name>packed_depth</name>
+    <title>Packed Depth</title>
+    <uniqueName>inventory_product_variant_depth</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>Packed Depth</comment>
+    <html>
+      <type>Text</type>
+      <label>Packed Depth</label>
+    </html>
+  </field>
+  <field>
+    <name>product_variant_battery</name>
+    <uniqueName>inventory_product_variant_battery</uniqueName>
+    <title>Product Battery</title>
+    <type>varchar</type>
+    <comment>Battery backup time.</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>product_variant_speed</name>
+    <uniqueName>inventory_product_variant_speed</uniqueName>
+    <title>Product Speed</title>
+    <type>varchar</type>
+    <comment>Device Speed.</comment>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>antenna</name>
+    <title>Antenna</title>
+    <uniqueName>inventory_product_antenna</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>tether</name>
+    <title>Tether</title>
+    <uniqueName>inventory_product_tether</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>powerbank</name>
+    <title>Power Bank</title>
+    <uniqueName>inventory_product_powerbank</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>batteryless</name>
+    <title>Battery Less</title>
+    <uniqueName>inventory_product_batteryless</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>network_4g</name>
+    <title>Network 4g</title>
+    <uniqueName>inventory_product_network_4g</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>network_5g</name>
+    <title>Network 5g</title>
+    <uniqueName>inventory_product_network_5g</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>has_sim</name>
+    <title>Has SIM</title>
+    <uniqueName>inventory_product_has_sim</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>has_device</name>
+    <title>Has Device</title>
+    <uniqueName>inventory_product_has_device</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>warranty_type_id</name>
+    <title>Warranty Type</title>
+    <uniqueName>inventory_product_warranty_type_id</uniqueName>
+    <type>int unsigned</type>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <field>
+    <name>is_serialize</name>
+    <title>Is Serialized</title>
+    <uniqueName>inventory_product_is_serialize</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>uom</name>
+    <title>Unit of Measure</title>
+    <uniqueName>inventory_product_variant_uom</uniqueName>
+    <comment>Feet, pounds, and gallons are all examples of units of measure.</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>screen</name>
+    <title>Screen</title>
+    <uniqueName>inventory_product_screen</uniqueName>
+    <comment>Screen sizde details.</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>memory</name>
+    <title>Memory</title>
+    <uniqueName>inventory_product_memory</uniqueName>
+    <comment>Product Memory size.</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>color</name>
+    <title>Color</title>
+    <uniqueName>inventory_product_color</uniqueName>
+    <comment>Product Color.</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>is_active</name>
+    <title>Is Active</title>
+    <uniqueName>inventory_product_is_active</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>premium_is_optional</name>
+    <title>Premium: Is Optional</title>
+    <uniqueName>inventory_product_premium_is_optional</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>premium_needs_address</name>
+    <title>Premium: Need Address</title>
+    <uniqueName>inventory_product_premium_needs_address</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+
+  <field>
+    <name>premium_shirt_count</name>
+    <title>Premium:Shirt Count</title>
+    <uniqueName>inventory_product_premium_shirt_count</uniqueName>
+    <type>int unsigned</type>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>premium_device_count</name>
+    <title>Premium: Device Count</title>
+    <uniqueName>inventory_product_premium_device_count</uniqueName>
+    <type>int unsigned</type>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>warehouse_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Warehouse</comment>
+    <pseudoconstant>
+      <table>civicrm_inventory_warehouse</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>name</labelColumn>
+    </pseudoconstant>
+    <html>
+      <label>Warehouse</label>
+      <type>Select</type>
+    </html>
+  </field>
+  <foreignKey>
+    <name>warehouse_id</name>
+    <table>civicrm_inventory_warehouse</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>quantity_available</name>
+    <type>int unsigned</type>
+    <title>Quantity Available</title>
+    <comment>The quantity on hand.</comment>
+    <uniqueName>inventory_product_quantity_available</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Quantity Available</label>
+    </html>
+  </field>
+  <field>
+    <name>minimum_quantity_stock_level</name>
+    <type>int unsigned</type>
+    <title>Minimum Stock Level</title>
+    <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
+    <uniqueName>inventory_product_minimum_quantity_stock_level</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Minimum Stock Level</label>
+    </html>
+  </field>
+  <field>
+    <name>maximum_quantity_stock_level</name>
+    <type>int unsigned</type>
+    <title>Maximum Stock Level</title>
+    <comment>The maximum number of units desired in stock, i.e. to avoid overstocking.</comment>
+    <uniqueName>inventory_product_maximum_quantity_stock_level</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Maximum Stock Level</label>
+    </html>
+  </field>
+  <field>
+    <name>reorder_point</name>
+    <type>int unsigned</type>
+    <title>ReOrder Point</title>
+    <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
+    <uniqueName>inventory_product_reorder_point</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>ReOrder Point</label>
+    </html>
+  </field>
+  <field>
+    <name>row</name>
+    <title>Row in Warehouse</title>
+    <uniqueName>inventory_produt_warehouse_row</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <comment>Use to locate the item in warehouse</comment>
+    <html>
+      <type>Text</type>
+      <label>Row in Warehouse</label>
+    </html>
+  </field>
+  <field>
+    <name>shelf</name>
+    <title>Warehouse shelf</title>
+    <uniqueName>inventory_produt_warehouse_shelf</uniqueName>
+    <type>varchar</type>
+    <length>256</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <comment>Use to locate the item in warehouse</comment>
+    <pseudoconstant>
+      <optionGroupName>warehouse_shelf</optionGroupName>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+      <label>Warehouse shelf</label>
+    </html>
+  </field>
+  <field>
+    <name>weight</name>
+    <title>Order</title>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Controls display sort order.</comment>
+    <add>5.75</add>
   </field>
  </table>

@@ -55,15 +55,15 @@ function inventory_civicrm_permission(array &$permissions) {
 }
 
 /**
- * Implements hook_civicrm_entityType().
+ * Implements hook_civicrm_qType().
  */
 function inventory_civicrm_entityTypes(&$entityTypes) {
   $civiVersion = CRM_Utils_System::version();
-  $type = 'CRM_Member_DAO_MembershipType';
+  $membershipType = 'CRM_Member_DAO_MembershipType';
   if (version_compare($civiVersion, '5.75.0') >= 0) {
-    $type = 'MembershipType';
+    $membershipType = 'MembershipType';
   }
-  $entityTypes[$type]['fields_callback'][]
+  $entityTypes[$membershipType]['fields_callback'][]
     = function ($class, &$fields) {
     $fields['signup_fee'] = [
       'name' => 'signup_fee',
@@ -132,6 +132,94 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
         'callback' => 'CRM_Inventory_Utils::membershipTypeShipableTo',
       ],
       'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
+    ];
+  };
+
+  $lineItem = 'CRM_Price_DAO_LineItem';
+  if (version_compare($civiVersion, '5.75.0') >= 0) {
+    $lineItem = 'LineItem';
+  }
+  $entityTypes[$lineItem]['fields_callback'][]
+    = function ($class, &$fields) {
+    $fields['product_variant_id'] = [
+      'name' => 'product_variant_id',
+      'title' => ts('Product ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'type' => CRM_Utils_Type::T_INT,
+      'description' => ts('Product ID.'),
+      'add' => '5.75',
+      'default' => '0',
+      'input_attrs' => [
+        'label' => ts('Product ID'),
+      ],
+      'html' => [
+        'type' => 'Number',
+      ],
+      'input_attrs' => [
+        'label' => ts('Product ID'),
+      ],
+      'entity_reference' => [
+        'entity' => 'InventoryProductVariant',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+      'where' => 'civicrm_line_item.product_variant_id',
+      'table_name' => 'civicrm_line_item',
+      'entity' => 'LineItem',
+      'bao' => 'CRM_Price_BAO_LineItem',
+    ];
+    $fields['sale_id'] = [
+      'name' => 'sale_id',
+      'title' => ts('Sale ID'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'type' => CRM_Utils_Type::T_INT,
+      'description' => ts('Sale ID.'),
+      'add' => '5.75',
+      'default' => '0',
+      'input_attrs' => [
+        'label' => ts('Sale ID'),
+      ],
+      'html' => [
+        'type' => 'Number',
+      ],
+      'input_attrs' => [
+        'label' => ts('Product ID'),
+      ],
+      'entity_reference' => [
+        'entity' => 'InventorySales',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
+      'where' => 'civicrm_line_item.sale_id',
+      'table_name' => 'civicrm_line_item',
+      'entity' => 'LineItem',
+      'bao' => 'CRM_Price_BAO_LineItem',
+    ];
+
+    $fields['additional_details'] = [
+      'name' => 'additional_details',
+      'title' => ts('Product Additional Details'),
+      'type' => CRM_Utils_Type::T_STRING,
+      'sql_type' => 'varchar(255)',
+      'input_type' => 'Text',
+      'description' => ts('Product Additional Details.'),
+      'add' => '5.75',
+      'default' => 'NULL',
+      'input_attrs' => [
+        'label' => ts('Product Additional Details.'),
+      ],
+      'html' => [
+        'type' => 'Text',
+      ],
+      'input_attrs' => [
+        'label' => ts('Product Additional Details.'),
+      ],
+      'where' => 'civicrm_line_item.additional_details',
+      'table_name' => 'civicrm_line_item',
+      'entity' => 'LineItem',
+      'bao' => 'CRM_Price_BAO_LineItem',
     ];
   };
 }

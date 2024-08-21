@@ -38,11 +38,67 @@
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
+    <name>code</name>
+    <title>Order ID</title>
+    <uniqueName>inventory_sales_code</uniqueName>
+    <type>varchar</type>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+    <comment>Random and Uniuqe ID Generated.</comment>
+  </field>
+  <index>
+    <name>UI_code</name>
+    <unique>true</unique>
+    <fieldName>code</fieldName>
+    <add>1.0</add>
+  </index>
+  <field>
     <name>sale_date</name>
     <title>Sale Date</title>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/sale(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>contribution_id</name>
+    <uniqueName>inventory_sales_contribution_id</uniqueName>
+    <title>Contribution ID</title>
+    <html>
+      <label>Contribution</label>
+      <type>EntityRef</type>
+    </html>
+    <type>int unsigned</type>
+    <comment>Contribution ID Associated with product.</comment>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+  </field>
+  <foreignKey>
+    <name>contribution_id</name>
+    <table>civicrm_contribution</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>updated_at</name>
+    <uniqueName>inventory_sales_updated_at</uniqueName>
+    <title>Updated Date</title>
+    <default>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</default>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/created(.?date)?/i</headerPattern>
     <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
     <html>
       <type>Select Date</type>
@@ -63,8 +119,11 @@
     <add>5.63</add>
     <html>
       <label>Sales Status</label>
-      <type>Text</type>
+      <type>Select</type>
     </html>
+    <pseudoconstant>
+      <callback>CRM_Inventory_Utils::productSalesStatus</callback>
+    </pseudoconstant>
   </field>
 
   <field>

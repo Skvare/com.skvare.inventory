@@ -25,14 +25,13 @@ DROP TABLE IF EXISTS `civicrm_inventory_product_variant`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment_labels`;
 DROP TABLE IF EXISTS `civicrm_inventory_sales`;
 DROP TABLE IF EXISTS `civicrm_inventory_purchase_order`;
-DROP TABLE IF EXISTS `civicrm_inventory`;
+DROP TABLE IF EXISTS `civicrm_inventory_product_meta`;
+DROP TABLE IF EXISTS `civicrm_inventory_product_membership`;
+DROP TABLE IF EXISTS `civicrm_inventory_product`;
 DROP TABLE IF EXISTS `civicrm_inventory_warehouse`;
 DROP TABLE IF EXISTS `civicrm_inventory_supplier`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment`;
 DROP TABLE IF EXISTS `civicrm_inventory_referrals`;
-DROP TABLE IF EXISTS `civicrm_inventory_product_meta`;
-DROP TABLE IF EXISTS `civicrm_inventory_product_membership`;
-DROP TABLE IF EXISTS `civicrm_inventory_product`;
 DROP TABLE IF EXISTS `civicrm_inventory_category`;
 
 SET FOREIGN_KEY_CHECKS=1;

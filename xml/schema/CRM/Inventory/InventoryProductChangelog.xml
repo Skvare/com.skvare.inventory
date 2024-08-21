@@ -36,6 +36,28 @@
     <onDelete>CASCADE</onDelete>
   </foreignKey>
   <field>
+    <name>batch_id</name>
+    <type>int unsigned</type>
+    <uniqueName>inventory_product_changelog_batch_id</uniqueName>
+    <title>Batch ID</title>
+    <comment>FK to Contact</comment>
+    <pseudoconstant>
+      <table>civicrm_batch</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+    </pseudoconstant>
+    <html>
+      <label>Batch</label>
+      <type>Select</type>
+    </html>
+  </field>
+  <foreignKey>
+    <name>batch_id</name>
+    <table>civicrm_batch</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
     <name>product_variant_id</name>
     <title>Product Variant ID</title>
     <type>int unsigned</type>
@@ -51,16 +73,6 @@
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
-  <field>
-    <name>batch_id</name>
-    <type>int unsigned</type>
-    <uniqueName>inventory_product_changelog_batch_id</uniqueName>
-    <title>Batch ID</title>
-    <comment>FK to Contact</comment>
-    <html>
-      <type>Number</type>
-    </html>
-  </field>
   <field>
     <name>created_date</name>
     <title>Created Date</title>
@@ -85,7 +97,10 @@
     <import>true</import>
     <add>5.63</add>
     <html>
-      <type>Text</type>
+      <type>Select</type>
     </html>
+    <pseudoconstant>
+      <callback>CRM_Inventory_Utils::productChangeLogStatus</callback>
+    </pseudoconstant>
   </field>
 </table>
