@@ -54,6 +54,10 @@
     <title>Sales ID</title>
     <type>int unsigned</type>
     <comment>FK to Sales</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Sale ID</label>
+    </html>
   </field>
   <foreignKey>
     <name>sales_id</name>
@@ -111,6 +115,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 
   <field>
@@ -137,6 +144,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 
 
@@ -150,6 +160,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 
   <field>
@@ -162,6 +175,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 
   <field>
@@ -194,17 +210,15 @@
     <add>5.63</add>
   </field>
 
-
-
-
-
-
-
-
   <field>
     <name>contact_id</name>
+    <title>Contact ID</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>contact_id</name>

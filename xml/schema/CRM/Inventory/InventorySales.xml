@@ -23,8 +23,13 @@
 
   <field>
     <name>contact_id</name>
+    <title>Contact ID</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>contact_id</name>
@@ -56,6 +61,10 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <label>Sales Status</label>
+      <type>Text</type>
+    </html>
   </field>
 
   <field>
@@ -73,8 +82,13 @@
 
   <field>
     <name>shipment_id</name>
+    <title>Shipment ID</title>
     <type>int unsigned</type>
     <comment>FK to shipments</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Shipment</label>
+    </html>
   </field>
   <foreignKey>
     <name>shipment_id</name>

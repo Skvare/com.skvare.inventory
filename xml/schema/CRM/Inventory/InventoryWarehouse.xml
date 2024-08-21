@@ -32,12 +32,20 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>address_id</name>
+    <title>Address ID</title>
     <uniqueName>inventory_warehouse_address_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Address</label>
+    </html>
   </field>
   <foreignKey>
     <name>address_id</name>
@@ -67,6 +75,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>unused_size</name>
@@ -78,5 +89,8 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 </table>

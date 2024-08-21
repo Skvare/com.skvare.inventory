@@ -31,12 +31,20 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_id</name>
+    <title>Product Variant</title>
     <uniqueName>inventory_warehouse_tranfer_product_variant_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Product Variant</comment>
+    <html>
+      <label>Product Variant</label>
+      <type>EntityRef</type>
+    </html>
   </field>
   <foreignKey>
     <name>product_variant_id</name>
@@ -46,9 +54,14 @@
   </foreignKey>
   <field>
     <name>from_warehouse_id</name>
+    <title>From Warehouse ID</title>
     <uniqueName>inventory_warehouse_tranfer_from_warehouse_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
+    <html>
+      <label>From Warehouse</label>
+      <type>EntityRef</type>
+    </html>
   </field>
   <foreignKey>
     <name>from_warehouse_id</name>
@@ -58,9 +71,14 @@
   </foreignKey>
   <field>
     <name>to_warehouse_id</name>
+    <label>To Warehouse ID</label>
     <uniqueName>inventory_warehouse_tranfer_to_warehouse_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
+    <html>
+      <label>To Warehouse</label>
+      <type>EntityRef</type>
+    </html>
   </field>
   <foreignKey>
     <name>to_warehouse_id</name>
@@ -74,6 +92,10 @@
     <title>Operation performed By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Operation performed By</label>
+    </html>
   </field>
   <foreignKey>
     <name>from_contact_id</name>
@@ -88,6 +110,10 @@
     <title>Recivied By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Recivied By</label>
+    </html>
   </field>
   <foreignKey>
     <name>to_contact_id</name>
@@ -119,6 +145,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>status_date</name>
@@ -140,6 +169,9 @@
     <title>Product Stock Quantity Sent</title>
     <comment>The quantity sent.</comment>
     <uniqueName>from_stock_quantity</uniqueName>
+    <html>
+      <type>Number</type>
+    </html>
   </field>
 
   <field>
@@ -148,5 +180,8 @@
     <title>Product Stock Quantity Received</title>
     <comment>The quantity Received.</comment>
     <uniqueName>received_stock_quantity</uniqueName>
+    <html>
+      <type>Number</type>
+    </html>
   </field>
 </table>

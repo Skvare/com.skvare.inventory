@@ -23,8 +23,13 @@
 
   <field>
     <name>order_id</name>
+    <title>Order ID</title>
     <type>int unsigned</type>
     <comment>FK to Order</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Order ID</label>
+    </html>
   </field>
   <foreignKey>
     <name>order_id</name>
@@ -37,6 +42,10 @@
     <title>Product Variant ID</title>
     <type>int unsigned</type>
     <comment>FK to Product Variant</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Product Variant</label>
+    </html>
   </field>
   <foreignKey>
     <name>product_variant_id</name>
@@ -49,6 +58,10 @@
     <title>Supplier ID</title>
     <type>int unsigned</type>
     <comment>FK to Supplier</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Supplier ID</label>
+    </html>
   </field>
   <foreignKey>
     <name>supplier_id</name>
@@ -61,6 +74,10 @@
     <title>Warehouse ID</title>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Warehouse ID</label>
+    </html>
   </field>
   <foreignKey>
     <name>warehouse_id</name>
@@ -74,6 +91,9 @@
     <title>Order Quantity</title>
     <comment>Order quantiy to supplier</comment>
     <uniqueName>inventory_orderdetail_order_quantity</uniqueName>
+    <html>
+      <type>Number</type>
+    </html>
   </field>
   <field>
     <name>expected_date</name>

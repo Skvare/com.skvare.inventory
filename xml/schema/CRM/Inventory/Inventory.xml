@@ -30,11 +30,19 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+      <label>Product Variant Code</label>
+    </html>
   </field>
   <field>
     <name>warehouse_id</name>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
+    <html>
+      <label>Warehouse ID</label>
+      <type>EntityRef</type>
+    </html>
   </field>
   <foreignKey>
     <name>warehouse_id</name>
@@ -48,6 +56,10 @@
     <title>Quantity Available</title>
     <comment>The quantity on hand.</comment>
     <uniqueName>inventory_quantity_available</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Quantity Available</label>
+    </html>
   </field>
   <field>
     <name>minimum_quantity_stock_level</name>
@@ -55,6 +67,10 @@
     <title>Minimum Stock Level</title>
     <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
     <uniqueName>inventory_minimum_quantity_stock_level</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Minimum Stock Level</label>
+    </html>
   </field>
   <field>
     <name>maximum_quantity_stock_level</name>
@@ -62,6 +78,10 @@
     <title>Maximum Stock Level</title>
     <comment>The maximum number of units desired in stock, i.e. to avoid overstocking.</comment>
     <uniqueName>inventory_maximum_quantity_stock_level</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>Maximum Stock Level</label>
+    </html>
   </field>
   <field>
     <name>reorder_point</name>
@@ -69,6 +89,10 @@
     <title>ReOrder Point</title>
     <comment>The minimum number of units required to ensure no shortages occur at this warehouse.</comment>
     <uniqueName>inventory_reorder_point</uniqueName>
+    <html>
+      <type>Number</type>
+      <label>ReOrder Point</label>
+    </html>
   </field>
   <field>
     <name>row</name>
@@ -81,6 +105,10 @@
     <import>true</import>
     <add>5.63</add>
     <comment>Use to locate the item in warehouse</comment>
+    <html>
+      <type>Text</type>
+      <label>Row in Warehouse</label>
+    </html>
   </field>
   <field>
     <name>shelf</name>
@@ -93,5 +121,9 @@
     <import>true</import>
     <add>5.63</add>
     <comment>Use to locate the item in warehouse</comment>
+    <html>
+      <type>Text</type>
+      <label>shelf Warehouse</label>
+    </html>
   </field>
 </table>

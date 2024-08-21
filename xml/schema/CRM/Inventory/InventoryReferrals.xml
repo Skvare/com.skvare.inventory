@@ -26,6 +26,10 @@
     <uniqueName>inventory_referral_created_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Created Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>creator_id</name>
@@ -39,6 +43,10 @@
     <uniqueName>inventory_referral_consumer_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Consumer Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>consumer_id</name>
@@ -99,5 +107,8 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
 </table>

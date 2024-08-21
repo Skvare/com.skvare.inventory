@@ -38,6 +38,10 @@
     <title>Order Created By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Order Created By</label>
+    </html>
   </field>
   <foreignKey>
     <name>contact_id</name>
@@ -51,6 +55,10 @@
     <title>Supplier Contact</title>
     <type>int unsigned</type>
     <comment>FK to Supplier</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Supplier Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>supplier_id</name>

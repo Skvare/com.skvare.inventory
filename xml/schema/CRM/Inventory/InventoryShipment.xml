@@ -28,6 +28,7 @@
     <uniqueName>inventory_shipment_contact_id</uniqueName>
     <html>
       <label>Created By</label>
+      <type>EntityRef</type>
     </html>
     <comment>FK to Contact</comment>
   </field>
@@ -66,6 +67,7 @@
     <comment>FK to Contact ID of person under whose credentials this data modification was made.</comment>
     <html>
       <label>Modified By</label>
+      <type>EntityRef</type>
     </html>
     <readonly>true</readonly>
   </field>

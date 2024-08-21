@@ -29,6 +29,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_name</name>
@@ -40,6 +43,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>membership_type_id</name>
@@ -47,6 +53,7 @@
     <title>Membership ID</title>
     <html>
       <label>Membership Type</label>
+      <type>EntityRef</type>
     </html>
     <type>int unsigned</type>
     <comment>Membership Type Associated with product.</comment>
@@ -65,6 +72,10 @@
     <name>contact_id</name>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Contact</label>
+    </html>
   </field>
   <foreignKey>
     <name>contact_id</name>

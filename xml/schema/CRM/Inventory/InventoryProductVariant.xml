@@ -24,6 +24,10 @@
     <name>product_id</name>
     <type>int unsigned</type>
     <comment>FK to Product</comment>
+    <html>
+      <label>Inventory Product</label>
+      <type>EntityRef</type>
+    </html>
   </field>
   <foreignKey>
     <name>product_id</name>
@@ -54,7 +58,7 @@
     <comment>Product Current price</comment>
     <html>
       <type>Text</type>
-      <label>Curent Price</label>
+      <label>Current Price</label>
     </html>
   </field>
   <field>
@@ -67,6 +71,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_phone_number</name>
@@ -79,6 +86,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_unique_id</name>
@@ -91,6 +101,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_details</name>
@@ -197,6 +210,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_speed</name>
@@ -209,6 +225,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>antenna</name>
@@ -313,6 +332,9 @@
     <type>int unsigned</type>
     <required>false</required>
     <export>true</export>
+    <html>
+      <type>Number</type>
+    </html>
   </field>
   <field>
     <name>image_thumbnail</name>
@@ -324,6 +346,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>image_actual</name>
@@ -335,6 +360,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>uom</name>
@@ -347,6 +375,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_variant_status</name>
@@ -358,6 +389,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>replaced_product_id</name>
@@ -366,7 +400,8 @@
     <comment>Optional Product.</comment>
     <export>true</export>
     <html>
-      <label>Primary Product</label>
+      <label>Replaced Product</label>
+      <type>EntityRef</type>
     </html>
   </field>
   <foreignKey>
@@ -393,6 +428,7 @@
     <title>Membership ID</title>
     <html>
       <label>Membership ID</label>
+      <type>EntityRef</type>
     </html>
     <type>int unsigned</type>
     <comment>Membership ID Associated with product.</comment>
@@ -439,6 +475,7 @@
     <title>Sales ID</title>
     <html>
       <label>Sales ID</label>
+      <type>EntityRef</type>
     </html>
     <type>int unsigned</type>
     <comment>Sales ID Associated with sales tables.</comment>

@@ -32,6 +32,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>external_code</name>
@@ -43,6 +46,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_name</name>
@@ -54,6 +60,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_description</name>
@@ -65,6 +74,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_brand</name>
@@ -76,6 +88,9 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
   <field>
     <name>product_note</name>
@@ -100,6 +115,9 @@
     <export>true</export>
     <import>true</import>
     <comment>FK to Category</comment>
+    <html>
+      <type>Number</type>
+    </html>
   </field>
   <foreignKey>
     <name>product_category_id</name>
@@ -142,5 +160,8 @@
     <import>true</import>
     <add>5.63</add>
     <comment>File url.</comment>
+    <html>
+      <type>Text</type>
+    </html>
   </field>
  </table>
