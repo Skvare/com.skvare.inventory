@@ -275,6 +275,22 @@ function inventory_civicrm_navigationMenu(&$menu) {
     'permission' => 'administer Inventory',
     'icon' => 'crm-i fa-wrench',
   ]);
+  _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
+    'label' => E::ts('Warehouse shelf'),
+    'name' => 'warehouse_shelf',
+    'url' => 'civicrm/admin/options/warehouse_shelf',
+    'permission' => 'administer Inventory,administer CiviCRM',
+    'operator' => NULL,
+    'separator' => 1,
+  ]);
+  _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
+    'label' => E::ts('Product Brand'),
+    'name' => 'product_brand',
+    'url' => 'civicrm/admin/options/product_brand',
+    'permission' => 'administer Inventory,administer CiviCRM',
+    'operator' => NULL,
+    'separator' => 1,
+  ]);
 
   _inventory_civix_navigationMenu($menu);
 }

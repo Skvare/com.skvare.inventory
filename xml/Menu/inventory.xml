@@ -22,6 +22,12 @@
     <path>civicrm/inventory/shipping</path>
     <page_callback>CRM_Inventory_Page_Shipping</page_callback>
     <title>Shipping Dashboard</title>
-    <access_arguments>access Inventory,taccess shipment</access_arguments>
+    <access_arguments>access Inventory,access shipment</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/inventory/productmapping</path>
+    <page_callback>CRM_Inventory_Page_Membershipproduct</page_callback>
+    <title>Membership Product Mapping</title>
+    <access_arguments>administer Inventory</access_arguments>
   </item>
 </menu>
