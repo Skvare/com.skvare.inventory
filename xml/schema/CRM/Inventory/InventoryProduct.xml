@@ -398,7 +398,7 @@
     <title>Is Serialized</title>
     <uniqueName>inventory_product_is_serialize</uniqueName>
     <type>boolean</type>
-    <default>0</default>
+    <default>1</default>
     <required>false</required>
     <export>true</export>
     <html>

@@ -33,7 +33,7 @@
     <name>contact_id</name>
     <table>civicrm_contact</table>
     <key>id</key>
-    <onDelete>CASCADE</onDelete>
+    <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
     <name>batch_id</name>
@@ -42,9 +42,9 @@
     <title>Batch ID</title>
     <comment>FK to Contact</comment>
     <pseudoconstant>
-      <table>civicrm_batch</table>
+      <table>civicrm_inventory_batch</table>
       <keyColumn>id</keyColumn>
-      <labelColumn>title</labelColumn>
+      <labelColumn>name</labelColumn>
     </pseudoconstant>
     <html>
       <label>Batch</label>
@@ -53,9 +53,9 @@
   </field>
   <foreignKey>
     <name>batch_id</name>
-    <table>civicrm_batch</table>
+    <table>civicrm_inventory_batch</table>
     <key>id</key>
-    <onDelete>CASCADE</onDelete>
+    <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
     <name>product_variant_id</name>

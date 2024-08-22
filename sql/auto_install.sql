@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS `civicrm_inventory_supplier`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment`;
 DROP TABLE IF EXISTS `civicrm_inventory_referrals`;
 DROP TABLE IF EXISTS `civicrm_inventory_category`;
+DROP TABLE IF EXISTS `civicrm_inventory_batch`;
 
 SET FOREIGN_KEY_CHECKS=1;
 -- /*******************************************************
@@ -40,6 +41,27 @@ SET FOREIGN_KEY_CHECKS=1;
 -- * Create new tables
 -- *
 -- *******************************************************/
+
+-- /*******************************************************
+-- *
+-- * civicrm_inventory_batch
+-- *
+-- * FIXME
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_inventory_batch` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryBatch ID',
+  `name` varchar(64) COMMENT 'Variable name/programmatic handle for this batch.',
+  `description` text COMMENT 'Description of this batch set.',
+  `created_id` int unsigned COMMENT 'FK to Contact ID',
+  `created_date` datetime COMMENT 'When was this item created',
+  `status_id` int unsigned NOT NULL COMMENT 'fk to Batch Status options in civicrm_option_values',
+  `exported_date` datetime,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `UI_name`(name),
+  CONSTRAINT FK_civicrm_inventory_batch_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
+)
+ENGINE=InnoDB;
 
 -- /*******************************************************
 -- *
@@ -178,7 +200,7 @@ CREATE TABLE `civicrm_inventory_product` (
   `has_sim` tinyint NULL DEFAULT 0,
   `has_device` tinyint NULL DEFAULT 0,
   `warranty_type_id` int unsigned NULL,
-  `is_serialize` tinyint NULL DEFAULT 0,
+  `is_serialize` tinyint NULL DEFAULT 1,
   `uom` varchar(100) NULL COMMENT 'Feet, pounds, and gallons are all examples of units of measure.',
   `screen` varchar(100) NULL COMMENT 'Screen sizde details.',
   `memory` varchar(100) NULL COMMENT 'Product Memory size.',
@@ -331,7 +353,6 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `product_variant_phone_number` varchar(100) NULL COMMENT 'Phone number linked with device.',
   `product_variant_unique_id` varchar(100) NULL COMMENT 'e.g IMEI (International Mobile Equipment Identity) number .',
   `product_variant_details` text COMMENT 'Product Variant details.',
-  `is_disable` tinyint NULL DEFAULT 0,
   `is_discontinued` tinyint NULL DEFAULT 0,
   `image_thumbnail` varchar(100) NULL,
   `image_actual` varchar(100) NULL,
@@ -348,7 +369,7 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sales_id` int unsigned NULL COMMENT 'Sales ID Associated with sales tables.',
   `is_primary` tinyint NULL DEFAULT 0,
-  `is_active` tinyint NULL DEFAULT 0,
+  `is_active` tinyint NULL DEFAULT 1,
   `is_suspended` tinyint NULL DEFAULT 0,
   `is_problem` tinyint NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -458,8 +479,8 @@ CREATE TABLE `civicrm_inventory_product_changelog` (
   `created_date` datetime,
   `status_id` varchar(100) NOT NULL COMMENT 'UPDATE,REACTIVATE,TERMINATE,SUSPEND',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_product_changelog_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_product_changelog_batch_id FOREIGN KEY (`batch_id`) REFERENCES `civicrm_batch`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_civicrm_inventory_product_changelog_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_inventory_product_changelog_batch_id FOREIGN KEY (`batch_id`) REFERENCES `civicrm_inventory_batch`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_changelog_product_variant_id FOREIGN KEY (`product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL
 )
 ENGINE=InnoDB;

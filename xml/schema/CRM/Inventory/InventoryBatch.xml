@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryBatch</class>
+  <name>civicrm_inventory_batch</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryBatch ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>name</name>
+    <title>Batch Name</title>
+    <type>varchar</type>
+    <length>64</length>
+    <comment>Variable name/programmatic handle for this batch.</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <index>
+    <name>UI_name</name>
+    <fieldName>name</fieldName>
+    <unique>true</unique>
+  </index>
+  <field>
+    <name>description</name>
+    <title>Batch Description</title>
+    <type>text</type>
+    <comment>Description of this batch set.</comment>
+    <localizable>true</localizable>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>80</cols>
+    </html>
+  </field>
+  <field>
+    <name>created_id</name>
+    <title>Created By Contact ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Contact ID</comment>
+    <html>
+      <label>Created By</label>
+      <type>EntityRef</type>
+    </html>
+    <add>3.3</add>
+  </field>
+  <foreignKey>
+    <name>created_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>created_date</name>
+    <title>Batch Created Date</title>
+    <type>datetime</type>
+    <comment>When was this item created</comment>
+    <add>3.3</add>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>status_id</name>
+    <title>Batch Status</title>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>fk to Batch Status options in civicrm_option_values</comment>
+    <add>4.2</add>
+    <pseudoconstant>
+      <optionGroupName>batch_status</optionGroupName>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+    </html>
+  </field>
+  <field>
+    <name>exported_date</name>
+    <title>Batch Exported Date</title>
+    <type>datetime</type>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+</table>

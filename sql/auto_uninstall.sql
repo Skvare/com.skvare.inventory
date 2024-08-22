@@ -33,5 +33,6 @@ DROP TABLE IF EXISTS `civicrm_inventory_supplier`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment`;
 DROP TABLE IF EXISTS `civicrm_inventory_referrals`;
 DROP TABLE IF EXISTS `civicrm_inventory_category`;
+DROP TABLE IF EXISTS `civicrm_inventory_batch`;
 
 SET FOREIGN_KEY_CHECKS=1;

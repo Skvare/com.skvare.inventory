@@ -56,37 +56,37 @@ class CRM_Inventory_Permission extends CRM_Core_Permission {
       // Inventory Product and variaant.
       'create inventory product' => [
         'label' => $prefix . E::ts('create inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Create a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create an inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'edit inventory product' => [
         'label' => $prefix . E::ts('edit inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Edit a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit an inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'access inventory product' => [
         'label' => $prefix . E::ts('access inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Get a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access an inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
       'delete inventory product' => [
         'label' => $prefix . E::ts('delete inventory product', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Delete a inventory product record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete an inventory product record.', ['domain' => 'com.skvare.inventory']),
       ],
 
       // Inventory sales.
       'create inventory sales' => [
         'label' => $prefix . E::ts('create inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create an inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'edit inventory sales' => [
         'label' => $prefix . E::ts('edit inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit an inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'access inventory sales' => [
         'label' => $prefix . E::ts('access inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Access a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access an inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
       'delete inventory sales' => [
         'label' => $prefix . E::ts('delete inventory sales', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Delete a inventory sales record.', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete an inventory sales record.', ['domain' => 'com.skvare.inventory']),
       ],
 
       // Shipment and label
@@ -100,11 +100,29 @@ class CRM_Inventory_Permission extends CRM_Core_Permission {
       ],
       'access shipment' => [
         'label' => $prefix . E::ts('access shipment', ['domain' => 'com.skvare.inventory']),
-        'description' => E::ts('Edit a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
       ],
       'delete shipment' => [
         'label' => $prefix . E::ts('delete shipment', ['domain' => 'com.skvare.inventory']),
         'description' => E::ts('Delete a shipment record in Inventory', ['domain' => 'com.skvare.inventory']),
+      ],
+
+      // Inventory batch.
+      'create device batch' => [
+        'label' => $prefix . E::ts('create device batch', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create an inventory device batch record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'edit device batch' => [
+        'label' => $prefix . E::ts('edit device batch', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit an inventory device batch record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'access device batch' => [
+        'label' => $prefix . E::ts('access device batch', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access an inventory device batch record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'delete device batch' => [
+        'label' => $prefix . E::ts('delete device batch', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete an inventory device batch record.', ['domain' => 'com.skvare.inventory']),
       ],
     ];
   }
