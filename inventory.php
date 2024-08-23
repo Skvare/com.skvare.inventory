@@ -347,6 +347,14 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
     'create' => [['create device batch', 'administer Inventory',]],
     'update' => [['edit device batch', 'administer Inventory',]],
   ];
+
+  $permissions['inventory_product_variant_replacement'] = [
+    'default' => [['access device replacement', 'administer Inventory']],
+    'get' => [['access device replacement',]],
+    'delete' => [['delete device replacement', 'administer Inventory',]],
+    'create' => [['create device replacement', 'administer Inventory',]],
+    'update' => [['edit device replacement', 'administer Inventory',]],
+  ];
   // allow fairly liberal access to the InventoryProduct, InventoryProductVariant.
   if (_inventory_ApiCall($entity, $action)) {
     $params['check_permissions'] = FALSE;

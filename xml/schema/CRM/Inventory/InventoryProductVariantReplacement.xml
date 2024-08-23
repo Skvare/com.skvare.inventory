@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryProductVariantReplacement</class>
+  <name>civicrm_inventory_product_variant_replacement</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryProductVariantReplacement ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>contact_id</name>
+    <uniqueName>inventory_product_replacement_contact_id</uniqueName>
+    <title>Requested By ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Requested By</label>
+    </html>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+  <field>
+    <name>created_at</name>
+    <uniqueName>inventory_product_replacement_created_at</uniqueName>
+    <title>Created Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/created(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>updated_at</name>
+    <uniqueName>inventory_product_replacement_updated_at</uniqueName>
+    <title>Updated Date</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/updated(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>old_product_variant_id</name>
+    <title>Old Product ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Old Product</label>
+    </html>
+  </field>
+  <foreignKey>
+    <name>old_product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>new_product_variant_id</name>
+    <title>New Product ID</title>
+    <type>int unsigned</type>
+    <comment>FK to Product Variant</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>New Product</label>
+    </html>
+  </field>
+  <foreignKey>
+    <name>new_product_variant_id</name>
+    <table>civicrm_inventory_product_variant</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+    <name>shipped_on</name>
+    <uniqueName>inventory_product_replacement_shipped_on</uniqueName>
+    <title>Shipped On</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/shipped_on(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
+    <name>is_warranty</name>
+    <title>Is Warranty</title>
+    <uniqueName>inventory_product_replacement_is_warranty</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>source</name>
+    <uniqueName>inventory_product_replacement_source</uniqueName>
+    <title>Replacement source</title>
+    <type>varchar</type>
+    <comment>Replacement source.</comment>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+</table>

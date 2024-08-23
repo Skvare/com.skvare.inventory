@@ -66,6 +66,29 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
       ])
       ->setMatch(['option_group_id', 'name'])
       ->execute();
+
+
+    \Civi\Api4\OptionGroup::save(FALSE)
+      ->addRecord([
+        'name' => 'warranty_type',
+        'title' => E::ts('Warranty Type'),
+      ])
+      ->setMatch(['name'])
+      ->execute();
+
+    // Create unmanaged option values. They will not be updated by the system ever,
+    // but they will be deleted on uninstall because the option group is a managed entity.
+    \Civi\Api4\OptionValue::save(FALSE)
+      ->setDefaults([
+        'option_group_id.name' => 'warranty_type',
+      ])
+      ->setRecords([
+        ['value' => 1, 'name' => 'express', 'label' => E::ts('Expres'), 'is_default' => TRUE],
+        ['value' => 2, 'name' => 'implied', 'label' => E::ts('Implied')],
+        ['value' => 3, 'name' => 'not_available', 'label' => E::ts('Not Available')],
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute();
   }
 
   /**

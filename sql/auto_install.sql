@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS `civicrm_inventory_product_changelog`;
 DROP TABLE IF EXISTS `civicrm_inventory_warehouse_transfer`;
 DROP TABLE IF EXISTS `civicrm_inventory_sales_detail`;
 DROP TABLE IF EXISTS `civicrm_inventory_purchase_order_detail`;
+DROP TABLE IF EXISTS `civicrm_inventory_product_variant_replacement`;
 DROP TABLE IF EXISTS `civicrm_inventory_product_variant`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment_labels`;
 DROP TABLE IF EXISTS `civicrm_inventory_sales`;
@@ -379,6 +380,30 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   CONSTRAINT FK_civicrm_inventory_product_variant_replaced_product_id FOREIGN KEY (`replaced_product_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_variant_membership_id FOREIGN KEY (`membership_id`) REFERENCES `civicrm_membership`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_variant_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE SET NULL
+)
+ENGINE=InnoDB;
+
+-- /*******************************************************
+-- *
+-- * civicrm_inventory_product_variant_replacement
+-- *
+-- * FIXME
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_inventory_product_variant_replacement` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryProductVariantReplacement ID',
+  `contact_id` int unsigned COMMENT 'FK to Contact',
+  `created_at` datetime,
+  `updated_at` datetime,
+  `old_product_variant_id` int unsigned COMMENT 'FK to Product Variant',
+  `new_product_variant_id` int unsigned COMMENT 'FK to Product Variant',
+  `shipped_on` datetime,
+  `is_warranty` tinyint NULL DEFAULT 0,
+  `source` varchar(255) NULL COMMENT 'Replacement source.',
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_old_product_variant_id FOREIGN KEY (`old_product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_new_product_variant_id FOREIGN KEY (`new_product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL
 )
 ENGINE=InnoDB;
 

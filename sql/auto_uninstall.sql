@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS `civicrm_inventory_product_changelog`;
 DROP TABLE IF EXISTS `civicrm_inventory_warehouse_transfer`;
 DROP TABLE IF EXISTS `civicrm_inventory_sales_detail`;
 DROP TABLE IF EXISTS `civicrm_inventory_purchase_order_detail`;
+DROP TABLE IF EXISTS `civicrm_inventory_product_variant_replacement`;
 DROP TABLE IF EXISTS `civicrm_inventory_product_variant`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment_labels`;
 DROP TABLE IF EXISTS `civicrm_inventory_sales`;

@@ -124,6 +124,24 @@ class CRM_Inventory_Permission extends CRM_Core_Permission {
         'label' => $prefix . E::ts('delete device batch', ['domain' => 'com.skvare.inventory']),
         'description' => E::ts('Delete an inventory device batch record.', ['domain' => 'com.skvare.inventory']),
       ],
+
+      // Inventory replacement.
+      'create device replacement' => [
+        'label' => $prefix . E::ts('create device replacement', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Create an inventory device replacement record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'edit device replacement' => [
+        'label' => $prefix . E::ts('edit device replacement', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Edit an inventory device replacement record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'access device replacement' => [
+        'label' => $prefix . E::ts('access device replacement', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Access an inventory device replacement record.', ['domain' => 'com.skvare.inventory']),
+      ],
+      'delete device replacement' => [
+        'label' => $prefix . E::ts('delete device replacement', ['domain' => 'com.skvare.inventory']),
+        'description' => E::ts('Delete an inventory device replacement record.', ['domain' => 'com.skvare.inventory']),
+      ],
     ];
   }
 
