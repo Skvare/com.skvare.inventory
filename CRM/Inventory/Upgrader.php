@@ -36,10 +36,9 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
         ['value' => 1, 'name' => 'Sumsung', 'label' => E::ts('Sumsung'), 'is_default' => TRUE],
         ['value' => 2, 'name' => 'Franklin', 'label' => E::ts('Franklin')],
         ['value' => 3, 'name' => 'Coolpad', 'label' => E::ts('Coolpad')],
-        ['value' => 4, 'name' => 'Coolpad', 'label' => E::ts('Coolpad')],
-        ['value' => 5, 'name' => 'LINKZONE', 'label' => E::ts('LINKZONE')],
-        ['value' => 6, 'name' => 'Fuse', 'label' => E::ts('Fuse')],
-        ['value' => 7, 'name' => 'ZTE', 'label' => E::ts('ZTE')],
+        ['value' => 4, 'name' => 'LINKZONE', 'label' => E::ts('LINKZONE')],
+        ['value' => 5, 'name' => 'Fuse', 'label' => E::ts('Fuse')],
+        ['value' => 6, 'name' => 'ZTE', 'label' => E::ts('ZTE')],
       ])
       ->setMatch(['option_group_id', 'name'])
       ->execute();
@@ -83,7 +82,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
         'option_group_id.name' => 'warranty_type',
       ])
       ->setRecords([
-        ['value' => 1, 'name' => 'express', 'label' => E::ts('Expres'), 'is_default' => TRUE],
+        ['value' => 1, 'name' => 'express', 'label' => E::ts('Express'), 'is_default' => TRUE],
         ['value' => 2, 'name' => 'implied', 'label' => E::ts('Implied')],
         ['value' => 3, 'name' => 'not_available', 'label' => E::ts('Not Available')],
       ])

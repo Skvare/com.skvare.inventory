@@ -25,8 +25,8 @@
     <type>int unsigned</type>
     <comment>FK to Product</comment>
     <html>
-      <label>Product Name</label>
       <type>EntityRef</type>
+      <label>Product Name</label>
     </html>
   </field>
   <foreignKey>

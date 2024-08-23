@@ -65,7 +65,7 @@
     </html>
   </field>
   <field>
-    <name>old_product_variant_id</name>
+    <name>old_product_id</name>
     <title>Old Product ID</title>
     <type>int unsigned</type>
     <comment>FK to Product Variant</comment>
@@ -75,13 +75,13 @@
     </html>
   </field>
   <foreignKey>
-    <name>old_product_variant_id</name>
+    <name>old_product_id</name>
     <table>civicrm_inventory_product_variant</table>
     <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
-    <name>new_product_variant_id</name>
+    <name>new_product_id</name>
     <title>New Product ID</title>
     <type>int unsigned</type>
     <comment>FK to Product Variant</comment>
@@ -91,7 +91,7 @@
     </html>
   </field>
   <foreignKey>
-    <name>new_product_variant_id</name>
+    <name>new_product_id</name>
     <table>civicrm_inventory_product_variant</table>
     <key>id</key>
     <onDelete>SET NULL</onDelete>

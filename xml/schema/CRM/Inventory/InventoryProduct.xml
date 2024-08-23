@@ -22,6 +22,20 @@
     <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
+    <name>label</name>
+    <title>Product Label</title>
+    <uniqueName>inventory_product_label</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
     <name>product_code</name>
     <title>Product Code</title>
     <comment>Product Code SKU.</comment>
@@ -43,20 +57,6 @@
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
-    <export>true</export>
-    <import>true</import>
-    <add>5.63</add>
-    <html>
-      <type>Text</type>
-    </html>
-  </field>
-  <field>
-    <name>product_name</name>
-    <title>Product Name</title>
-    <uniqueName>inventory_product_name</uniqueName>
-    <type>varchar</type>
-    <length>100</length>
-    <required>true</required>
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
@@ -145,8 +145,14 @@
     <export>true</export>
     <import>true</import>
     <comment>FK to Category</comment>
+    <pseudoconstant>
+      <table>civicrm_inventory_category</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+    </pseudoconstant>
     <html>
-      <type>Number</type>
+      <label>Product Category</label>
+      <type>Select</type>
     </html>
   </field>
   <foreignKey>
@@ -155,18 +161,6 @@
     <key>id</key>
     <onDelete>RESTRICT</onDelete>
   </foreignKey>
-  <field>
-    <name>is_discontinued</name>
-    <title>Is Discontinued</title>
-    <uniqueName>inventory_product_is_discontinued</uniqueName>
-    <type>boolean</type>
-    <default>0</default>
-    <required>false</required>
-    <export>true</export>
-    <html>
-      <type>CheckBox</type>
-    </html>
-  </field>
   <field>
     <name>image_actual</name>
     <title>Image</title>
@@ -389,20 +383,12 @@
     <type>int unsigned</type>
     <required>false</required>
     <export>true</export>
+    <pseudoconstant>
+      <optionGroupName>warranty_type</optionGroupName>
+    </pseudoconstant>
     <html>
-      <type>Number</type>
-    </html>
-  </field>
-  <field>
-    <name>is_serialize</name>
-    <title>Is Serialized</title>
-    <uniqueName>inventory_product_is_serialize</uniqueName>
-    <type>boolean</type>
-    <default>1</default>
-    <required>false</required>
-    <export>true</export>
-    <html>
-      <type>CheckBox</type>
+      <type>Select</type>
+      <label>Warranty Type</label>
     </html>
   </field>
   <field>
@@ -463,18 +449,6 @@
     <add>5.63</add>
     <html>
       <type>Text</type>
-    </html>
-  </field>
-  <field>
-    <name>is_active</name>
-    <title>Is Active</title>
-    <uniqueName>inventory_product_is_active</uniqueName>
-    <type>boolean</type>
-    <default>0</default>
-    <required>false</required>
-    <export>true</export>
-    <html>
-      <type>CheckBox</type>
     </html>
   </field>
   <field>
@@ -593,7 +567,7 @@
   <field>
     <name>row</name>
     <title>Row in Warehouse</title>
-    <uniqueName>inventory_produt_warehouse_row</uniqueName>
+    <uniqueName>inventory_product_warehouse_row</uniqueName>
     <type>varchar</type>
     <length>256</length>
     <required>false</required>
@@ -609,7 +583,7 @@
   <field>
     <name>shelf</name>
     <title>Warehouse shelf</title>
-    <uniqueName>inventory_produt_warehouse_shelf</uniqueName>
+    <uniqueName>inventory_product_warehouse_shelf</uniqueName>
     <type>varchar</type>
     <length>256</length>
     <required>false</required>
@@ -629,8 +603,48 @@
     <name>weight</name>
     <title>Order</title>
     <type>int unsigned</type>
-    <required>true</required>
+    <default>1</default>
+    <required>false</required>
     <comment>Controls display sort order.</comment>
     <add>5.75</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>is_serialize</name>
+    <title>Is Serialized</title>
+    <uniqueName>inventory_product_is_serialize</uniqueName>
+    <type>boolean</type>
+    <default>1</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>is_discontinued</name>
+    <title>Is Discontinued</title>
+    <uniqueName>inventory_product_is_discontinued</uniqueName>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>is_active</name>
+    <title>Is Active</title>
+    <uniqueName>inventory_product_is_active</uniqueName>
+    <type>boolean</type>
+    <default>1</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
   </field>
  </table>

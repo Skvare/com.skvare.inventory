@@ -37,6 +37,7 @@ DROP TABLE IF EXISTS `civicrm_inventory_category`;
 DROP TABLE IF EXISTS `civicrm_inventory_batch`;
 
 SET FOREIGN_KEY_CHECKS=1;
+
 -- /*******************************************************
 -- *
 -- * Create new tables
@@ -60,8 +61,7 @@ CREATE TABLE `civicrm_inventory_batch` (
   `exported_date` datetime,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UI_name`(name),
-  CONSTRAINT FK_civicrm_inventory_batch_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_batch_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -79,8 +79,7 @@ CREATE TABLE `civicrm_inventory_category` (
   `slug` varchar(100) NOT NULL,
   `content` text COMMENT 'Category Content.',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_category_parent_id FOREIGN KEY (`parent_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_category_parent_id FOREIGN KEY (`parent_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -100,8 +99,7 @@ CREATE TABLE `civicrm_inventory_referrals` (
   `referral_code` varchar(100) NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_referrals_creator_id FOREIGN KEY (`creator_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_referrals_consumer_id FOREIGN KEY (`consumer_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
-)
+  CONSTRAINT FK_civicrm_inventory_referrals_consumer_id FOREIGN KEY (`consumer_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -124,8 +122,7 @@ CREATE TABLE `civicrm_inventory_shipment` (
   INDEX `index_created_date`(created_date),
   INDEX `index_updated_date`(updated_date),
   CONSTRAINT FK_civicrm_inventory_shipment_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_shipment_modified_id FOREIGN KEY (`modified_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_shipment_modified_id FOREIGN KEY (`modified_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -142,8 +139,7 @@ CREATE TABLE `civicrm_inventory_supplier` (
   `contact_id` int unsigned COMMENT 'FK to Contact',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_supplier_address_id FOREIGN KEY (`address_id`) REFERENCES `civicrm_address`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_supplier_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE RESTRICT
-)
+  CONSTRAINT FK_civicrm_inventory_supplier_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE RESTRICT)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -161,8 +157,7 @@ CREATE TABLE `civicrm_inventory_warehouse` (
   `size` varchar(100) NULL,
   `unused_size` varchar(100) NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_warehouse_address_id FOREIGN KEY (`address_id`) REFERENCES `civicrm_address`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_warehouse_address_id FOREIGN KEY (`address_id`) REFERENCES `civicrm_address`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -174,16 +169,15 @@ ENGINE=InnoDB;
 -- *******************************************************/
 CREATE TABLE `civicrm_inventory_product` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryProduct ID',
+  `label` varchar(100) NOT NULL,
   `product_code` varchar(100) NOT NULL COMMENT 'Product Code SKU.',
   `external_code` varchar(100) NULL,
-  `product_name` varchar(100) NOT NULL,
   `product_description` varchar(512) NULL,
   `listed_price` decimal(20,2) NOT NULL COMMENT 'The amount that is shown to the user.',
   `current_price` decimal(20,2) NOT NULL COMMENT 'The fair market value of this item.',
   `product_brand` varchar(100) NULL,
   `product_note` text COMMENT 'Product details.',
   `product_category_id` int unsigned NOT NULL COMMENT 'FK to Category',
-  `is_discontinued` tinyint NULL DEFAULT 0,
   `image_actual` varchar(100) NULL COMMENT 'File url.',
   `image_thumbnail` varchar(100) NULL,
   `packed_weight` decimal(20,2) NULL COMMENT 'Packed Weight',
@@ -201,12 +195,10 @@ CREATE TABLE `civicrm_inventory_product` (
   `has_sim` tinyint NULL DEFAULT 0,
   `has_device` tinyint NULL DEFAULT 0,
   `warranty_type_id` int unsigned NULL,
-  `is_serialize` tinyint NULL DEFAULT 1,
   `uom` varchar(100) NULL COMMENT 'Feet, pounds, and gallons are all examples of units of measure.',
   `screen` varchar(100) NULL COMMENT 'Screen sizde details.',
   `memory` varchar(100) NULL COMMENT 'Product Memory size.',
   `color` varchar(100) NULL COMMENT 'Product Color.',
-  `is_active` tinyint NULL DEFAULT 0,
   `premium_is_optional` tinyint NULL DEFAULT 0,
   `premium_needs_address` tinyint NULL DEFAULT 0,
   `premium_shirt_count` int unsigned NULL,
@@ -218,11 +210,13 @@ CREATE TABLE `civicrm_inventory_product` (
   `reorder_point` int unsigned COMMENT 'The minimum number of units required to ensure no shortages occur at this warehouse.',
   `row` varchar(256) NULL COMMENT 'Use to locate the item in warehouse',
   `shelf` varchar(256) NULL COMMENT 'Use to locate the item in warehouse',
-  `weight` int unsigned NOT NULL COMMENT 'Controls display sort order.',
+  `weight` int unsigned NULL DEFAULT 1 COMMENT 'Controls display sort order.',
+  `is_serialize` tinyint NULL DEFAULT 1,
+  `is_discontinued` tinyint NULL DEFAULT 0,
+  `is_active` tinyint NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_product_product_category_id FOREIGN KEY (`product_category_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE RESTRICT,
-  CONSTRAINT FK_civicrm_inventory_product_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_product_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -242,8 +236,7 @@ CREATE TABLE `civicrm_inventory_product_membership` (
   UNIQUE INDEX `UI_product_id_membership_type_id`(product_id, membership_type_id),
   CONSTRAINT FK_civicrm_inventory_product_membership_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE CASCADE,
   CONSTRAINT FK_civicrm_inventory_product_membership_membership_type_id FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type`(`id`) ON DELETE RESTRICT,
-  CONSTRAINT FK_civicrm_inventory_product_membership_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_product_membership_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -259,8 +252,7 @@ CREATE TABLE `civicrm_inventory_product_meta` (
   `product_meta_key` varchar(50) NOT NULL,
   `product_meta_content` text COMMENT 'Product Meta Content.',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_product_meta_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE CASCADE
-)
+  CONSTRAINT FK_civicrm_inventory_product_meta_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE CASCADE)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -277,8 +269,7 @@ CREATE TABLE `civicrm_inventory_purchase_order` (
   `supplier_id` int unsigned COMMENT 'FK to Supplier',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_purchase_order_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_purchase_order_supplier_id FOREIGN KEY (`supplier_id`) REFERENCES `civicrm_inventory_supplier`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_purchase_order_supplier_id FOREIGN KEY (`supplier_id`) REFERENCES `civicrm_inventory_supplier`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -293,7 +284,7 @@ CREATE TABLE `civicrm_inventory_sales` (
   `contact_id` int unsigned COMMENT 'FK to Contact',
   `code` varchar(255) NULL COMMENT 'Random and Uniuqe ID Generated.',
   `sale_date` datetime,
-  `contribution_id` int unsigned NULL COMMENT 'Payment ID Associated with product.',
+  `contribution_id` int unsigned NULL COMMENT 'Contribution ID Associated with product.',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status_id` varchar(100) NOT NULL COMMENT 'Sales Status: \'placed\', \'shipped\', \'completed\'',
   `is_shipping_required` tinyint NULL DEFAULT 0,
@@ -307,8 +298,7 @@ CREATE TABLE `civicrm_inventory_sales` (
   UNIQUE INDEX `UI_code`(code),
   CONSTRAINT FK_civicrm_inventory_sales_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_sales_contribution_id FOREIGN KEY (`contribution_id`) REFERENCES `civicrm_contribution`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_sales_shipment_id FOREIGN KEY (`shipment_id`) REFERENCES `civicrm_inventory_shipment`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_sales_shipment_id FOREIGN KEY (`shipment_id`) REFERENCES `civicrm_inventory_shipment`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -336,8 +326,7 @@ CREATE TABLE `civicrm_inventory_shipment_labels` (
   `contact_id` int unsigned COMMENT 'FK to Contact',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_shipment_labels_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_shipment_labels_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
-)
+  CONSTRAINT FK_civicrm_inventory_shipment_labels_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -354,7 +343,6 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `product_variant_phone_number` varchar(100) NULL COMMENT 'Phone number linked with device.',
   `product_variant_unique_id` varchar(100) NULL COMMENT 'e.g IMEI (International Mobile Equipment Identity) number .',
   `product_variant_details` text COMMENT 'Product Variant details.',
-  `is_discontinued` tinyint NULL DEFAULT 0,
   `image_thumbnail` varchar(100) NULL,
   `image_actual` varchar(100) NULL,
   `status` varchar(100) NULL,
@@ -369,18 +357,20 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `created_at` datetime,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sales_id` int unsigned NULL COMMENT 'Sales ID Associated with sales tables.',
+  `row` varchar(256) NULL COMMENT 'Use to locate the item in warehouse',
+  `shelf` varchar(256) NULL COMMENT 'Use to locate the item in warehouse',
   `is_primary` tinyint NULL DEFAULT 0,
+  `is_discontinued` tinyint NULL DEFAULT 0,
   `is_active` tinyint NULL DEFAULT 1,
   `is_suspended` tinyint NULL DEFAULT 0,
   `is_problem` tinyint NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UI_product_variant_unique_id`(product_variant_unique_id),
-  CONSTRAINT FK_civicrm_inventory_product_variant_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_civicrm_inventory_product_variant_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE RESTRICT,
   CONSTRAINT FK_civicrm_inventory_product_variant_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_variant_replaced_product_id FOREIGN KEY (`replaced_product_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_variant_membership_id FOREIGN KEY (`membership_id`) REFERENCES `civicrm_membership`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_product_variant_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_product_variant_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -395,16 +385,15 @@ CREATE TABLE `civicrm_inventory_product_variant_replacement` (
   `contact_id` int unsigned COMMENT 'FK to Contact',
   `created_at` datetime,
   `updated_at` datetime,
-  `old_product_variant_id` int unsigned COMMENT 'FK to Product Variant',
-  `new_product_variant_id` int unsigned COMMENT 'FK to Product Variant',
+  `old_product_id` int unsigned COMMENT 'FK to Product Variant',
+  `new_product_id` int unsigned COMMENT 'FK to Product Variant',
   `shipped_on` datetime,
   `is_warranty` tinyint NULL DEFAULT 0,
   `source` varchar(255) NULL COMMENT 'Replacement source.',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_product_variant_replacement_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_old_product_variant_id FOREIGN KEY (`old_product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_new_product_variant_id FOREIGN KEY (`new_product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_old_product_id FOREIGN KEY (`old_product_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_inventory_product_variant_replacement_new_product_id FOREIGN KEY (`new_product_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -427,8 +416,7 @@ CREATE TABLE `civicrm_inventory_purchase_order_detail` (
   CONSTRAINT FK_civicrm_inventory_purchase_order_detail_order_id FOREIGN KEY (`order_id`) REFERENCES `civicrm_inventory_purchase_order`(`id`) ON DELETE CASCADE,
   CONSTRAINT FK_civicrm_inventory_purchase_order_detail_product_variant_id FOREIGN KEY (`product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_purchase_order_detail_supplier_id FOREIGN KEY (`supplier_id`) REFERENCES `civicrm_inventory_supplier`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_purchase_order_detail_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE RESTRICT
-)
+  CONSTRAINT FK_civicrm_inventory_purchase_order_detail_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE RESTRICT)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -449,15 +437,14 @@ CREATE TABLE `civicrm_inventory_sales_detail` (
   `product_sub_title` varchar(100) NULL,
   `additional_details` text COMMENT 'Additional product details',
   `membership_id` int unsigned NULL COMMENT 'Membership Associated with product.',
-  `contribution_id` int unsigned NULL COMMENT 'FK to payment table.',
+  `contribution_id` int unsigned NULL COMMENT 'FK to contribution table.',
   `type` varchar(100) NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_sales_detail_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE CASCADE,
   CONSTRAINT FK_civicrm_inventory_sales_detail_product_variant_id FOREIGN KEY (`product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_sales_detail_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_sales_detail_membership_id FOREIGN KEY (`membership_id`) REFERENCES `civicrm_membership`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_sales_detail_contribution_id FOREIGN KEY (`contribution_id`) REFERENCES `civicrm_contribution`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_sales_detail_contribution_id FOREIGN KEY (`contribution_id`) REFERENCES `civicrm_contribution`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -485,8 +472,7 @@ CREATE TABLE `civicrm_inventory_warehouse_transfer` (
   CONSTRAINT FK_civicrm_inventory_warehouse_transfer_from_warehouse_id FOREIGN KEY (`from_warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_warehouse_transfer_to_warehouse_id FOREIGN KEY (`to_warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_warehouse_transfer_from_contact_id FOREIGN KEY (`from_contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_warehouse_transfer_to_contact_id FOREIGN KEY (`to_contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_warehouse_transfer_to_contact_id FOREIGN KEY (`to_contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -506,6 +492,5 @@ CREATE TABLE `civicrm_inventory_product_changelog` (
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_product_changelog_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_product_changelog_batch_id FOREIGN KEY (`batch_id`) REFERENCES `civicrm_inventory_batch`(`id`) ON DELETE SET NULL,
-  CONSTRAINT FK_civicrm_inventory_product_changelog_product_variant_id FOREIGN KEY (`product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL
-)
+  CONSTRAINT FK_civicrm_inventory_product_changelog_product_variant_id FOREIGN KEY (`product_variant_id`) REFERENCES `civicrm_inventory_product_variant`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
