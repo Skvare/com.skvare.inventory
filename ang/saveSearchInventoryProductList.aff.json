@@ -1,0 +1,40 @@
+{
+"name": "Inventory_Product_List",
+"label": "Inventory Product List",
+"form_values": null,
+"mapping_id": null,
+"search_custom_id": null,
+"api_entity": "InventoryProduct",
+"api_params": {
+  "version": 4,
+  "select": [
+    "id",
+    "label",
+    "is_active",
+    "product_code",
+    "product_category_id:label",
+    "product_brand:label",
+    "warranty_type_id:label"
+  ],
+  "orderBy": [],
+  "where": [
+    [
+      "is_serialize",
+      "=",
+      true
+    ],
+    [
+      "is_active",
+      "=",
+      true
+    ]
+  ],
+  "groupBy": [],
+  "join": [],
+  "having": []
+},
+"expires_date": null,
+"created_date": "2024-08-23 13:09:33",
+"modified_date": "2024-08-23 13:09:33",
+"description": null
+}

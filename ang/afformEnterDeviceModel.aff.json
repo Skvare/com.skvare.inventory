@@ -1,0 +1,443 @@
+{
+  "type": "form",
+  "requires": null,
+  "entity_type": null,
+  "join_entity": null,
+  "title": "Enter Device Model",
+  "description": null,
+  "placement": [],
+  "summary_contact_type": null,
+  "summary_weight": null,
+  "icon": "fa-list-alt",
+  "server_route": "civicrm/inventory/device-model",
+  "is_public": false,
+  "permission": [
+    "access CiviCRM",
+    "access inventory product",
+    "create inventory product"
+  ],
+  "permission_operator": "AND",
+  "redirect": "",
+  "submit_enabled": true,
+  "submit_limit": null,
+  "create_submission": true,
+  "manual_processing": false,
+  "allow_verification_by_email": false,
+  "email_confirmation_template_id": null,
+  "navigation": null,
+  "modified_date": "2024-08-23 10:11:33",
+  "layout": [
+    {
+      "#tag": "af-form",
+      "ctrl": "afform",
+      "#children": [
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "af-entity",
+          "actions": {
+            "create": true,
+            "update": true
+          },
+          "type": "InventoryProduct",
+          "name": "InventoryProduct1",
+          "label": "Inventory Device Model",
+          "security": "RBAC",
+          "data": {
+            "warehouse_id": "1",
+            "is_serialize": true
+          }
+        },
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "fieldset",
+          "af-fieldset": "InventoryProduct1",
+          "class": "af-container",
+          "af-title": "Inventory Device Model",
+          "#children": [
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "label"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_brand"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "warranty_type_id"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_category_id"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "external_code"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_code"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_description"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "Price",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "current_price"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "listed_price"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "Alert",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "reorder_point"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "minimum_quantity_stock_level"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "maximum_quantity_stock_level"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "Images",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "image_actual"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "image_thumbnail"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "Packing",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "packed_weight"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "packed_depth"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "packed_height"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "packed_width"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "uom"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "More Details",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "screen"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_variant_speed"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "memory"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_variant_battery"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "color"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "af-title": "Yes/No",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "batteryless"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "has_device"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "powerbank"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "antenna"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "network_4g"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "tether"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "has_sim"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "network_5g"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "row"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "shelf"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n  "
+            }
+          ]
+        },
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "button",
+          "class": "af-button btn btn-primary",
+          "crm-icon": "fa-check",
+          "ng-click": "afform.submit()",
+          "ng-if": "afform.showSubmitButton",
+          "#children": [
+            {
+              "#text": "Submit"
+            }
+          ]
+        },
+        {
+          "#text": "\n"
+        }
+      ]
+    },
+    {
+      "#text": "\n"
+    }
+  ],
+  "name": "afformEnterDeviceModel"
+}

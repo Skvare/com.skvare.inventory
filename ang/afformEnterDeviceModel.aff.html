@@ -1,0 +1,59 @@
+<af-form ctrl="afform">
+  <af-entity actions="{create: true, update: true}" type="InventoryProduct" name="InventoryProduct1" label="Inventory Device Model" security="RBAC" data="{warehouse_id: '1', is_serialize: true}" />
+  <fieldset af-fieldset="InventoryProduct1" class="af-container" af-title="Inventory Device Model">
+    <div class="af-container af-layout-inline">
+      <af-field name="label" />
+      <af-field name="product_brand" />
+      <af-field name="warranty_type_id" />
+      <af-field name="product_category_id" />
+    </div>
+    <div class="af-container af-layout-inline">
+      <af-field name="external_code" />
+      <af-field name="product_code" />
+      <af-field name="product_description" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="Price">
+      <af-field name="current_price" />
+      <af-field name="listed_price" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="Alert">
+      <af-field name="reorder_point" />
+      <af-field name="minimum_quantity_stock_level" />
+      <af-field name="maximum_quantity_stock_level" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="Images">
+      <af-field name="image_actual" />
+      <af-field name="image_thumbnail" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="Packing">
+      <af-field name="packed_weight" />
+      <af-field name="packed_depth" />
+      <af-field name="packed_height" />
+      <af-field name="packed_width" />
+      <af-field name="uom" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="More Details">
+      <af-field name="screen" />
+      <af-field name="product_variant_speed" />
+      <af-field name="memory" />
+      <af-field name="product_variant_battery" />
+      <af-field name="color" />
+    </div>
+    <div class="af-container af-layout-inline" af-title="Yes/No">
+      <af-field name="batteryless" />
+      <af-field name="has_device" />
+      <af-field name="powerbank" />
+      <af-field name="antenna" />
+      <af-field name="network_4g" />
+      <af-field name="tether" />
+      <af-field name="has_sim" />
+      <af-field name="network_5g" />
+    </div>
+    <div class="af-container af-layout-inline">
+      <af-field name="row" />
+      <af-field name="shelf" />
+    </div>
+  </fieldset>
+  <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
+</af-form>
+
