@@ -25,9 +25,14 @@
     <type>int unsigned</type>
     <comment>FK to Product</comment>
     <html>
-      <type>EntityRef</type>
+      <type>Select</type>
       <label>Product Name</label>
     </html>
+    <pseudoconstant>
+      <table>civicrm_membership_type</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>name</labelColumn>
+    </pseudoconstant>
   </field>
   <foreignKey>
     <name>product_id</name>
@@ -268,6 +273,7 @@
     <name>created_at</name>
     <uniqueName>inventory_product_variant_created_at</uniqueName>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/created(.?date)?/i</headerPattern>

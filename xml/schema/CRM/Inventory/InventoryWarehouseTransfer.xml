@@ -38,7 +38,7 @@
   <field>
     <name>product_variant_id</name>
     <title>Product Variant</title>
-    <uniqueName>inventory_warehouse_tranfer_product_variant_id</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_product_variant_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Product Variant</comment>
     <html>
@@ -55,7 +55,7 @@
   <field>
     <name>from_warehouse_id</name>
     <title>From Warehouse ID</title>
-    <uniqueName>inventory_warehouse_tranfer_from_warehouse_id</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_from_warehouse_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
     <html>
@@ -72,7 +72,7 @@
   <field>
     <name>to_warehouse_id</name>
     <label>To Warehouse ID</label>
-    <uniqueName>inventory_warehouse_tranfer_to_warehouse_id</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_to_warehouse_id</uniqueName>
     <type>int unsigned</type>
     <comment>FK to Warehouse</comment>
     <html>
@@ -88,7 +88,7 @@
   </foreignKey>
   <field>
     <name>from_contact_id</name>
-    <uniqueName>inventory_warehouse_tranfer_from_contact_id</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_from_contact_id</uniqueName>
     <title>Operation performed By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
@@ -106,13 +106,13 @@
 
   <field>
     <name>to_contact_id</name>
-    <uniqueName>inventory_warehouse_tranfer_to_contact_id</uniqueName>
-    <title>Recivied By</title>
+    <uniqueName>inventory_warehouse_transfer_to_contact_id</uniqueName>
+    <title>Received By</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
     <html>
       <type>EntityRef</type>
-      <label>Recivied By</label>
+      <label>Received By</label>
     </html>
   </field>
   <foreignKey>
@@ -123,8 +123,9 @@
   </foreignKey>
   <field>
     <name>created_date</name>
-    <uniqueName>inventory_warehouse_tranfer_created_date</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_created_date</uniqueName>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/action(.?date)?/i</headerPattern>
@@ -136,7 +137,7 @@
   </field>
   <field>
     <name>status_id</name>
-    <uniqueName>inventory_warehouse_tranfer_status_id</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_status_id</uniqueName>
     <title>Transaction Status</title>
     <type>varchar</type>
     <comment>IN = into location, OUT = OUT of location</comment>
@@ -152,7 +153,7 @@
   <field>
     <name>status_date</name>
     <title>Status Date</title>
-    <uniqueName>inventory_warehouse_tranfer_status_date</uniqueName>
+    <uniqueName>inventory_warehouse_transfer_status_date</uniqueName>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/action(.?date)?/i</headerPattern>

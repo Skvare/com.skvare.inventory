@@ -30,4 +30,10 @@
     <title>Membership Product Mapping</title>
     <access_arguments>administer Inventory</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/product-replacement-request</path>
+    <page_callback>CRM_Inventory_Form_Devicereplacement</page_callback>
+    <title>Device Replacement Request</title>
+    <access_arguments>create device replacement</access_arguments>
+  </item>
 </menu>

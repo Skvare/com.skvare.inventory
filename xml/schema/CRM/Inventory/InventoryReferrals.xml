@@ -59,6 +59,7 @@
     <name>created_date</name>
     <uniqueName>inventory_referral_created_date</uniqueName>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/Created(.?date)?/i</headerPattern>

@@ -76,6 +76,7 @@
   <field>
     <name>created_date</name>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/created(.?date)?/i</headerPattern>

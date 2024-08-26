@@ -5,6 +5,6 @@ return [
   [
     'name' => 'InventoryProductVariant',
     'class' => 'CRM_Inventory_DAO_InventoryProductVariant',
-    'table' => 'civicrm_inventory_warehouse',
+    'table' => 'civicrm_inventory_product_variant',
   ],
 ];

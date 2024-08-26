@@ -42,6 +42,7 @@
     <name>created_at</name>
     <uniqueName>inventory_product_replacement_created_at</uniqueName>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/created(.?date)?/i</headerPattern>
@@ -55,6 +56,7 @@
     <name>updated_at</name>
     <uniqueName>inventory_product_replacement_updated_at</uniqueName>
     <title>Updated Date</title>
+    <default>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/updated(.?date)?/i</headerPattern>

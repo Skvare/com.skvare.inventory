@@ -67,6 +67,7 @@
   <field>
     <name>created_date</name>
     <title>Batch Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>datetime</type>
     <comment>When was this item created</comment>
     <add>3.3</add>

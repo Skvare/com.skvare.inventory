@@ -24,6 +24,7 @@
   <field>
     <name>created_date</name>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <uniqueName>inventory_shipment_label_created_date</uniqueName>
     <type>datetime</type>
     <import>true</import>
@@ -38,6 +39,7 @@
   <field>
     <name>updated_date</name>
     <title>Updated Date</title>
+    <default>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</default>
     <uniqueName>inventory_shipment_label_updated_date</uniqueName>
     <type>datetime</type>
     <import>true</import>

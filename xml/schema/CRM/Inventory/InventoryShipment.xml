@@ -42,6 +42,7 @@
   <field>
     <name>created_date</name>
     <title>Created Date</title>
+    <default>CURRENT_TIMESTAMP</default>
     <type>timestamp</type>
     <uniqueName>inventory_shipment_created_date</uniqueName>
     <comment>When was the shipment was created.</comment>
@@ -101,7 +102,7 @@
   <field>
     <name>shipped_date</name>
     <title>Shipped At</title>
-    <uniqueName>inventory_shipment_shippe_date</uniqueName>
+    <uniqueName>inventory_shipment_shipped_date</uniqueName>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/shipped(.?date)?/i</headerPattern>
