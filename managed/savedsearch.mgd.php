@@ -325,7 +325,7 @@ return [
       'values' => [
         'name' => 'Inventory_Product_Variant_Table_1',
         'label' => 'Inventory Product List Table',
-        'saved_search_id.name' => 'Inventory Product Variant Table 1',
+        'saved_search_id.name' => 'Inventory_Product_Variant',
         'type' => 'table',
         "settings" => [
           "description" => NULL,
