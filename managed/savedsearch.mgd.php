@@ -257,7 +257,7 @@ return [
           ],
           "where" => [
             [
-              "is_serialize",
+              "InventoryProductVariant_InventoryProduct_product_id_01.is_serialize",
               "=",
               TRUE,
             ],
