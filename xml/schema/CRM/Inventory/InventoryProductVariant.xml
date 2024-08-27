@@ -25,14 +25,9 @@
     <type>int unsigned</type>
     <comment>FK to Product</comment>
     <html>
-      <type>Select</type>
-      <label>Product Name</label>
+      <type>EntityRef</type>
+      <label>Product Model</label>
     </html>
-    <pseudoconstant>
-      <table>civicrm_membership_type</table>
-      <keyColumn>id</keyColumn>
-      <labelColumn>name</labelColumn>
-    </pseudoconstant>
   </field>
   <foreignKey>
     <name>product_id</name>

@@ -1,0 +1,19 @@
+<div af-fieldset="">
+  <div class="af-container af-layout-inline" af-title="Search">
+    <af-field name="product_variant_phone_number" />
+    <af-field name="contact_id" />
+    <af-field name="contact_id.display_name" />
+    <af-field name="product_variant_unique_id" />
+    <af-field name="status" defn="{input_attrs: {multiple: true}}" />
+    <af-field name="product_id" defn="{input_attrs: {multiple: true}}" />
+  </div>
+  <div class="af-container af-layout-inline" af-title="Additional Filter">
+    <af-field name="is_active" />
+    <af-field name="is_discontinued" />
+    <af-field name="is_replaced" />
+    <af-field name="is_primary" />
+    <af-field name="is_suspended" />
+    <af-field name="is_problem" />
+  </div>
+  <crm-search-display-table search-name="Inventory_Product_Variant" display-name="Inventory_Product_Variant_Table_1"></crm-search-display-table>
+</div>

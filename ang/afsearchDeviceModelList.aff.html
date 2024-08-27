@@ -1,10 +1,17 @@
 <div af-fieldset="">
-  <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
+  <div class="af-container af-layout-inline">
     <af-field name="product_brand" defn="{input_attrs: {multiple: true}}" />
-    <af-field name="warehouse_id" defn="{input_attrs: {multiple: true}}" />
-    <af-field name="product_code" />
     <af-field name="product_category_id" defn="{input_attrs: {multiple: true}}" />
     <af-field name="label" />
+    <af-field name="product_code" />
+    <af-field name="warranty_type_id" defn="{input_attrs: {multiple: true}}" />
+    <af-field name="warehouse_id" defn="{input_attrs: {multiple: true}}" />
   </div>
-  <crm-search-display-table search-name="Inventory_Product_List" display-name="" filters="{is_serialize: true, is_active: true}"></crm-search-display-table>
+  <div class="af-container af-layout-inline">
+    <af-field name="is_active" defn="{afform_default: true, input_type: 'Radio'}" />
+    <af-field name="has_sim" />
+    <af-field name="is_discontinued" />
+    <af-field name="has_device" />
+  </div>
+  <crm-search-display-table search-name="Inventory_Product_List" display-name="Inventory_Product_List_Table_1" filters="{is_serialize: true}"></crm-search-display-table>
 </div>
