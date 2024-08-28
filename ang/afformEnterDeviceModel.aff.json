@@ -17,7 +17,7 @@
     "create inventory product"
   ],
   "permission_operator": "AND",
-  "redirect": "",
+  "redirect": "civicrm/inventory/device-model-list",
   "submit_enabled": true,
   "submit_limit": null,
   "create_submission": true,
@@ -25,7 +25,7 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-08-28 05:26:47",
+  "modified_date": "2024-08-28 13:57:08",
   "layout": [
     {
       "#tag": "af-form",
@@ -128,6 +128,13 @@
                   "name": "product_description"
                 },
                 {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_note"
+                },
+                {
                   "#text": "\n    "
                 }
               ]
@@ -145,14 +152,22 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "current_price"
+                  "name": "current_price",
+                  "defn": {
+                    "help_post": "What the member pays for replacement",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "listed_price"
+                  "name": "listed_price",
+                  "defn": {
+                    "help_post": "Fair market value for device",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n    "
@@ -198,8 +213,44 @@
             },
             {
               "#tag": "div",
+              "class": "af-container",
+              "af-title": "Images",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "image_url",
+                  "defn": {
+                    "help_post": "Full absolute URL",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "help_url",
+                  "defn": {
+                    "help_post": "Full absolute URL",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
               "class": "af-container af-layout-inline",
               "af-title": "Packing",
+              "style": "border: 1px solid #000000",
               "#children": [
                 {
                   "#text": "\n      "
@@ -254,35 +305,66 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "screen"
+                  "name": "screen",
+                  "defn": {
+                    "help_post": "e.g. 5.81\", OLED 2340 × 1080",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "product_variant_speed"
+                  "name": "product_variant_speed",
+                  "defn": {
+                    "help_post": "e.g. 150 Mbps",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "memory"
+                  "name": "memory",
+                  "defn": {
+                    "help_post": "e.g. 4 GB",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "product_variant_battery"
+                  "name": "product_variant_battery",
+                  "defn": {
+                    "help_post": "e.g. 8 Hours",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "color"
+                  "name": "color",
+                  "defn": {
+                    "help_post": "e.g. Black",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "storage",
+                  "defn": {
+                    "help_post": "e.g. 128 GB",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n    "
@@ -302,56 +384,81 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "batteryless"
+                  "name": "batteryless",
+                  "defn": {
+                    "help_post": "Can run without a battery "
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "has_device"
+                  "name": "has_device",
+                  "defn": {
+                    "label": "Device Included?"
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "powerbank"
+                  "name": "powerbank",
+                  "defn": {
+                    "help_post": "Supports charging external devices "
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "antenna"
+                  "name": "antenna",
+                  "defn": {
+                    "help_post": "Supports external antenna"
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "network_4g"
+                  "name": "network_4g",
+                  "defn": {
+                    "help_post": "Supports 4G networks ",
+                    "label": "4G"
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "tether"
+                  "name": "tether",
+                  "defn": {
+                    "help_post": "Supports tethering via USB or Ethernet"
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "has_sim"
+                  "name": "has_sim",
+                  "defn": {
+                    "label": "SIM Included"
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "network_5g"
+                  "name": "network_5g",
+                  "defn": {
+                    "help_post": "Supports 5G networks "
+                  }
                 },
                 {
                   "#text": "\n    "
@@ -378,6 +485,70 @@
                 {
                   "#tag": "af-field",
                   "name": "shelf"
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "inventory_status",
+                  "defn": {
+                    "help_post": "\n\nfull: device is fully stocked\nlow: limited inventory is reserved for replacement orders only.\ndelayed: members see that shipment may be delayed.\nout: no inventory, and members are unable to order.\n",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "af-field",
+              "name": "inventory_status_note",
+              "defn": {
+                "help_post": " If defined, this note will replace the default inventory message that is based on the inventory status. ",
+                "input_attrs": []
+              }
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "inventory_display",
+                  "defn": {
+                    "help_post": "Show or hide this model on the admin dashboard."
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "is_discontinued",
+                  "defn": {
+                    "help_post": "When a model is discontinued, a membership cannot be renewed until they upgrade the device."
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "is_active",
+                  "defn": {
+                    "help_post": "If not active, new devices of this type will not be available. Users \nwith existing devices of this type will still see their devices listed."
+                  }
                 },
                 {
                   "#text": "\n    "
