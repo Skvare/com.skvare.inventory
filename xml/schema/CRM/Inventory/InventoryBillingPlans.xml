@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Inventory</base>
+  <class>InventoryBillingPlans</class>
+  <name>civicrm_inventory_billing_plans</name>
+  <comment>FIXME</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique InventoryBillingPlans ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>name</name>
+    <title>Plan Name</title>
+    <uniqueName>inventory_billing_label</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>membership_type_id</name>
+    <uniqueName>inventory_billing_membership_type_id</uniqueName>
+    <title>Membership Type ID</title>
+    <html>
+      <type>Select</type>
+      <label>Membership Type</label>
+    </html>
+    <type>int unsigned</type>
+    <comment>Membership Type Associated with product.</comment>
+    <required>true</required>
+    <export>true</export>
+    <import>true</import>
+    <token>true</token>
+    <add>5.63</add>
+    <pseudoconstant>
+      <table>civicrm_membership_type</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>name</labelColumn>
+    </pseudoconstant>
+  </field>
+  <foreignKey>
+    <name>membership_type_id</name>
+    <table>civicrm_membership_type</table>
+    <key>id</key>
+    <onDelete>RESTRICT</onDelete>
+  </foreignKey>
+  <field>
+    <name>amount</name>
+    <uniqueName>inventory_billing_amount</uniqueName>
+    <type>decimal</type>
+    <required>true</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>The amount that is shown to the user.</comment>
+    <html>
+      <type>Text</type>
+      <label>Amount</label>
+    </html>
+  </field>
+  <field>
+    <name>frequency_unit</name>
+    <uniqueName>inventory_billing_frequency_unit</uniqueName>
+    <title>Frequency</title>
+    <type>varchar</type>
+    <required>true</required>
+    <length>8</length>
+    <default>'year'</default>
+    <comment>Time units for recurrence of payment.</comment>
+    <pseudoconstant>
+      <optionGroupName>recur_frequency_units</optionGroupName>
+      <keyColumn>name</keyColumn>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+    </html>
+  </field>
+  <field>
+    <name>frequency_interval</name>
+    <uniqueName>inventory_billing_frequency_interval</uniqueName>
+    <title>Frequency interval</title>
+    <type>int unsigned</type>
+    <required>true</required>
+    <default>1</default>
+    <comment>Number of time units for recurrence of payment.</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>intro_amount</name>
+    <uniqueName>inventory_billing_intro_amount</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>The fair market value of this item.</comment>
+    <html>
+      <type>Text</type>
+      <label>Intro amount</label>
+    </html>
+  </field>
+  <field>
+    <name>intro_frequency_unit</name>
+    <uniqueName>inventory_billing_intro_frequency_unit</uniqueName>
+    <title>Intro frequency</title>
+    <type>varchar</type>
+    <required>false</required>
+    <length>8</length>
+    <default>'year'</default>
+    <comment>Time units for recurrence of payment.</comment>
+    <pseudoconstant>
+      <optionGroupName>recur_frequency_units</optionGroupName>
+      <keyColumn>name</keyColumn>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+    </html>
+  </field>
+  <field>
+    <name>intro_frequency_interval</name>
+    <uniqueName>inventory_billing_intro_frequency_interval</uniqueName>
+    <title>Intro frequency interval</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <default>1</default>
+    <comment>Number of time units for recurrence of payment.</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>value</name>
+    <uniqueName>inventory_billing_value</uniqueName>
+    <type>decimal</type>
+    <required>false</required>
+    <import>true</import>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <comment>The fair market value of this item.</comment>
+    <html>
+      <type>Text</type>
+      <label>Fair Market Value</label>
+    </html>
+  </field>
+  <field>
+    <name>currency</name>
+    <title>Currency</title>
+    <uniqueName>inventory_billing_currency</uniqueName>
+    <type>varchar</type>
+    <length>3</length>
+    <default>NULL</default>
+    <comment>3 character string, value from config setting or input via user.</comment>
+    <add>3.2</add>
+    <pseudoconstant>
+      <table>civicrm_currency</table>
+      <keyColumn>name</keyColumn>
+      <labelColumn>full_name</labelColumn>
+      <nameColumn>name</nameColumn>
+      <abbrColumn>symbol</abbrColumn>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+    </html>
+  </field>
+  <field>
+    <name>renew_only</name>
+    <title>Renew Only?</title>
+    <uniqueName>inventory_billing_renew_only</uniqueName>
+    <comment>If checked, this billing plan is only available for renewals, not new signups.</comment>
+    <type>boolean</type>
+    <default>0</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>is_active</name>
+    <title>Is Active</title>
+    <uniqueName>inventory_billing_is_active</uniqueName>
+    <comment>If unchecked, current memberships that have this billing plan will still use it, but it will not be available at renewal time or sign up.</comment>
+    <type>boolean</type>
+    <default>1</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+</table>

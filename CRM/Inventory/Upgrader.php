@@ -33,12 +33,15 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
         'option_group_id.name' => 'product_brand',
       ])
       ->setRecords([
-        ['value' => 1, 'name' => 'Sumsung', 'label' => E::ts('Sumsung'), 'is_default' => TRUE],
-        ['value' => 2, 'name' => 'Franklin', 'label' => E::ts('Franklin')],
-        ['value' => 3, 'name' => 'Coolpad', 'label' => E::ts('Coolpad')],
-        ['value' => 4, 'name' => 'LINKZONE', 'label' => E::ts('LINKZONE')],
-        ['value' => 5, 'name' => 'Fuse', 'label' => E::ts('Fuse')],
-        ['value' => 6, 'name' => 'ZTE', 'label' => E::ts('ZTE')],
+        ['value' => 1, 'name' => 'JEXtream', 'label' => E::ts('JEXtream'), 'is_default' => TRUE],
+        ['value' => 2, 'name' => 'Inseego', 'label' => E::ts('Inseego')],
+        ['value' => 3, 'name' => 'Quanta', 'label' => E::ts('Quanta')],
+        ['value' => 4, 'name' => 'Franklin', 'label' => E::ts('Franklin')],
+        ['value' => 5, 'name' => 'Pixel', 'label' => E::ts('Pixel')],
+        ['value' => 6, 'name' => 'Alcatel', 'label' => E::ts('Alcatel')],
+        ['value' => 7, 'name' => 'NETGEAR', 'label' => E::ts('NETGEAR')],
+        ['value' => 8, 'name' => 'ZTE', 'label' => E::ts('ZTE')],
+        ['value' => 9, 'name' => 'Alcatel', 'label' => E::ts('Alcatel')],
       ])
       ->setMatch(['option_group_id', 'name'])
       ->execute();
@@ -82,9 +85,9 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
         'option_group_id.name' => 'warranty_type',
       ])
       ->setRecords([
-        ['value' => 1, 'name' => 'express', 'label' => E::ts('Express'), 'is_default' => TRUE],
-        ['value' => 2, 'name' => 'implied', 'label' => E::ts('Implied')],
-        ['value' => 3, 'name' => 'not_available', 'label' => E::ts('Not Available')],
+        ['value' => 1, 'name' => 'mobile_citizen', 'label' => E::ts('Mobile Citizen'), 'is_default' => TRUE],
+        ['value' => 2, 'name' => 'google_pixel', 'label' => E::ts('Google Pixel')],
+        ['value' => 3, 'name' => 'quanta_warranty', 'label' => E::ts('Quanta Warranty')],
       ])
       ->setMatch(['option_group_id', 'name'])
       ->execute();
@@ -98,24 +101,34 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
    * created during the installation (e.g., a setting or a managed entity), do
    * so here to avoid order of operation problems.
    */
-  // public function postInstall(): void {
-  //  $customFieldId = civicrm_api3('CustomField', 'getvalue', array(
-  //    'return' => array("id"),
-  //    'name' => "customFieldCreatedViaManagedHook",
-  //  ));
-  //  civicrm_api3('Setting', 'create', array(
-  //    'myWeirdFieldSetting' => array('id' => $customFieldId, 'weirdness' => 1),
-  //  ));
-  // }
+  public function postInstall(): void {
+    $this->executeSqlFile('sql/category.sql');
+  }
 
   /**
    * Example: Run an external SQL script when the module is uninstalled.
    *
    * Note that if a file is present sql\auto_uninstall that will run regardless of this hook.
    */
-  // public function uninstall(): void {
-  //   $this->executeSqlFile('sql/my_uninstall.sql');
-  // }
+  public function uninstall(): void {
+    $optionGroups = ['warehouse_shelf', 'product_brand', 'warranty_type'];
+    foreach ($optionGroups as $optionGroup) {
+      // Delete all option fields.
+      civicrm_api4('OptionValue', 'delete', [
+        'where' => [
+          ['option_group_id:name', '=', $optionGroup],
+        ],
+        'checkPermissions' => TRUE,
+      ]);
+      // Delete option Group.
+      civicrm_api4('OptionGroup', 'delete', [
+        'where' => [
+          ['name', '=', $optionGroup],
+        ],
+        'checkPermissions' => TRUE,
+      ]);
+    }
+  }
 
   /**
    * Example: Run a simple query when a module is enabled.

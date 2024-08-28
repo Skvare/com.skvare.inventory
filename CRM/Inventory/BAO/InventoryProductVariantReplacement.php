@@ -19,6 +19,10 @@ class CRM_Inventory_BAO_InventoryProductVariantReplacement extends CRM_Inventory
         ->addJoin('InventoryProduct AS inventory_product', 'INNER')
         ->addWhere('contact_id', '=', $contactID)
         ->addWhere('is_active', '=', TRUE)
+        ->addWhere('is_discontinued', '=', FALSE)
+        ->addWhere('is_suspended', '=', FALSE)
+        ->addWhere('is_problem', '=', FALSE)
+        ->addWhere('is_replaced', '=', FALSE)
         ->setLimit(25)
         ->execute();
       foreach ($inventoryProductVariants as $inventoryProductVariant) {
@@ -27,5 +31,6 @@ class CRM_Inventory_BAO_InventoryProductVariantReplacement extends CRM_Inventory
     }
     return $productList;
   }
+
 }
 

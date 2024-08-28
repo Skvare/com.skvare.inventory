@@ -2,33 +2,30 @@
   <script type="text/javascript">
     CRM.$(function($) {
       $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-period_type');
-      $('.crm-membership-type-form-block-renewal_fee').insertAfter('.crm-membership-type-form-block-period_type');
-      $('.crm-membership-type-form-block-signup_fee').insertAfter('.crm-membership-type-form-block-period_type');
+      $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-period_type');
+      $('.crm-membership-type-form-block-billing_plan').insertAfter('.crm-membership-type-form-block-period_type');
     });
   </script>
 {/literal}
 
 {crmScope extensionKey='com.skvare.inventory'}
   <table class="form-layout-compressed" style="display: none">
-    <tr class="crm-membership-type-form-block-signup_fee">
-      <td class="label">{$form.signup_fee.label}</td>
-      <td>{$form.signup_fee.html}<br/>
+    <tr class="crm-membership-type-form-block-billing_plan">
+      <td colspan="2">
+        <a href="/civicrm/inventory/membership-billing-plan"><i class="crm-i fa-plus" aria-hidden="true"></i>Add New Billing Plan</a>
+        <br/>
+        List Billing Plan click  <a class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/membership-billing-plan-list" q="" f="?membership_type_id=$membershipTypeId"}'><i class="crm-i fa-list" aria-hidden="true"></i>{ts}here{/ts}</a>
+      </td>
+    </tr>
+    <tr class="crm-membership-type-form-block-may_renew">
+      <td class="label">{$form.may_renew.label}</td>
+      <td>{$form.may_renew.html}<br/>
         <span class="description">
-          {ts}This is the fee charged for the first time while buying the product.{/ts}
+          {ts}If true, a member may renew at this membership level.{/ts}
         </span>
         <br/><br/>
       </td>
     </tr>
-    <tr class="crm-membership-type-form-block-renewal_fee">
-      <td class="label">{$form.renewal_fee.label}</td>
-      <td>{$form.renewal_fee.html}<br/>
-        <span class="description">
-          {ts}This fee will be charged for renewal of membership.{/ts}
-        </span>
-        <br/><br/>
-      </td>
-    </tr>
-
     <tr class="crm-membership-type-form-block-shippable_to">
       <td class="label">{$form.shippable_to.label}</td>
       <td>{$form.shippable_to.html}<br/>

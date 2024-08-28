@@ -70,7 +70,7 @@
   <field>
     <name>product_variant_unique_id</name>
     <uniqueName>inventory_product_variant_unique_id</uniqueName>
-    <title>Product Unique ID (IMEI)</title>
+    <title>Identifier (IMEI/MEID)</title>
     <type>varchar</type>
     <comment>e.g IMEI (International Mobile Equipment Identity) number .</comment>
     <length>100</length>
@@ -103,36 +103,18 @@
     <add>5.63</add>
   </field>
   <field>
-    <name>image_thumbnail</name>
-    <title>Thumbnail Image</title>
-    <uniqueName>inventory_product_variant_thumbnail</uniqueName>
-    <type>varchar</type>
-    <length>100</length>
-    <required>false</required>
-    <export>true</export>
+    <name>note</name>
+    <title>Note</title>
+    <uniqueName>inventory_product_variable_note</uniqueName>
+    <type>text</type>
+    <comment>A private note only visible to admins.</comment>
+    <html>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
+    </html>
     <import>true</import>
     <add>5.63</add>
-    <html>
-      <type>File</type>
-      <size>30</size>
-      <label>Thumbnail Image</label>
-    </html>
-  </field>
-  <field>
-    <name>image_actual</name>
-    <title>Image</title>
-    <uniqueName>inventory_product_variant_image</uniqueName>
-    <type>varchar</type>
-    <length>100</length>
-    <required>false</required>
-    <export>true</export>
-    <import>true</import>
-    <add>5.63</add>
-    <html>
-      <type>File</type>
-      <size>30</size>
-      <label>Image</label>
-    </html>
   </field>
   <field>
     <name>status</name>
@@ -228,7 +210,7 @@
   <field>
     <name>warranty_start_date</name>
     <uniqueName>inventory_product_variant_warranty_start_date</uniqueName>
-    <title>Warranty Start Date</title>
+    <title>Warranty start on</title>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/warranty(.?date)?/i</headerPattern>
@@ -241,7 +223,7 @@
   <field>
     <name>warranty_end_date</name>
     <uniqueName>inventory_product_variant_warranty_end_date</uniqueName>
-    <title>Warranty End Date</title>
+    <title>Warranty end on</title>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/warranty(.?date)?/i</headerPattern>

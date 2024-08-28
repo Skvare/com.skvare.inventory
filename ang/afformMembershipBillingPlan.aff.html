@@ -1,0 +1,28 @@
+<af-form ctrl="afform">
+  <af-entity actions="{create: true, update: true}" type="InventoryBillingPlans" name="InventoryBillingPlans1" label="Inventory Billing Plans" security="RBAC" url-autofill="1" />
+  <fieldset af-fieldset="InventoryBillingPlans1" class="af-container" af-title="Inventory Billing Plan">
+    <div class="af-container af-layout-inline">
+      <af-field name="name" />
+      <af-field name="membership_type_id" />
+    </div>
+    <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
+      <af-field name="amount" />
+      <af-field name="frequency_unit" />
+      <af-field name="frequency_interval" />
+    </div>
+    <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
+      <af-field name="intro_amount" />
+      <af-field name="intro_frequency_unit" />
+      <af-field name="intro_frequency_interval" />
+    </div>
+    <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
+      <af-field name="value" />
+      <af-field name="currency" />
+    </div>
+    <div class="af-container">
+      <af-field name="is_active" defn="{help_post: 'If unchecked, current memberships that have this billing plan will still\n use it, but it will not be available at renewal time or sign up.'}" />
+      <af-field name="renew_only" defn="{help_post: 'If checked, this billing plan is only available for renewals, not new signups.'}" />
+    </div>
+  </fieldset>
+  <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
+</af-form>

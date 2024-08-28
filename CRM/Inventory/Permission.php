@@ -17,7 +17,7 @@ class CRM_Inventory_Permission extends CRM_Core_Permission {
     $prefix = E::ts('Inventory', ['domain' => 'com.skvare.inventory']) . ': ';
 
     return [
-      // Acces Inventory Component.
+      // Access Inventory Component.
       'access Inventory' => [
         'label' => $prefix . E::ts('access Inventory', ['domain' => 'com.skvare.inventory']),
         'description' => E::ts('Access Inventory Component', ['domain' => 'com.skvare.inventory']),

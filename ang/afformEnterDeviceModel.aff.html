@@ -1,5 +1,5 @@
 <af-form ctrl="afform">
-  <af-entity actions="{create: true, update: true}" type="InventoryProduct" name="InventoryProduct1" label="Inventory Device Model" security="RBAC" data="{warehouse_id: '1', is_serialize: true}" />
+  <af-entity actions="{create: true, update: true}" type="InventoryProduct" name="InventoryProduct1" label="Inventory Device Model" security="RBAC" data="{warehouse_id: '1', is_serialize: true}" url-autofill="1" />
   <fieldset af-fieldset="InventoryProduct1" class="af-container" af-title="Inventory Device Model">
     <div class="af-container af-layout-inline">
       <af-field name="label" />
@@ -20,10 +20,6 @@
       <af-field name="reorder_point" />
       <af-field name="minimum_quantity_stock_level" />
       <af-field name="maximum_quantity_stock_level" />
-    </div>
-    <div class="af-container af-layout-inline" af-title="Images">
-      <af-field name="image_actual" />
-      <af-field name="image_thumbnail" />
     </div>
     <div class="af-container af-layout-inline" af-title="Packing">
       <af-field name="packed_weight" />
@@ -56,4 +52,3 @@
   </fieldset>
   <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
 </af-form>
-

@@ -1,0 +1,9 @@
+<af-form ctrl="afform">
+  <af-entity actions="{create: true, update: true}" type="InventoryProductMembership" name="InventoryProductMembership1" label="Inventory Product Membership 1" security="RBAC" data="{contact_id: 'user_contact_id'}" />
+  <fieldset af-fieldset="InventoryProductMembership1" class="af-container" af-title="Inventory Product Membership">
+    <af-field name="product_id" defn="{required: true, input_attrs: {}}" />
+    <af-field name="membership_type_id" />
+    <af-field name="is_product_serialize" />
+  </fieldset>
+  <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
+</af-form>

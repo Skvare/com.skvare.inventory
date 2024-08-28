@@ -1,0 +1,114 @@
+{
+  "type": "form",
+  "title": "Inventory Product and Membership Mapping",
+  "placement": [],
+  "icon": "fa-list-alt",
+  "server_route": "civicrm/inventory/device-model-membership",
+  "permission": [
+    "access CiviCRM",
+    "administer Inventory"
+  ],
+  "permission_operator": "AND",
+  "submit_enabled": true,
+  "create_submission": false,
+  "layout": [
+    {
+      "#tag": "af-form",
+      "ctrl": "afform",
+      "#children": [
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "af-entity",
+          "actions": {
+            "create": true,
+            "update": true
+          },
+          "type": "InventoryProductMembership",
+          "name": "InventoryProductMembership1",
+          "label": "Inventory Product Membership 1",
+          "security": "RBAC",
+          "data": {
+            "contact_id": "user_contact_id"
+          }
+        },
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "fieldset",
+          "af-fieldset": "InventoryProductMembership1",
+          "class": "af-container",
+          "af-title": "Inventory Product Membership",
+          "#children": [
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "af-field",
+              "name": "product_id",
+              "defn": {
+                "required": true,
+                "input_attrs": []
+              }
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "af-field",
+              "name": "membership_type_id"
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "af-field",
+              "name": "is_product_serialize"
+            },
+            {
+              "#text": "\n  "
+            }
+          ]
+        },
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "button",
+          "class": "af-button btn btn-primary",
+          "crm-icon": "fa-check",
+          "ng-click": "afform.submit()",
+          "ng-if": "afform.showSubmitButton",
+          "#children": [
+            {
+              "#text": "Submit"
+            }
+          ]
+        },
+        {
+          "#text": "\n"
+        }
+      ]
+    },
+    {
+      "#text": "\n"
+    }
+  ],
+  "name": "afformInventoryProductAndMembershipMapping",
+  "modified_date": "2024-08-23 06:43:21",
+  "requires": null,
+  "entity_type": null,
+  "join_entity": null,
+  "description": null,
+  "summary_contact_type": null,
+  "summary_weight": null,
+  "is_public": false,
+  "redirect": null,
+  "submit_limit": null,
+  "manual_processing": null,
+  "allow_verification_by_email": null,
+  "email_confirmation_template_id": null,
+  "navigation": null
+}

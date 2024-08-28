@@ -68,14 +68,15 @@
     <name>product_description</name>
     <title>Product Description</title>
     <uniqueName>inventory_product_description</uniqueName>
-    <type>varchar</type>
-    <length>512</length>
+    <type>text</type>
     <required>false</required>
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
     <html>
-      <type>Text</type>
+      <type>TextArea</type>
+      <rows>4</rows>
+      <cols>60</cols>
     </html>
   </field>
   <field>
@@ -85,7 +86,7 @@
     <required>true</required>
     <import>true</import>
     <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-    <comment>The amount that is shown to the user.</comment>
+    <comment>What the member pays for replacement.</comment>
     <html>
       <type>Text</type>
       <label>Listed Price</label>
@@ -98,7 +99,7 @@
     <required>true</required>
     <import>true</import>
     <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-    <comment>The fair market value of this item.</comment>
+    <comment>Fair market value for device.</comment>
     <html>
       <type>Text</type>
       <label>Current Price</label>
@@ -127,7 +128,7 @@
     <title>Product Note</title>
     <uniqueName>inventory_product_note</uniqueName>
     <type>text</type>
-    <comment>Product details.</comment>
+    <comment>Displayed to the user as a place to document additional features or issues.</comment>
     <html>
       <type>TextArea</type>
       <rows>4</rows>
@@ -162,36 +163,32 @@
     <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
-    <name>image_actual</name>
-    <title>Image</title>
-    <uniqueName>inventory_product_image</uniqueName>
+    <name>image_url</name>
+    <title>Image URL</title>
+    <uniqueName>inventory_product_image_url</uniqueName>
     <type>varchar</type>
-    <length>100</length>
+    <length>255</length>
     <required>false</required>
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
-    <comment>File url.</comment>
+    <comment>Full absolute URL</comment>
     <html>
-      <type>File</type>
-      <size>30</size>
-      <label>Image</label>
+      <type>Text</type>
     </html>
   </field>
   <field>
-    <name>image_thumbnail</name>
-    <title>Thumbnail Image</title>
-    <uniqueName>inventory_product_thumbnail</uniqueName>
+    <name>help_url</name>
+    <title>Help URL</title>
+    <uniqueName>inventory_product_help_url</uniqueName>
     <type>varchar</type>
-    <length>100</length>
+    <length>255</length>
     <required>false</required>
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
     <html>
-      <type>File</type>
-      <size>30</size>
-      <label>Thumbnail Image</label>
+      <type>Text</type>
     </html>
   </field>
   <field>
@@ -284,6 +281,7 @@
     <name>antenna</name>
     <title>Antenna</title>
     <uniqueName>inventory_product_antenna</uniqueName>
+    <comment>Supports external antenna</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -296,6 +294,7 @@
     <name>tether</name>
     <title>Tether</title>
     <uniqueName>inventory_product_tether</uniqueName>
+    <comment>Supports tethering via USB or Ethernet</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -308,6 +307,7 @@
     <name>powerbank</name>
     <title>Power Bank</title>
     <uniqueName>inventory_product_powerbank</uniqueName>
+    <comment>Supports charging external devices</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -320,6 +320,7 @@
     <name>batteryless</name>
     <title>Battery Less</title>
     <uniqueName>inventory_product_batteryless</uniqueName>
+    <comment>Can run without a battery</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -332,6 +333,7 @@
     <name>network_4g</name>
     <title>Network 4g</title>
     <uniqueName>inventory_product_network_4g</uniqueName>
+    <comment>Supports 4G networks</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -344,6 +346,7 @@
     <name>network_5g</name>
     <title>Network 5g</title>
     <uniqueName>inventory_product_network_5g</uniqueName>
+    <comment>Supports 5G networks</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -410,7 +413,22 @@
     <name>screen</name>
     <title>Screen</title>
     <uniqueName>inventory_product_screen</uniqueName>
-    <comment>Screen sizde details.</comment>
+    <comment>Screen size details. e.g. 5.81", OLED 2340x1080</comment>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>storage</name>
+    <title>Storage</title>
+    <uniqueName>inventory_product_storage</uniqueName>
+    <comment>Storage size. e.g. 128 GB</comment>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
@@ -425,7 +443,7 @@
     <name>memory</name>
     <title>Memory</title>
     <uniqueName>inventory_product_memory</uniqueName>
-    <comment>Product Memory size.</comment>
+    <comment>Product Memory size. e.g. 4 GB</comment>
     <type>varchar</type>
     <length>100</length>
     <required>false</required>
@@ -440,6 +458,7 @@
     <name>color</name>
     <title>Color</title>
     <uniqueName>inventory_product_color</uniqueName>
+    <comment>e.g. Black</comment>
     <comment>Product Color.</comment>
     <type>varchar</type>
     <length>100</length>
@@ -627,6 +646,7 @@
     <name>is_discontinued</name>
     <title>Is Discontinued</title>
     <uniqueName>inventory_product_is_discontinued</uniqueName>
+    <comment>When a model is discontinued, a membership cannot be renewed until they upgrade the device.</comment>
     <type>boolean</type>
     <default>0</default>
     <required>false</required>
@@ -639,12 +659,58 @@
     <name>is_active</name>
     <title>Is Active</title>
     <uniqueName>inventory_product_is_active</uniqueName>
+    <comment>If not active, new devices of this type will not be available. Users with existing devices of this type will still see their devices listed.</comment>
     <type>boolean</type>
     <default>1</default>
     <required>false</required>
     <export>true</export>
     <html>
       <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>inventory_display</name>
+    <title>Inventory Display</title>
+    <uniqueName>inventory_product_inventory_display</uniqueName>
+    <comment>Show or hide this model on the admin dashboard.</comment>
+    <type>boolean</type>
+    <default>1</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>inventory_status_note</name>
+    <uniqueName>inventory_product_inventory_status_note</uniqueName>
+    <title>Inventory note</title>
+    <type>varchar</type>
+    <comment>If defined, this note will replace the default inventory message that is based on the inventory status.</comment>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>inventory_status</name>
+    <title>Inventory Status</title>
+    <uniqueName>inventory_product_inventory_status</uniqueName>
+    <type>varchar</type>
+    <length>100</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <pseudoconstant>
+      <callback>CRM_Inventory_Utils::productInventoryStatus</callback>
+    </pseudoconstant>
+    <html>
+      <type>Select</type>
+      <label>Inventory Status</label>
     </html>
   </field>
  </table>

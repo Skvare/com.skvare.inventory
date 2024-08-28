@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS `civicrm_inventory_supplier`;
 DROP TABLE IF EXISTS `civicrm_inventory_shipment`;
 DROP TABLE IF EXISTS `civicrm_inventory_referrals`;
 DROP TABLE IF EXISTS `civicrm_inventory_category`;
+DROP TABLE IF EXISTS `civicrm_inventory_billing_plans`;
 DROP TABLE IF EXISTS `civicrm_inventory_batch`;
 
 SET FOREIGN_KEY_CHECKS=1;
@@ -62,6 +63,31 @@ CREATE TABLE `civicrm_inventory_batch` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UI_name`(name),
   CONSTRAINT FK_civicrm_inventory_batch_created_id FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL)
+ENGINE=InnoDB;
+
+-- /*******************************************************
+-- *
+-- * civicrm_inventory_billing_plans
+-- *
+-- * FIXME
+-- *
+-- *******************************************************/
+CREATE TABLE `civicrm_inventory_billing_plans` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryBillingPlans ID',
+  `name` varchar(100) NOT NULL,
+  `membership_type_id` int unsigned NOT NULL COMMENT 'Membership Type Associated with product.',
+  `amount` decimal(20,2) NOT NULL COMMENT 'The amount that is shown to the user.',
+  `frequency_unit` varchar(8) NOT NULL DEFAULT 'year' COMMENT 'Time units for recurrence of payment.',
+  `frequency_interval` int unsigned NOT NULL DEFAULT 1 COMMENT 'Number of time units for recurrence of payment.',
+  `intro_amount` decimal(20,2) NULL COMMENT 'The fair market value of this item.',
+  `intro_frequency_unit` varchar(8) NULL DEFAULT 'year' COMMENT 'Time units for recurrence of payment.',
+  `intro_frequency_interval` int unsigned NULL DEFAULT 1 COMMENT 'Number of time units for recurrence of payment.',
+  `value` decimal(20,2) NULL COMMENT 'The fair market value of this item.',
+  `currency` varchar(3) DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.',
+  `renew_only` tinyint NULL DEFAULT 0 COMMENT 'If checked, this billing plan is only available for renewals, not new signups.',
+  `is_active` tinyint NULL DEFAULT 1 COMMENT 'If unchecked, current memberships that have this billing plan will still use it, but it will not be available at renewal time or sign up.',
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_civicrm_inventory_billing_plans_membership_type_id FOREIGN KEY (`membership_type_id`) REFERENCES `civicrm_membership_type`(`id`) ON DELETE RESTRICT)
 ENGINE=InnoDB;
 
 -- /*******************************************************
@@ -172,33 +198,34 @@ CREATE TABLE `civicrm_inventory_product` (
   `label` varchar(100) NOT NULL,
   `product_code` varchar(100) NOT NULL COMMENT 'Product Code SKU.',
   `external_code` varchar(100) NULL,
-  `product_description` varchar(512) NULL,
-  `listed_price` decimal(20,2) NOT NULL COMMENT 'The amount that is shown to the user.',
-  `current_price` decimal(20,2) NOT NULL COMMENT 'The fair market value of this item.',
+  `product_description` text NULL,
+  `listed_price` decimal(20,2) NOT NULL COMMENT 'What the member pays for replacement.',
+  `current_price` decimal(20,2) NOT NULL COMMENT 'Fair market value for device.',
   `product_brand` varchar(100) NULL,
-  `product_note` text COMMENT 'Product details.',
+  `product_note` text COMMENT 'Displayed to the user as a place to document additional features or issues.',
   `product_category_id` int unsigned NOT NULL COMMENT 'FK to Category',
-  `image_actual` varchar(100) NULL COMMENT 'File url.',
-  `image_thumbnail` varchar(100) NULL,
+  `image_url` varchar(255) NULL COMMENT 'Full absolute URL',
+  `help_url` varchar(255) NULL,
   `packed_weight` decimal(20,2) NULL COMMENT 'Packed Weight',
   `packed_height` decimal(20,2) NULL COMMENT 'Packed Height',
   `packed_width` decimal(20,2) NULL COMMENT 'Packed Width',
   `packed_depth` decimal(20,2) NULL COMMENT 'Packed Depth',
   `product_variant_battery` varchar(100) NULL COMMENT 'Battery backup time.',
   `product_variant_speed` varchar(100) NULL COMMENT 'Device Speed.',
-  `antenna` tinyint NULL DEFAULT 0,
-  `tether` tinyint NULL DEFAULT 0,
-  `powerbank` tinyint NULL DEFAULT 0,
-  `batteryless` tinyint NULL DEFAULT 0,
-  `network_4g` tinyint NULL DEFAULT 0,
-  `network_5g` tinyint NULL DEFAULT 0,
+  `antenna` tinyint NULL DEFAULT 0 COMMENT 'Supports external antenna',
+  `tether` tinyint NULL DEFAULT 0 COMMENT 'Supports tethering via USB or Ethernet',
+  `powerbank` tinyint NULL DEFAULT 0 COMMENT 'Supports charging external devices',
+  `batteryless` tinyint NULL DEFAULT 0 COMMENT 'Can run without a battery',
+  `network_4g` tinyint NULL DEFAULT 0 COMMENT 'Supports 4G networks',
+  `network_5g` tinyint NULL DEFAULT 0 COMMENT 'Supports 5G networks',
   `has_sim` tinyint NULL DEFAULT 0,
   `has_device` tinyint NULL DEFAULT 0,
   `warranty_type_id` int unsigned NULL,
   `uom` varchar(100) NULL COMMENT 'Feet, pounds, and gallons are all examples of units of measure.',
-  `screen` varchar(100) NULL COMMENT 'Screen sizde details.',
-  `memory` varchar(100) NULL COMMENT 'Product Memory size.',
-  `color` varchar(100) NULL COMMENT 'Product Color.',
+  `screen` varchar(100) NULL COMMENT 'Screen size details. e.g. 5.81\", OLED 2340x1080',
+  `storage` varchar(100) NULL COMMENT 'Storage size. e.g. 128 GB',
+  `memory` varchar(100) NULL COMMENT 'Product Memory size. e.g. 4 GB',
+  `color` varchar(100) NULL COMMENT 'e.g. Black',
   `premium_is_optional` tinyint NULL DEFAULT 0,
   `premium_needs_address` tinyint NULL DEFAULT 0,
   `premium_shirt_count` int unsigned NULL,
@@ -212,8 +239,11 @@ CREATE TABLE `civicrm_inventory_product` (
   `shelf` varchar(256) NULL COMMENT 'Use to locate the item in warehouse',
   `weight` int unsigned NULL DEFAULT 1 COMMENT 'Controls display sort order.',
   `is_serialize` tinyint NULL DEFAULT 1,
-  `is_discontinued` tinyint NULL DEFAULT 0,
-  `is_active` tinyint NULL DEFAULT 1,
+  `is_discontinued` tinyint NULL DEFAULT 0 COMMENT 'When a model is discontinued, a membership cannot be renewed until they upgrade the device.',
+  `is_active` tinyint NULL DEFAULT 1 COMMENT 'If not active, new devices of this type will not be available. Users with existing devices of this type will still see their devices listed.',
+  `inventory_display` tinyint NULL DEFAULT 1 COMMENT 'Show or hide this model on the admin dashboard.',
+  `inventory_status_note` varchar(255) NULL COMMENT 'If defined, this note will replace the default inventory message that is based on the inventory status.',
+  `inventory_status` varchar(100) NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_product_product_category_id FOREIGN KEY (`product_category_id`) REFERENCES `civicrm_inventory_category`(`id`) ON DELETE RESTRICT,
   CONSTRAINT FK_civicrm_inventory_product_warehouse_id FOREIGN KEY (`warehouse_id`) REFERENCES `civicrm_inventory_warehouse`(`id`) ON DELETE SET NULL)
@@ -343,8 +373,7 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `product_variant_phone_number` varchar(100) NULL COMMENT 'Phone number linked with device.',
   `product_variant_unique_id` varchar(100) NULL COMMENT 'e.g IMEI (International Mobile Equipment Identity) number .',
   `product_variant_details` text COMMENT 'Product Variant details.',
-  `image_thumbnail` varchar(100) NULL,
-  `image_actual` varchar(100) NULL,
+  `note` text COMMENT 'A private note only visible to admins.',
   `status` varchar(100) NULL,
   `replaced_product_id` int unsigned COMMENT 'Optional Product.',
   `is_replaced` tinyint NULL DEFAULT 0,

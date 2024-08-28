@@ -25,7 +25,7 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-08-23 10:11:33",
+  "modified_date": "2024-08-28 05:26:47",
   "layout": [
     {
       "#tag": "af-form",
@@ -47,7 +47,8 @@
           "data": {
             "warehouse_id": "1",
             "is_serialize": true
-          }
+          },
+          "url-autofill": "1"
         },
         {
           "#text": "\n  "
@@ -186,33 +187,6 @@
                 {
                   "#tag": "af-field",
                   "name": "maximum_quantity_stock_level"
-                },
-                {
-                  "#text": "\n    "
-                }
-              ]
-            },
-            {
-              "#text": "\n    "
-            },
-            {
-              "#tag": "div",
-              "class": "af-container af-layout-inline",
-              "af-title": "Images",
-              "#children": [
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "image_actual"
-                },
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "image_thumbnail"
                 },
                 {
                   "#text": "\n    "

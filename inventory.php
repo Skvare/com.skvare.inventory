@@ -65,46 +65,31 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
   }
   $entityTypes[$membershipType]['fields_callback'][]
     = function ($class, &$fields) {
-    $fields['signup_fee'] = [
-      'name' => 'signup_fee',
-      'title' => ts('Signup Fee'),
-      'sql_type' => 'decimal(18,9)',
-      'type' => CRM_Utils_Type::T_FLOAT,
-      'input_type' => 'Text',
-      'description' => ts('This is the fee charged for the first time while buying the product.'),
-      'add' => '5.75',
-      'default' => '0',
-      'input_attrs' => [
-        'label' => ts('Signup Fee'),
+    $fields['may_renew'] = [
+      'name' => 'may_renew',
+      'type' => CRM_Utils_Type::T_BOOLEAN,
+      'title' => E::ts('May Renew?'),
+      'description' => E::ts('If true, a member may renew at this membership level.'),
+      'required' => FALSE,
+      'usage' => [
+        'import' => TRUE,
+        'export' => TRUE,
+        'duplicate_matching' => FALSE,
+        'token' => FALSE,
       ],
-      'html' => [
-        'type' => 'Text',
-      ],
-      'where' => 'civicrm_membership_type.signup_fee',
+      'where' => 'civicrm_membership_type.may_renew',
+      'export' => TRUE,
+      'default' => '1',
       'table_name' => 'civicrm_membership_type',
       'entity' => 'MembershipType',
       'bao' => 'CRM_Member_BAO_MembershipType',
-    ];
-    $fields['renewal_fee'] = [
-      'name' => 'renewal_fee',
-      'title' => ts('Renewal Fee'),
-      'sql_type' => 'decimal(18,9)',
-      'type' => CRM_Utils_Type::T_FLOAT,
-      'input_type' => 'Text',
-      'description' => ts('This fee will be charged for renewal of membership.'),
-      'add' => '5.75',
-      'default' => '0',
-      'input_attrs' => [
-        'label' => ts('Renewal Fee'),
-      ],
+      'localizable' => 0,
       'html' => [
-        'type' => 'Text',
+        'type' => 'CheckBox',
       ],
-      'where' => 'civicrm_membership_type.renewal_fee',
-      'table_name' => 'civicrm_membership_type',
-      'entity' => 'MembershipType',
-      'bao' => 'CRM_Member_BAO_MembershipType',
+      'add' => NULL,
     ];
+
     $fields['shippable_to'] = [
       'name' => 'shippable_to',
       'type' => CRM_Utils_Type::T_STRING,
@@ -119,7 +104,6 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'table_name' => 'civicrm_membership_type',
       'entity' => 'MembershipType',
       'bao' => 'CRM_Member_BAO_MembershipType',
-      'localizable' => 1,
       'input_attrs' => [
         'multiple' => '1',
       ],
@@ -129,7 +113,7 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
         'label' => ts("Shippable To Country."),
       ],
       'pseudoconstant' => [
-        'callback' => 'CRM_Inventory_Utils::membershipTypeShipableTo',
+        'callback' => 'CRM_Inventory_Utils::membershipTypeShippableTo',
       ],
       'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
     ];
@@ -156,9 +140,6 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'html' => [
         'type' => 'Number',
       ],
-      'input_attrs' => [
-        'label' => ts('Product ID'),
-      ],
       'entity_reference' => [
         'entity' => 'InventoryProductVariant',
         'key' => 'id',
@@ -184,9 +165,6 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'html' => [
         'type' => 'Number',
       ],
-      'input_attrs' => [
-        'label' => ts('Product ID'),
-      ],
       'entity_reference' => [
         'entity' => 'InventorySales',
         'key' => 'id',
@@ -207,9 +185,6 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       'description' => ts('Product Additional Details.'),
       'add' => '5.75',
       'default' => 'NULL',
-      'input_attrs' => [
-        'label' => ts('Product Additional Details.'),
-      ],
       'html' => [
         'type' => 'Text',
       ],
@@ -389,21 +364,8 @@ function _inventory_ApiCall($entity, $action) {
 function inventory_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Member_Form_MembershipType') {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType');
-    $shippableTo = CRM_Inventory_Utils::membershipTypeShipableTo();
-    $form->addMoney('signup_fee',
-      ts('Signup Fee'),
-      FALSE,
-      $attributes['signup_fee'],
-      FALSE, 'currency', NULL, FALSE
-    );
-
-    $form->addMoney('renewal_fee',
-      ts('Renewal Fee'),
-      FALSE,
-      $attributes['renewal_fee'],
-      FALSE, 'currency', NULL, FALSE
-    );
-
+    $shippableTo = CRM_Inventory_Utils::membershipTypeShippableTo();
+    $form->addElement('checkbox', 'may_renew', ts('May Renew?'));
     $form->add('select', 'shippable_to', E::ts('Product Shippable to Country(s)'),
       $shippableTo, FALSE, ['class' => 'crm-select2 huge', 'multiple' => 1]);
     if ($form->_action & CRM_Core_Action::UPDATE) {
