@@ -17,7 +17,7 @@
     "create inventory product"
   ],
   "permission_operator": "AND",
-  "redirect": "civicrm/inventory/device-model-list",
+  "redirect": "civicrm/inventory/device-model",
   "submit_enabled": true,
   "submit_limit": null,
   "create_submission": true,
@@ -25,7 +25,7 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-08-28 13:57:08",
+  "modified_date": "2024-08-29 04:08:10",
   "layout": [
     {
       "#tag": "af-form",
@@ -78,14 +78,7 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "product_brand"
-                },
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "warranty_type_id"
+                  "name": "product_code"
                 },
                 {
                   "#text": "\n      "
@@ -118,14 +111,36 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "product_code"
+                  "name": "product_brand"
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "product_description"
+                  "name": "warranty_type_id"
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "product_description",
+                  "defn": {
+                    "input_type": "RichTextEditor"
+                  }
                 },
                 {
                   "#text": "\n      "
@@ -377,6 +392,38 @@
             {
               "#tag": "div",
               "class": "af-container af-layout-inline",
+              "#children": [
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "has_device",
+                  "defn": {
+                    "label": "Device Included?"
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "has_sim",
+                  "defn": {
+                    "label": "SIM Included"
+                  }
+                },
+                {
+                  "#text": "\n    "
+                }
+              ]
+            },
+            {
+              "#text": "\n    "
+            },
+            {
+              "#tag": "div",
+              "class": "af-container af-layout-inline",
               "af-title": "Yes/No",
               "#children": [
                 {
@@ -387,16 +434,6 @@
                   "name": "batteryless",
                   "defn": {
                     "help_post": "Can run without a battery "
-                  }
-                },
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "has_device",
-                  "defn": {
-                    "label": "Device Included?"
                   }
                 },
                 {
@@ -435,29 +472,20 @@
                 },
                 {
                   "#tag": "af-field",
+                  "name": "network_5g",
+                  "defn": {
+                    "help_post": "Supports 5G networks ",
+                    "label": "5G"
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
                   "name": "tether",
                   "defn": {
                     "help_post": "Supports tethering via USB or Ethernet"
-                  }
-                },
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "has_sim",
-                  "defn": {
-                    "label": "SIM Included"
-                  }
-                },
-                {
-                  "#text": "\n      "
-                },
-                {
-                  "#tag": "af-field",
-                  "name": "network_5g",
-                  "defn": {
-                    "help_post": "Supports 5G networks "
                   }
                 },
                 {
@@ -493,7 +521,7 @@
                   "#tag": "af-field",
                   "name": "inventory_status",
                   "defn": {
-                    "help_post": "\n\nfull: device is fully stocked\nlow: limited inventory is reserved for replacement orders only.\ndelayed: members see that shipment may be delayed.\nout: no inventory, and members are unable to order.\n",
+                    "help_post": " full: device is fully stocked   low: limited inventory is reserved for replacement orders only.     delayed: members see that shipment may be delayed.     out: no inventory, and members are unable to order. ",
                     "input_attrs": []
                   }
                 },
@@ -547,7 +575,8 @@
                   "#tag": "af-field",
                   "name": "is_active",
                   "defn": {
-                    "help_post": "If not active, new devices of this type will not be available. Users \nwith existing devices of this type will still see their devices listed."
+                    "help_post": "If not active, new devices of this type will not be available. Users \nwith existing devices of this type will still see their devices listed.",
+                    "input_type": "Radio"
                   }
                 },
                 {

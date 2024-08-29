@@ -15,7 +15,7 @@ class CRM_Inventory_Form_Devicereplacement extends CRM_Core_Form {
   public function buildQuickForm(): void {
     $contactID = CRM_Core_Session::getLoggedInContactID();
     $productList = CRM_Inventory_BAO_InventoryProductVariantReplacement::getContactProductList($contactID);
-
+    $this->assign('productList', $productList);
     // add form elements
     $this->add(
       'select', // field type

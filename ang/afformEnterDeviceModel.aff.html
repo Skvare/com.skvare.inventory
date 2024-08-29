@@ -3,14 +3,16 @@
   <fieldset af-fieldset="InventoryProduct1" class="af-container" af-title="Inventory Device Model">
     <div class="af-container af-layout-inline">
       <af-field name="label" />
-      <af-field name="product_brand" />
-      <af-field name="warranty_type_id" />
+      <af-field name="product_code" />
       <af-field name="product_category_id" />
     </div>
     <div class="af-container af-layout-inline">
       <af-field name="external_code" />
-      <af-field name="product_code" />
-      <af-field name="product_description" />
+      <af-field name="product_brand" />
+      <af-field name="warranty_type_id" />
+    </div>
+    <div class="af-container">
+      <af-field name="product_description" defn="{input_type: 'RichTextEditor'}" />
       <af-field name="product_note" />
     </div>
     <div class="af-container af-layout-inline" af-title="Price">
@@ -41,26 +43,28 @@
       <af-field name="color" defn="{help_post: 'e.g. Black', input_attrs: {}}" />
       <af-field name="storage" defn="{help_post: 'e.g. 128 GB', input_attrs: {}}" />
     </div>
+    <div class="af-container af-layout-inline">
+      <af-field name="has_device" defn="{label: 'Device Included?'}" />
+      <af-field name="has_sim" defn="{label: 'SIM Included'}" />
+    </div>
     <div class="af-container af-layout-inline" af-title="Yes/No">
       <af-field name="batteryless" defn="{help_post: 'Can run without a battery\u00a0'}" />
-      <af-field name="has_device" defn="{label: 'Device Included?'}" />
       <af-field name="powerbank" defn="{help_post: 'Supports charging external devices\u00a0'}" />
       <af-field name="antenna" defn="{help_post: 'Supports external antenna'}" />
       <af-field name="network_4g" defn="{help_post: 'Supports 4G networks\u00a0', label: '4G'}" />
+      <af-field name="network_5g" defn="{help_post: 'Supports 5G networks\u00a0', label: '5G'}" />
       <af-field name="tether" defn="{help_post: 'Supports tethering via USB or Ethernet'}" />
-      <af-field name="has_sim" defn="{label: 'SIM Included'}" />
-      <af-field name="network_5g" defn="{help_post: 'Supports 5G networks\u00a0'}" />
     </div>
     <div class="af-container af-layout-inline">
       <af-field name="row" />
       <af-field name="shelf" />
-      <af-field name="inventory_status" defn="{help_post: '\n\nfull: device is fully stocked\nlow: limited inventory is reserved for replacement orders only.\ndelayed: members see that shipment may be delayed.\nout: no inventory, and members are unable to order.\n', input_attrs: {}}" />
+      <af-field name="inventory_status" defn="{help_post: '\u00a0full: device is fully stocked\u00a0\u00a0 low: limited inventory is reserved for replacement orders only. \u00a0\u00a0\u00a0 delayed: members see that shipment may be delayed. \u00a0\u00a0\u00a0 out: no inventory, and members are unable to order. ', input_attrs: {}}" />
     </div>
     <af-field name="inventory_status_note" defn="{help_post: '\u00a0If defined, this note will replace the default inventory message that is based on the inventory status.\u00a0', input_attrs: {}}" />
     <div class="af-container af-layout-inline">
       <af-field name="inventory_display" defn="{help_post: 'Show or hide this model on the admin dashboard.'}" />
       <af-field name="is_discontinued" defn="{help_post: 'When a model is discontinued, a membership cannot be renewed until they upgrade the device.'}" />
-      <af-field name="is_active" defn="{help_post: 'If not active, new devices of this type will not be available. Users \nwith existing devices of this type will still see their devices listed.'}" />
+      <af-field name="is_active" defn="{help_post: 'If not active, new devices of this type will not be available. Users \nwith existing devices of this type will still see their devices listed.', input_type: 'Radio'}" />
     </div>
   </fieldset>
   <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
