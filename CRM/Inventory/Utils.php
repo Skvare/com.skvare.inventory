@@ -112,4 +112,16 @@ class CRM_Inventory_Utils {
     return $result;
   }
 
+  public static function  getBillingPlanForMemberhshipType($typeID) {
+    $inventoryBillingPlanses = \Civi\Api4\InventoryBillingPlans::get(TRUE)
+      ->addWhere('membership_type_id', '=', $typeID)
+      ->setLimit(25)
+      ->execute();
+    $billingPlans = [];
+    foreach ($inventoryBillingPlanses as $inventoryBillingPlans) {
+      $billingPlans[] = $inventoryBillingPlans;
+    }
+    return $billingPlans;
+  }
+
 }

@@ -371,6 +371,19 @@ function inventory_civicrm_buildForm($formName, &$form) {
     if ($form->_action & CRM_Core_Action::UPDATE) {
       $membershipExtras = CRM_Inventory_Utils::getMembershipTypeSettings($form->_id);
       $form->setDefaults($membershipExtras);
+      \Civi::service('angularjs.loader')->addModules('afsearchMembershipBillingPlan');
+      \Civi::service('angularjs.loader')->addModules('afsearchProductMembershipMappingList');
+    }
+  }
+}
+
+function inventory_civicrm_links(string $op, ?string $objectName, $objectID, array &$links, ?int &$mask, array &$values): void {
+  if ($op == 'membershipType.manage.action' && $objectName == 'MembershipType') {
+    foreach ($links as &$link) {
+      if ($link['bit'] == CRM_Core_Action::UPDATE) {
+        $link['f'] = '?membership_type_id=' . $values['id'];
+        $link['class'] = 'no-popup';
+      }
     }
   }
 }

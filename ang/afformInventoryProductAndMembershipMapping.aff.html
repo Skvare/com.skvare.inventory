@@ -1,9 +1,14 @@
 <af-form ctrl="afform">
-  <af-entity actions="{create: true, update: true}" type="InventoryProductMembership" name="InventoryProductMembership1" label="Inventory Product Membership 1" security="RBAC" data="{contact_id: 'user_contact_id'}" />
+  <af-entity actions="{create: true, update: true}" type="InventoryProductMembership" name="InventoryProductMembership1" label="Inventory Product Membership 1" security="RBAC" data="{contact_id: 'user_contact_id'}" url-autofill="1" />
   <fieldset af-fieldset="InventoryProductMembership1" class="af-container" af-title="Inventory Product Membership">
-    <af-field name="product_id" defn="{required: true, input_attrs: {}}" />
-    <af-field name="membership_type_id" />
-    <af-field name="is_product_serialize" />
+    <div class="af-container af-layout-cols">
+      <af-field name="product_id" defn="{required: true, input_attrs: {}}" />
+      <af-field name="membership_type_id" />
+    </div>
+    <div class="af-container af-layout-inline">
+      <af-field name="is_product_serialize" defn="{help_post: 'Product you selected is electronic device ?'}" />
+      <af-field name="is_active" defn="{help_post: 'If unchecked,\u00a0 Product mapped with this membership won\'t be available for sale.'}" />
+    </div>
   </fieldset>
   <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Submit</button>
 </af-form>

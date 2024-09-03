@@ -1,0 +1,52 @@
+{
+  "type": "search",
+  "title": "Product Membership Mapping List",
+  "placement": [],
+  "icon": "fa-list-alt",
+  "server_route": "civicrm/inventory/membership-product-list",
+  "permission": [
+    "access CiviCRM",
+    "administer Inventory"
+  ],
+  "permission_operator": "AND",
+  "modified_date": "2024-09-02 10:40:00",
+  "requires": null,
+  "entity_type": null,
+  "join_entity": null,
+  "description": null,
+  "summary_contact_type": null,
+  "summary_weight": null,
+  "is_public": false,
+  "redirect": null,
+  "submit_enabled": true,
+  "submit_limit": null,
+  "create_submission": null,
+  "manual_processing": null,
+  "allow_verification_by_email": null,
+  "email_confirmation_template_id": null,
+  "navigation": null,
+  "layout": [
+    {
+      "#tag": "div",
+      "af-fieldset": "",
+      "#children": [
+        {
+          "#text": "\n  "
+        },
+        {
+          "#tag": "crm-search-display-table",
+          "search-name": "Inventory_Product_Membership_List_For_Membership_Type",
+          "display-name": "Inventory_Product_Membership_List_For_Membership_Type_Table_1",
+          "filters": "{membership_type_id: routeParams.membership_type_id}"
+        },
+        {
+          "#text": "\n"
+        }
+      ]
+    },
+    {
+      "#text": "\n"
+    }
+  ],
+  "name": "afsearchProductMembershipMappingList"
+}

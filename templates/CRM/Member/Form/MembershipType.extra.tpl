@@ -1,9 +1,11 @@
 {literal}
   <script type="text/javascript">
     CRM.$(function($) {
-      $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-period_type');
-      $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-period_type');
-      $('.crm-membership-type-form-block-billing_plan').insertAfter('.crm-membership-type-form-block-period_type');
+      $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-auto_renew');
+      $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-auto_renew');
+      $('.crm-membership-type-form-block-billing_plan').insertAfter('.crm-membership-type-form-block-auto_renew');
+      $('.crm-membership-type-form-block-product_mapping').insertAfter('.crm-membership-type-form-block-auto_renew');
+
     });
   </script>
 {/literal}
@@ -12,10 +14,26 @@
   <table class="form-layout-compressed" style="display: none">
     <tr class="crm-membership-type-form-block-billing_plan">
       <td class="label"><label for="period_type">Billing Plan information</label></td>
-      <td colspan="1">
-        <a href="/civicrm/inventory/membership-billing-plan"><i class="crm-i fa-plus" aria-hidden="true"></i> Add New Billing Plan</a>
-        <br/><br/>
-        <a class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/membership-billing-plan-list" q="" f="?membership_type_id=$membershipTypeId"}'><i class="crm-i fa-list" aria-hidden="true"></i> {ts}List Billing Plan{/ts}</a>
+      <td>
+        <div>
+          <div class="crm-container" id="bootstrap-theme">
+            <crm-angular-js modules='afsearchMembershipBillingPlan'>
+              <afsearch-membership-billing-plan></afsearch-membership-billing-plan>
+            </crm-angular-js>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr class="crm-membership-type-form-block-product_mapping">
+      <td class="label"><label for="period_type">Product Linked</label></td>
+      <td>
+        <div>
+          <div class="crm-container" id="bootstrap-theme">
+            <crm-angular-js modules='afsearchProductMembershipMappingList'>
+              <afsearch-product-membership-mapping-list></afsearch-product-membership-mapping-list>
+            </crm-angular-js>
+          </div>
+        </div>
       </td>
     </tr>
     <tr class="crm-membership-type-form-block-may_renew">

@@ -82,7 +82,6 @@
     <type>varchar</type>
     <required>true</required>
     <length>8</length>
-    <default>'year'</default>
     <comment>Time units for recurrence of payment.</comment>
     <pseudoconstant>
       <optionGroupName>recur_frequency_units</optionGroupName>
@@ -98,8 +97,18 @@
     <title>Frequency interval</title>
     <type>int unsigned</type>
     <required>true</required>
-    <default>1</default>
     <comment>Number of time units for recurrence of payment.</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>installments</name>
+    <uniqueName>inventory_billing_frequency_installments</uniqueName>
+    <title>Number of Installments</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.</comment>
     <html>
       <type>Text</type>
     </html>
@@ -124,7 +133,6 @@
     <type>varchar</type>
     <required>false</required>
     <length>8</length>
-    <default>'year'</default>
     <comment>Time units for recurrence of payment.</comment>
     <pseudoconstant>
       <optionGroupName>recur_frequency_units</optionGroupName>
@@ -140,8 +148,18 @@
     <title>Intro frequency interval</title>
     <type>int unsigned</type>
     <required>false</required>
-    <default>1</default>
     <comment>Number of time units for recurrence of payment.</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>intro_installments</name>
+    <uniqueName>inventory_billing_frequency_intro_installments</uniqueName>
+    <title>Number of Installments</title>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.</comment>
     <html>
       <type>Text</type>
     </html>

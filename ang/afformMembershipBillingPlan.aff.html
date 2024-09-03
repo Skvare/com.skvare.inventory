@@ -6,14 +6,16 @@
       <af-field name="membership_type_id" />
     </div>
     <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
-      <af-field name="amount" />
-      <af-field name="frequency_unit" />
-      <af-field name="frequency_interval" />
+      <af-field name="amount" defn="{help_post: 'Amount to be charged each recurrence.', input_attrs: {}}" />
+      <af-field name="frequency_unit" defn="{help_post: 'Time units for recurrence of payment.', input_attrs: {}}" />
+      <af-field name="frequency_interval" defn="{help_post: 'Number of time units for recurrence of payment.', input_attrs: {}}" />
+      <af-field name="installments" defn="{help_post: 'Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.', input_attrs: {}}" />
     </div>
     <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
-      <af-field name="intro_amount" />
-      <af-field name="intro_frequency_unit" />
-      <af-field name="intro_frequency_interval" />
+      <af-field name="intro_amount" defn="{help_post: 'Amount to be charged each recurrence.', input_attrs: {}}" />
+      <af-field name="intro_frequency_unit" defn="{help_post: 'Time units for recurrence of payment.', input_attrs: {}}" />
+      <af-field name="intro_frequency_interval" defn="{help_post: 'Number of time units for recurrence of payment.', input_attrs: {}}" />
+      <af-field name="intro_installments" defn="{help_post: 'Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.', input_attrs: {}, label: 'Intro Number of Installments'}" />
     </div>
     <div class="af-container af-layout-inline" style="border: 1px dotted #000000">
       <af-field name="value" />

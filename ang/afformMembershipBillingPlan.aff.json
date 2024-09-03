@@ -23,7 +23,7 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-08-28 12:38:35",
+  "modified_date": "2024-09-03 01:57:02",
   "layout": [
     {
       "#tag": "af-form",
@@ -92,21 +92,44 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "amount"
+                  "name": "amount",
+                  "defn": {
+                    "help_post": "Amount to be charged each recurrence.",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "frequency_unit"
+                  "name": "frequency_unit",
+                  "defn": {
+                    "help_post": "Time units for recurrence of payment.",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "frequency_interval"
+                  "name": "frequency_interval",
+                  "defn": {
+                    "help_post": "Number of time units for recurrence of payment.",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "installments",
+                  "defn": {
+                    "help_post": "Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n    "
@@ -126,21 +149,45 @@
                 },
                 {
                   "#tag": "af-field",
-                  "name": "intro_amount"
+                  "name": "intro_amount",
+                  "defn": {
+                    "help_post": "Amount to be charged each recurrence.",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "intro_frequency_unit"
+                  "name": "intro_frequency_unit",
+                  "defn": {
+                    "help_post": "Time units for recurrence of payment.",
+                    "input_attrs": []
+                  }
                 },
                 {
                   "#text": "\n      "
                 },
                 {
                   "#tag": "af-field",
-                  "name": "intro_frequency_interval"
+                  "name": "intro_frequency_interval",
+                  "defn": {
+                    "help_post": "Number of time units for recurrence of payment.",
+                    "input_attrs": []
+                  }
+                },
+                {
+                  "#text": "\n      "
+                },
+                {
+                  "#tag": "af-field",
+                  "name": "intro_installments",
+                  "defn": {
+                    "help_post": "Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.",
+                    "input_attrs": [],
+                    "label": "Intro Number of Installments"
+                  }
                 },
                 {
                   "#text": "\n    "
