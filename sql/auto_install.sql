@@ -119,15 +119,15 @@ ENGINE=InnoDB;
 -- *******************************************************/
 CREATE TABLE `civicrm_inventory_referrals` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryReferrals ID',
-  `creator_id` int unsigned COMMENT 'FK to Contact',
-  `consumer_id` int unsigned COMMENT 'FK to Contact',
+  `creator_id` int unsigned COMMENT 'FK to Membership',
+  `consumer_id` int unsigned COMMENT 'FK to Membership',
   `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
-  `before_end_date` datetime,
-  `after_end_date` datetime,
+  `before_end_date` datetime COMMENT 'Membership End Date Before referral',
+  `after_end_date` datetime COMMENT 'Membership End Date after referral',
   `referral_code` varchar(100) NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_inventory_referrals_creator_id FOREIGN KEY (`creator_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
-  CONSTRAINT FK_civicrm_inventory_referrals_consumer_id FOREIGN KEY (`consumer_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE)
+  CONSTRAINT FK_civicrm_inventory_referrals_creator_id FOREIGN KEY (`creator_id`) REFERENCES `civicrm_membership`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_civicrm_inventory_referrals_consumer_id FOREIGN KEY (`consumer_id`) REFERENCES `civicrm_membership`(`id`) ON DELETE CASCADE)
 ENGINE=InnoDB;
 
 -- /*******************************************************

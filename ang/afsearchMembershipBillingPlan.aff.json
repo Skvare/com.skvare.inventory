@@ -23,18 +23,19 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-08-28 11:01:35",
+  "modified_date": "2024-09-03 05:38:26",
   "layout": [
     {
       "#tag": "div",
       "class": "af-markup",
       "#children": [
         {
-          "#text": "\n  "
+          "#text": "\n  \n\n  "
         },
         {
           "#tag": "a",
           "href": "/civicrm/inventory/membership-billing-plan",
+          "target": "crm-popup",
           "#children": [
             {
               "#tag": "i",
@@ -47,7 +48,7 @@
           ]
         },
         {
-          "#text": "\n"
+          "#text": "\n\n\n"
         }
       ]
     },

@@ -387,3 +387,63 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
     }
   }
 }
+
+/**
+ * Implements hook_civicrm_pre().
+ */
+function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName === 'Membership' && in_array($op, ['create', 'edit'])) {
+    // Get current membership stats.
+    $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
+    // Check our status fit in current membership status.
+    if (isset($objectRef->status_id) && in_array($objectRef->status_id, $activeMembershipStatus)) {
+      // Get the Setting field, where we mapped civicrm field with the fields.
+      $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
+      if (!empty($settingInfo['inventory_referral_code_key_name'])) {
+        // Get the current value of referral code on membership record.
+        $custom_params = [];
+        $custom_params['entityID'] = $objectId;
+        $custom_params['entityType'] = 'Membership';
+        $custom_params[$settingInfo['inventory_referral_code_key_name']] = 1;
+        $customFieldValues = CRM_Core_BAO_CustomValueTable::getValues($custom_params);
+      }
+      // If the value is empty then generate the new code.
+      if (empty($customFieldValues[$settingInfo['inventory_referral_code_key_name']])) {
+        // Get the code.
+        $code = CRM_Inventory_BAO_InventoryReferrals::getNewCode();
+        $custom_params[$settingInfo['inventory_referral_code_key_name']] = $code;
+        CRM_Core_BAO_CustomValueTable::setValues($custom_params);
+      }
+    }
+  }
+}
+
+
+/**
+ * Function to get  activity list.
+ *
+ * @return array|mixed
+ *   Activity list.
+ *
+ * @throws CRM_Core_Exception
+ */
+function _inventory_activities() {
+  static $activities;
+
+  if (!$activities) {
+    $activities = [
+      'activity_referral_membership_extend' => civicrm_api3('OptionValue', 'getvalue', [
+        'option_group_id' => 'activity_type',
+        'name' => 'Referral-Membership Extended',
+        'return' => 'value',
+      ]),
+      'activity_completed' => civicrm_api3('OptionValue', 'getvalue', [
+        'option_group_id' => 'activity_status',
+        'name' => 'Completed',
+        'return' => 'value',
+      ]),
+    ];
+  }
+
+  return $activities;
+}

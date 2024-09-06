@@ -13,15 +13,11 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
    * @throws \CRM_Core_Exception
    */
   public function buildQuickForm(): void {
-
-    // add form elements
-    $this->add(
-      'select', // field type
-      'favorite_color', // field name
-      'Favorite Color', // field label
-      $this->getColorOptions(), // list of options
-      TRUE // is required
-    );
+    $civicrmFields = CRM_Inventory_Utils::getCiviCRMFields();
+    $this->add('select', "inventory_referral_code", "Referral Code Field",
+      $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
+    $this->add('select', "inventory_referral_consumed_code", "Referral Code Consumed Field",
+      $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
     $this->addButtons([
       [
         'type' => 'submit',
@@ -30,32 +26,34 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
       ],
     ]);
 
-    // export form elements
+    // Export form elements.
     $this->assign('elementNames', $this->getRenderableElementNames());
     parent::buildQuickForm();
   }
 
-  public function postProcess(): void {
-    $values = $this->exportValues();
-    $options = $this->getColorOptions();
-    CRM_Core_Session::setStatus(E::ts('You picked color "%1"', [
-      1 => $options[$values['favorite_color']],
-    ]));
-    parent::postProcess();
+  public function setDefaultValues() {
+    $defaults = [];
+    $domainID = CRM_Core_Config::domainID();
+    $settings = Civi::settings($domainID);
+    $defaults['inventory_referral_code'] = $settings->get('inventory_referral_code');
+    $defaults['inventory_referral_consumed_code'] = $settings->get('inventory_referral_consumed_code');
+    return $defaults;
   }
 
-  public function getColorOptions(): array {
-    $options = [
-      '' => E::ts('- select -'),
-      '#f00' => E::ts('Red'),
-      '#0f0' => E::ts('Green'),
-      '#00f' => E::ts('Blue'),
-      '#f0f' => E::ts('Purple'),
-    ];
-    foreach (['1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'] as $f) {
-      $options["#{$f}{$f}{$f}"] = E::ts('Grey (%1)', [1 => $f]);
+
+  public function postProcess(): void {
+    // Store the submitted values in an array.
+    $params = $this->controller->exportValues($this->_name);
+    // Save the API Key & Save the Security Key
+    $setting = ['inventory_referral_code', 'inventory_referral_consumed_code'];
+    $domainID = CRM_Core_Config::domainID();
+    $settings = Civi::settings($domainID);
+    foreach ($setting as $key) {
+      if (CRM_Utils_Array::value($key, $params)) {
+        $settings->set($key, $params[$key]);
+      }
     }
-    return $options;
+
   }
 
   /**

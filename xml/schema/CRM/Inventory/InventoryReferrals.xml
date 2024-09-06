@@ -25,15 +25,15 @@
     <name>creator_id</name>
     <uniqueName>inventory_referral_created_id</uniqueName>
     <type>int unsigned</type>
-    <comment>FK to Contact</comment>
+    <comment>FK to Membership</comment>
     <html>
       <type>EntityRef</type>
-      <label>Created Contact</label>
+      <label>Created Membership</label>
     </html>
   </field>
   <foreignKey>
     <name>creator_id</name>
-    <table>civicrm_contact</table>
+    <table>civicrm_membership</table>
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
@@ -42,15 +42,15 @@
     <name>consumer_id</name>
     <uniqueName>inventory_referral_consumer_id</uniqueName>
     <type>int unsigned</type>
-    <comment>FK to Contact</comment>
+    <comment>FK to Membership</comment>
     <html>
       <type>EntityRef</type>
-      <label>Consumer Contact</label>
+      <label>Consumer Membership</label>
     </html>
   </field>
   <foreignKey>
     <name>consumer_id</name>
-    <table>civicrm_contact</table>
+    <table>civicrm_membership</table>
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
@@ -74,6 +74,7 @@
     <name>before_end_date</name>
     <uniqueName>inventory_referral_before_end_date</uniqueName>
     <title>Before End Date</title>
+    <comment>Membership End Date Before referral</comment>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/before_end(.?date)?/i</headerPattern>
@@ -88,6 +89,7 @@
     <name>after_end_date</name>
     <uniqueName>inventory_referral_after_end_date</uniqueName>
     <title>After End Date</title>
+    <comment>Membership End Date after referral</comment>
     <type>datetime</type>
     <import>true</import>
     <headerPattern>/after_end(.?date)?/i</headerPattern>
@@ -97,7 +99,6 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
-
   <field>
     <name>referral_code</name>
     <title>Referral Code</title>
