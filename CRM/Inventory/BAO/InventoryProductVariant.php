@@ -1,13 +1,15 @@
 <?php
 
+use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryProductVariant;
 use Civi\Core\Event\PreEvent;
 
 /**
+ * CRM_Inventory_BAO_InventoryProductVariant.
  *
+ * Product variant class.
  */
 class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_InventoryProductVariant {
-
 
   /**
    * Takes an associative array and creates a product variant object.
@@ -97,7 +99,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function getProductVariant($id, $allRelatedEntity = FALSE): array {
+  public static function getProductVariant(int $id, bool $allRelatedEntity = FALSE): array {
     if ($allRelatedEntity) {
       $inventoryProductVariants = InventoryProductVariant::get(TRUE)
         ->addSelect('*', 'product_id.*', 'membership_id.*')
@@ -139,99 +141,189 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    *   Product variant id.
    * @param string $change
    *   Status string.
-   * @param string $msg
+   * @param string|null $msg
    *   Message for reason.
    *
-   * @return void
+   * @return object
    *   No return.
    *
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function change($params, $change, $msg = NULL): void {
-    $productVariantID = $this->id;
-    $productVariantObj = $this;
-    $productVariant = self::getProductVariant($productVariantID);
-    if ($productVariant['product_id.has_sim']) {
-      CRM_Inventory_BAO_InventoryProductChangelog::logStatusChange($productVariantID, $change);
-      if ($msg) {
-        $this->memo = $msg;
-      }
-      switch ($change) {
-        case "REACTIVATE":
-          $productVariantObj->is_active = TRUE;
-          $productVariantObj->is_suspended = FALSE;
-          $productVariantObj->expire_on = NULL;
-          // TOD Custom field.
-          if ($productVariantObj->membership_id || !$productVariant['membership_id.primary_device']) {
-            // $this->setPrimary(x);
-          }
-          break;
+  public function changeStatus(int $productVariantID, string $change, string $msg = NULL): object {
+    $productVariantObj = new CRM_Inventory_BAO_InventoryProductVariant();
+    $productVariantObj->id = $productVariantID;
+    if ($productVariantObj->find(TRUE)) {
+      $productVariant = self::getProductVariant($productVariantID, TRUE);
+      if ($productVariant['product']['has_sim']) {
+        CRM_Inventory_BAO_InventoryProductChangelog::logStatusChange($productVariantID, $change);
+        if (!empty($msg)) {
+          // $productVariant->memo = $msg;
+        }
+        switch ($change) {
+          case "REACTIVATE":
+            $productVariantObj->is_active = TRUE;
+            $productVariantObj->is_suspended = FALSE;
+            $productVariantObj->expire_on = NULL;
+            // If membership present and device is not set primary then set it.
+            if ($productVariantObj->membership_id &&
+              !$productVariantObj->is_primary) {
+              $productVariantObj->setPrimary(TRUE);
+            }
+            break;
 
-        case "TERMINATE":
-        case "LOST":
-          $productVariantObj->is_active = FALSE;
-          $productVariantObj->is_suspended = TRUE;
-          $productVariantObj->expire_on = NULL;
-          break;
+          case "TERMINATE":
+          case "LOST":
+            $productVariantObj->is_active = FALSE;
+            $productVariantObj->is_suspended = TRUE;
+            $productVariantObj->expire_on = NULL;
+            break;
 
-        case "SUSPEND":
-          $productVariantObj->is_suspended = TRUE;
-          $productVariantObj->expire_on = now()->addDays(Conf::days_until_terminate() - Conf::days_until_suspend() + 1);
-          break;
+          case "SUSPEND":
+            $productVariantObj->is_suspended = TRUE;
+            $productVariantObj->expire_on = date('Y-m-d H:i:s');
+            break;
+
+          case "EXPIRE":
+            // $productVariantObj->memo = $msg;
+            // The number of days to keep a device active after it has been
+            // replaced.
+            $productVariantObj->expire_on = date('Y-m-d', strtotime('+14days'));
+            break;
+        }
+        $productVariantObj->save();
       }
-      $productVariantObj->save();
     }
+
+    return $productVariantObj;
   }
 
   /**
+   * Function to set device as primary.
    *
+   * @param bool $newPrimaryValue
+   *   Set device primary.
+   * @param bool $autoExpire
+   *   Auto Expire device.
+   * @param string|null $expireMessage
+   *   Message.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function reactivateIt($msg = NULL) {
-    $this->change("REACTIVATE", $msg);
+  public function setPrimary(
+    bool   $newPrimaryValue,
+    bool   $autoExpire = TRUE,
+    string $expireMessage = NULL,
+  ): void {
+    if ($newPrimaryValue) {
+      $this->is_primary = TRUE;
+      $this->expire_on = NULL;
+      $this->memo = 'Assigned as primary';
+      if ($this->membership_id) {
+        // $this->membership->update(['primary_device_id' => $this->id]);
+        $value = [];
+        $membershipDevice = self::getValues(['membership_id' => $this->membership_id], $value, TRUE);
+        foreach ($membershipDevice as $device) {
+          /** @var CRM_Inventory_BAO_InventoryProductVariant $device */
+          if ($device->id !== $this->id) {
+            $device->is_primary = FALSE;
+            if ($autoExpire) {
+              $expireMessage = $expireMessage ?? "Expiring because device [device:{$this->id}] made primary";
+              // Is this device is not terminated then expire it.
+              if (!$device->isTerminated()) {
+                try {
+                  $device->changeStatus($device->id, 'EXPIRE', $expireMessage);
+                }
+                catch (UnauthorizedException $e) {
+
+                }
+                catch (CRM_Core_Exception $e) {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      $this->is_primary = FALSE;
+      if ($this->membership_id) {
+        $newPrimaryBestGuess = InventoryProductVariant::get(TRUE)
+          ->addWhere('membership_id', '=', $this->membership_id)
+          ->addWhere('id', '!=', $this->id)
+          ->addWhere('is_active', '=', 1)
+          ->addOrderBy('created_at', 'DESC')
+          ->setLimit(1)
+          ->execute()->first();
+        if ($newPrimaryBestGuess) {
+          $newPrimaryBestGuess['is_primary'] = TRUE;
+          InventoryProductVariant::save($newPrimaryBestGuess);
+          // @todo
+          // $this->membership->update(['primary_device_id' => $newPrimaryBestGuess->id]);
+          if ($autoExpire) {
+            $expireMessage = $expireMessage ?? "Expiring because device [device:{$this->id}] made primary";
+            if (!$this->isTerminated()) {
+              try {
+                $this->changeStatus($this->id, 'EXPIRE', $expireMessage);
+              }
+              catch (UnauthorizedException $e) {
+
+              }
+              catch (CRM_Core_Exception $e) {
+
+              }
+            }
+          }
+        }
+      }
+    }
     $this->save();
   }
 
   /**
+   * Function to check status.
    *
+   * @return bool
+   *   Boolean value.
    */
-  public function terminateIt($params, $msg = NULL) {
-    $this->change($params, "TERMINATE", $msg);
-    $this->save();
+  public function isTerminated(): bool {
+    return !$this->is_active && $this->is_suspended;
   }
 
   /**
+   * Function to check status.
    *
+   * @return bool
+   *   Boolean value.
    */
-  public function suspendIt($msg = NULL) {
-    $this->change("SUSPEND", $msg);
-    $this->save();
+  public function isReadyForShipment(): bool {
+    return $this->is_active && !$this->is_suspended && is_null($this->expire_on)
+      && is_null($this->membership_id) && is_null($this->contact_id);
   }
 
   /**
+   * Function to check status.
    *
+   * @return bool
+   *   Boolean value.
    */
-  public function updateIt($msg = NULL) {
-    $this->change("UPDATE", $msg);
-    $this->save();
+  public function isInactive(): bool {
+    return !$this->is_active || $this->is_suspended;
   }
 
   /**
+   * Function to check status.
    *
+   * @return bool
+   *   Boolean value.
    */
-  public function lostIt($productVariantID, $msg = NULL) {
-    $this->change($productVariantID, "LOST", $msg);
-    $this->save();
-  }
-
-  /**
-   *
-   */
-  public function expireIt($msg = NULL) {
-    $this->update([
-      'memo' => $msg,
-      'expire_on' => now()->addDays(Conf::days_until_suspend_replaced_devices()),
-    ]);
+  public function isAssigned(): bool {
+    return $this->contact_id && $this->membership_id && $this->status === 'assigned_to_member';
   }
 
 }

@@ -29,27 +29,25 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    *   Referral consume membership details.
    *
    * @return void
+   *   Nothing.
    *
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function addReferralDetails($membershipID):void {
+  public static function addReferralDetails(int $membershipID):void {
     $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
     $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
     // Get consume membership details using id or code used.
     $consumer = self::findMembership($membershipID ?? NULL);
-    echo '<pre>$consumer: '; print_r($consumer); echo '</pre>';
     // Check consume membership is active.
     if (in_array($consumer['status_id'], $activeMembershipStatus)) {
       // Check consume membership added referral code.
       if (!empty($consumer[$settingInfo['inventory_referral_consumed_code_cf_name_full']])) {
         // Find membership of creator of referral code.
         $creator = self::findMembership(NULL, $consumer[$settingInfo['inventory_referral_consumed_code_cf_name_full']] ?? NULL);
-        echo '<pre>$creator: '; print_r($creator); echo '</pre>';
         if (in_array($creator['status_id'], $activeMembershipStatus)) {
           // Validate the referral code, that same person is not consuming code.
           $error = self::validateConsumer($creator, $consumer);
-          echo '<pre>$error: '; print_r($error); echo '</pre>';
           if (!empty($error)) {
             $error .= ", Creator ID " . $creator['id'] . ", " . "Consumer ID " . $consumer['id'];
             CRM_Core_Error::debug_var('Referral', $error);
@@ -65,10 +63,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
           $referralParams['referral_code'] = $consumer[$settingInfo['inventory_referral_consumed_code_cf_name_full']] ?? NULL;
           // Add entry to referral table for creator
           // membership end date and extended end date.
-          echo '<pre>$referralParams: '; print_r($referralParams); echo '</pre>';
           $result = self::create($referralParams);
-          echo '<pre>result $referral create: '; print_r($result); echo '</pre>';
-
 
           // Extend the both membership records.
           self::extendMembership($creator['id'], $consumer['id']);
@@ -153,6 +148,10 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
     if (empty($settingInfo)) {
       throw new CRM_Core_Exception('Referral Code Setting missing.');
     }
+    // E.G. : SELECT COUNT(CUSTOMFIELD-Referral-CODE) FROM CUSTOM-TABLE WHERE
+    //  CUSTOMFIELD-Referral-CODE = 'ABC';
+
+    // This field myst be indexed, it gets used heavily.
     $sql = "select count({$settingInfo['inventory_referral_code']}) from {$settingInfo['table']}  where {$settingInfo['inventory_referral_code']} = %1";
     $count = CRM_Core_DAO::singleValueQuery($sql, [1 => [$code, 'String']]);
     return (bool) $count;

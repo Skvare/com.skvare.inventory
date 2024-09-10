@@ -1,9 +1,16 @@
 <?php
 
 // phpcs:disable
+use Civi\Api4\InventoryBillingPlans;
 use CRM_Inventory_ExtensionUtil as E;
 // phpcs:enable
 
+
+/**
+ * CRM_Inventory_Utils.
+ *
+ * Utility functions.
+ */
 class CRM_Inventory_Utils {
 
   /**
@@ -22,11 +29,11 @@ class CRM_Inventory_Utils {
    * @return string[]
    *   Status List.
    */
-  public static function productVariantStatus() {
+  public static function productVariantStatus(): array {
     return [
       '' => E::ts('Unknown Placement'),
       'new_inventory' => E::ts('New Inventory'),
-      'assinged_to_member' => E::ts('Assigned to member'),
+      'assigned_to_member' => E::ts('Assigned to member'),
       'lost' => E::ts('Lost'),
       'broken' => E::ts('Broken'),
       'returned' => E::ts('Returned'),
@@ -40,7 +47,7 @@ class CRM_Inventory_Utils {
    * @return array
    *   Inventory Status for model list.
    */
-  public static function productInventoryStatus() {
+  public static function productInventoryStatus(): array {
     /*
     full: device is fully stocked
     low: limited inventory is reserved for replacement orders only.
@@ -61,7 +68,7 @@ class CRM_Inventory_Utils {
    * @return string[]
    *   Product Change log status list.
    */
-  public static function productChangeLogStatus() {
+  public static function productChangeLogStatus(): array {
     return [
       'UPDATE' => E::ts('UPDATE'),
       'REACTIVATE' => E::ts('REACTIVATE'),
@@ -77,7 +84,7 @@ class CRM_Inventory_Utils {
    * @return string[]
    *   Product Sales status list.
    */
-  public static function productSalesStatus() {
+  public static function productSalesStatus(): array {
     return [
       'placed' => E::ts('Placed'),
       'shipped' => E::ts('Shipped'),
@@ -96,7 +103,7 @@ class CRM_Inventory_Utils {
    * @return array
    *   Additional field values.
    */
-  public static function getMembershipTypeSettings($typeID) {
+  public static function getMembershipTypeSettings(int $typeID): array {
     $result = [];
     try {
       $result = civicrm_api3('MembershipType', 'getsingle', [
@@ -112,8 +119,11 @@ class CRM_Inventory_Utils {
     return $result;
   }
 
-  public static function  getBillingPlanForMemberhshipType($typeID) {
-    $inventoryBillingPlanses = \Civi\Api4\InventoryBillingPlans::get(TRUE)
+  /**
+   *
+   */
+  public static function getBillingPlanForMemberhshipType($typeID) {
+    $inventoryBillingPlanses = InventoryBillingPlans::get(TRUE)
       ->addWhere('membership_type_id', '=', $typeID)
       ->setLimit(25)
       ->execute();
@@ -132,7 +142,7 @@ class CRM_Inventory_Utils {
    *
    * @throws CRM_Core_Exception
    */
-  public static function getInventorySettingInfo() {
+  public static function getInventorySettingInfo(): mixed {
     $cacheKey = "CRM_Inventory_custom_field";
     $cache = CRM_Utils_Cache::singleton();
     $params = $cache->get($cacheKey);
@@ -213,6 +223,25 @@ class CRM_Inventory_Utils {
     Civi::cache('metadata')->set($cacheKey, $fieldValues);
 
     return $fieldValues;
+  }
+
+  /**
+   * Function to deactivate contact.
+   *
+   * @param int $contactID
+   *   Contact ID.
+   *
+   * @return void
+   *   Nothing.
+   */
+  public function deactivateContact(int $contactID):void {
+    $values = [];
+    $activeMembership = CRM_Member_BAO_Membership::getValues(['contact_id' => $contactID], $values, TRUE);
+    if (empty($activeMembership)) {
+      // Set is_active = false for Contact/Member record.
+      // $this->update(['is_active' => false]);
+      // is_active should be custom field.
+    }
   }
 
 }

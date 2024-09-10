@@ -11,11 +11,57 @@ namespace Civi\Api4;
 class InventoryProductVariant extends Generic\DAOEntity {
 
   /**
+   * @param bool $checkPermissions
+   * @return Action\InventoryProductVariant\Create
+   */
+  public static function create($checkPermissions = TRUE) {
+    return (new Action\InventoryProductVariant\Create(self::getEntityName(), __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
+  /**
+   * @param bool $checkPermissions
+   * @return Action\InventoryProductVariant\Update
+   */
+  public static function update($checkPermissions = TRUE) {
+    return (new Action\InventoryProductVariant\Update(self::getEntityName(), __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
+  /**
+   * @param bool $checkPermissions
+   * @return Action\InventoryProductVariant\Save
+   */
+  public static function save($checkPermissions = TRUE) {
+    return (new Action\InventoryProductVariant\Save(self::getEntityName(), __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
+  /**
+   * @param bool $checkPermissions
+   * @return Action\InventoryProductVariant\Delete
+   */
+  public static function delete($checkPermissions = TRUE) {
+    return (new Action\InventoryProductVariant\Delete(self::getEntityName(), __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
+  /**
+   * @param bool $checkPermissions
+   *
+   * @return Action\InventoryProductVariant\ChangeStatus
+   */
+  public static function changeStatus($checkPermissions = TRUE) {
+    return (new Action\InventoryProductVariant\ChangeStatus(__CLASS__, __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
+  /**
    * Provides more-open permissions that will be further restricted by checkAccess
    *
    * @return array
    */
-  public static function permissions():array {
+  public static function permissions(): array {
     $permissions = parent::permissions();
 
     return [

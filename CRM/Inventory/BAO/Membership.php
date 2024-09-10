@@ -9,7 +9,9 @@
 use Civi\Api4\Membership;
 
 /**
+ * CRM_Inventory_BAO_Membership
  *
+ * Extension of CiviCRM core membership BAO class.
  */
 class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
 
@@ -18,6 +20,8 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    *
    * @param int $id
    *   Membership id.
+   * @param bool $returnObject
+   *   Return object or array.
    *
    * @return array|null
    *   Membership details.
@@ -25,13 +29,20 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function findById($id): ?array {
-    $memberships = Membership::get(TRUE)
-      ->addSelect('*', 'custom.*')
-      ->addWhere('id', '=', $id)
-      ->setLimit(1)
-      ->execute();
-    return $memberships->first();
+  public static function findById($id, bool $returnObject = FALSE): ?array {
+    if ($returnObject) {
+      $membershipObj = new CRM_Member_DAO_Membership();
+      $membershipObj->id = $id;
+      return $membershipObj->find(TRUE);
+    }
+    else {
+      $memberships = Membership::get(TRUE)
+        ->addSelect('*', 'custom.*')
+        ->addWhere('id', '=', $id)
+        ->setLimit(1)
+        ->execute();
+      return $memberships->first();
+    }
   }
 
   /**
@@ -69,24 +80,25 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    * @throws \Civi\API\Exception\UnauthorizedException
    */
   public function terminate(int $id): void {
-    $membership = self::findById($id);
-    // Change status suspended?
-    // $membership->is_active = FALSE;
-    // $membership->is_suspended = TRUE;
-    // Terminate the Device (is_active = false, is_suspended = true, expire_on = null).
-    if (!empty($membership)) {
+    /** @var CRM_Member_BAO_Membership $membershipObject */
+    $membershipObject = self::findById($id);
+    $membershipStatus = CRM_Member_BAO_Membership::buildOptions('status_id', 'validate');
+    if (!empty($membershipObject->id)) {
+      $membershipObject->status_id = array_search('Suspended', $membershipStatus);
       $productVariantParams = [];
       $productVariantParams['membership_id'] = $id;
       $values = [];
       $productVariants = CRM_Inventory_BAO_InventoryProductVariant::getValues($productVariantParams, $values, TRUE);
+      // Terminate the Device linked with membership.
       foreach ($productVariants as $productVariantID => $productVariant) {
-        $productVariant->terminateIt($values[$productVariantID], "Terminated because membership [membership:{$$id}] terminated.");
+        /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
+        $productVariant->changeStatus($values[$productVariantID],
+          'TERMINATE', "Terminated because membership [membership:{$$id}] terminated.");
       }
+      $membershipObject->save();
+      // $this->member->deactivate();
+      // $this->broadcast('terminate', $this);
     }
-    $this->save();
-    //
-    $this->member->deactivate();
-    $this->broadcast('terminate', $this);
   }
 
   /**
@@ -99,16 +111,21 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    *
    * @return void
    *   Nothing.
+   *
+   * @throws CRM_Core_Exception
    */
   public static function extendEnrollment(int $membershipID, string $extendBy = ''): void {
     $memberDAO = new CRM_Member_DAO_Membership();
     $memberDAO->id = $membershipID;
-    if ($memberDAO->find(TRUE)) {
-      $beforeEndDate = $memberDAO->end_date;
-      $memberDAO->end_date = date('Y-m-d', strtotime("+$extendBy", strtotime($memberDAO->end_date)));
-      $subjectForActivity = "Membership Extended from {$beforeEndDate} to {$memberDAO->end_date} ({$extendBy})";
-      $memberDAO->save();
+    if (!$memberDAO->find(TRUE)) {
+      // If no membership then just return from here.
+      return;
     }
+    $beforeEndDate = $memberDAO->end_date;
+    $memberDAO->end_date = date('Y-m-d', strtotime("+$extendBy", strtotime($memberDAO->end_date)));
+    $subjectForActivity = "Membership Extended from {$beforeEndDate} to {$memberDAO->end_date} ({$extendBy})";
+    $memberDAO->save();
+
     // Log the membership extent details.
     $logStartDate = CRM_Utils_Date::isoToMysql($memberDAO->start_date);
     $values = self::getStatusANDTypeValues($memberDAO->id);
