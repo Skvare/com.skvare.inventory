@@ -26,6 +26,7 @@ class ValidateCode extends AbstractAction {
    * Value of referral code.
    *
    * @var string
+   * @required
    */
   protected string $code = '';
 
