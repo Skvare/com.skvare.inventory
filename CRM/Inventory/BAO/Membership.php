@@ -61,6 +61,8 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
     $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
     $memberships = Membership::get(TRUE)
       ->addSelect('*', 'custom.*')
+      ->addJoin('MembershipStatus AS membership_status', 'INNER')
+      ->addWhere('membership_status.is_current_member', '=', TRUE)
       ->addWhere($settingInfo['inventory_referral_code_cf_name_full'], '=', "{$code}")
       ->setLimit(1)
       ->execute();
