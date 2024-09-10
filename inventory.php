@@ -389,13 +389,13 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
 }
 
 /**
- * Implements hook_civicrm_pre().
+ * Implements hook_civicrm_post().
  */
 function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName === 'Membership' && in_array($op, ['create', 'edit'])) {
-    // Get current membership stats.
+    // Get current membership status.
     $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
-    // Check our status fit in current membership status.
+    // Check our status fit in current membership status list.
     if (isset($objectRef->status_id) && in_array($objectRef->status_id, $activeMembershipStatus)) {
       // Get the Setting field, where we mapped civicrm field with the fields.
       $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
@@ -417,7 +417,6 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     }
   }
 }
-
 
 /**
  * Function to get  activity list.

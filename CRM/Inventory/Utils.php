@@ -158,6 +158,24 @@ class CRM_Inventory_Utils {
         }
         $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID($customField);
         [$table_name, $column_name, $custom_group_id, $cgName, $cf_name] = self::getTableColumnGroup($customFieldInfo);
+        /*
+        Example for output format:
+        This is meta-data about custom field.
+
+        // Custom Table name.
+        [table] => civicrm_value_referral_code_8
+        // Custom Group name
+        [inventory_referral_code_cg_name] => Referral_Code
+
+        // Custom Field name.
+        [inventory_referral_code_cf_name] => Referral_Code
+        // Custom Field name with CustomGroup + Custom field name (separated by dot)
+        [inventory_referral_code_cf_name_full] => Referral_Code.Referral_Code
+        // Custom field column name in custom group table.
+        [inventory_referral_code] => referral_code_27
+        // widely used custom field name in form.
+        [inventory_referral_code_key_name] => custom_27
+         */
         $params['table'] = $table_name;
         $params[$key . '_cg_name'] = $cgName;
         $params[$key . '_cf_name'] = $cf_name;
