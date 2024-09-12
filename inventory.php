@@ -446,3 +446,17 @@ function _inventory_activities() {
 
   return $activities;
 }
+
+function inventory_civicrm_searchKitTasks(array &$tasks, bool $checkPermissions, ?int $userID) {
+  $tasks['InventoryProductChangelog']['export'] = [
+    'title' => E::ts('Export Device'),
+    'icon' => 'fa-random',
+    'apiBatch' => [
+      'action' => 'export',
+      'confirmMsg' => E::ts('Are you sure you want to run export for %1 batch?'),
+      'runMsg' => E::ts('Running export on %1 batch...'),
+      'successMsg' => E::ts('Successfully ran export on %1 batch.'),
+      'errorMsg' => E::ts('An error occurred while attempting to run export on %1 batch.'),
+    ],
+  ];
+}

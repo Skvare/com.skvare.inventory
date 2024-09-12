@@ -40,7 +40,7 @@
     <type>int unsigned</type>
     <uniqueName>inventory_product_changelog_batch_id</uniqueName>
     <title>Batch ID</title>
-    <comment>FK to Contact</comment>
+    <comment>FK to Batch</comment>
     <pseudoconstant>
       <table>civicrm_inventory_batch</table>
       <keyColumn>id</keyColumn>
@@ -89,7 +89,7 @@
   <field>
     <name>status_id</name>
     <uniqueName>inventory_product_changelog_status_id</uniqueName>
-    <title>Sales Status</title>
+    <title>Product Status</title>
     <type>varchar</type>
     <comment>UPDATE,REACTIVATE,TERMINATE,SUSPEND</comment>
     <length>100</length>

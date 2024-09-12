@@ -517,7 +517,7 @@ ENGINE=InnoDB;
 CREATE TABLE `civicrm_inventory_product_changelog` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventoryProductChangelog ID',
   `contact_id` int unsigned COMMENT 'FK to Contact',
-  `batch_id` int unsigned COMMENT 'FK to Contact',
+  `batch_id` int unsigned COMMENT 'FK to Batch',
   `product_variant_id` int unsigned COMMENT 'FK to Product Variant',
   `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `status_id` varchar(100) NOT NULL COMMENT 'UPDATE,REACTIVATE,TERMINATE,SUSPEND',

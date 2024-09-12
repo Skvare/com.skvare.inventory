@@ -214,15 +214,11 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function setPrimary(
-    bool   $newPrimaryValue,
-    bool   $autoExpire = TRUE,
-    string $expireMessage = NULL,
-  ): void {
+  public function setPrimary(bool   $newPrimaryValue, bool   $autoExpire = TRUE, string $expireMessage = NULL): void {
     if ($newPrimaryValue) {
       $this->is_primary = TRUE;
       $this->expire_on = NULL;
-      $this->memo = 'Assigned as primary';
+      // $this->memo = 'Assigned as primary';
       if ($this->membership_id) {
         // $this->membership->update(['primary_device_id' => $this->id]);
         $value = [];
