@@ -62,7 +62,7 @@ class CRM_Inventory_BAO_InventoryProductChangelog extends CRM_Inventory_DAO_Inve
     if ($productID && $changeAction && array_key_exists($changeAction, $changeActionList)) {
       // Get Open Status Batch ID.
       $batchID = CRM_Inventory_BAO_InventoryBatch::getOpenBatchID();
-      if (empty($getOpenBatch)) {
+      if (empty($batchID)) {
         // Create Open Status Batch.
         $batchID = CRM_Inventory_BAO_InventoryBatch::createOpenBatch();
       }
@@ -71,7 +71,7 @@ class CRM_Inventory_BAO_InventoryProductChangelog extends CRM_Inventory_DAO_Inve
         ->addValue('batch_id', $batchID)
         ->addValue('status_id', $changeAction)
         ->addValue('contact_id', $contactID)
-        ->addValue('product_variant_id', 1)
+        ->addValue('product_variant_id', $productID)
         ->addValue('created_date', date('YmdHis'))
         ->execute();
       return $results->first();
@@ -131,7 +131,7 @@ class CRM_Inventory_BAO_InventoryProductChangelog extends CRM_Inventory_DAO_Inve
     $validation->setShowInputMessage(TRUE);
     $validation->setShowErrorMessage(TRUE);
     $validation->setShowDropDown(TRUE);
-    $validation->setFormula1('"' . implode(',', self::CHANGE_LIST) . '"');
+    // $validation->setFormula1('"' . implode(',', self::CHANGE_LIST) . '"');
     $writer = new Xlsx($spreadsheet);
 
     // Update the Batch status to Exported.

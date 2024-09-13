@@ -36,4 +36,10 @@
     <title>Device Replacement Request</title>
     <access_arguments>create device replacement</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/batch-change-log</path>
+    <page_callback>CRM_Inventory_Page_ChangeLog</page_callback>
+    <title>ChangeLog</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

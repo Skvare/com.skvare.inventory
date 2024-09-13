@@ -891,4 +891,364 @@ return [
       ],
     ],
   ],
+
+  // Saved Search for Inventory_Batch.
+  [
+    'name' => 'SavedSearch_Inventory_Batch',
+    'entity' => 'SavedSearch',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Batch',
+        'label' => E::ts('Inventory Batch'),
+        'api_entity' => 'InventoryBatch',
+        'api_params' => [
+          'version' => 4,
+          'select' => [
+            'id',
+            'description',
+            'created_date',
+            'status_id:label',
+            'name',
+            'exported_date',
+          ],
+          'orderBy' => [
+            'field (status_id:label, "Open", "Reopened", "Exported", "Closed", "Data Entry" )',
+            'created_date DESC',
+          ],
+          "where" => [],
+          "groupBy" => [],
+          "join" => [],
+          "having" => [],
+        ],
+      ],
+      'match' => [
+        'name',
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Batch_Table_1.
+  [
+    'name' => 'SearchDisplay_Inventory_Batch_Table_1',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Batch_Table_1',
+        'label' => E::ts('Inventory Batch Table 1'),
+        'saved_search_id.name' => 'Inventory_Batch',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [],
+          'limit' => 50,
+          'pager' => FALSE,
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'field',
+              'key' => 'created_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created On'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'html',
+              'key' => 'name',
+              'dataType' => 'String',
+              'label' => E::ts('Name'),
+              'sortable' => TRUE,
+              'rewrite' => '<a href="/civicrm/inventory/batch-change-log?batch_id=[id]#?batch_id=[id]">[name]</a>',
+            ],
+            [
+              'type' => 'field',
+              'key' => 'status_id:label',
+              'dataType' => 'Integer',
+              'label' => E::ts('Status'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'exported_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Export Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'text' => '',
+              'style' => 'default',
+              'size' => 'btn-xs',
+              'icon' => 'fa-bars',
+              'links' => [
+                [
+                  'path' => '',
+                  'icon' => 'fa-trash',
+                  'text' => E::ts('Delete Batch'),
+                  'style' => 'danger',
+                  'condition' => [],
+                  'task' => 'delete',
+                  'entity' => 'InventoryBatch',
+                  'action' => '',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                ],
+              ],
+              'type' => 'menu',
+              'alignment' => 'text-right',
+            ],
+          ],
+          'actions' => TRUE,
+          'classes' => [
+            'table',
+            'table-striped',
+          ],
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Batch_Table_2.
+  [
+    'name' => 'SearchDisplay_Inventory_Batch_Table_2',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Batch_Table_2',
+        'label' => E::ts('Inventory Batch Table 2'),
+        'saved_search_id.name' => 'Inventory_Batch',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [],
+          'pager' => FALSE,
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'field',
+              'key' => 'created_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created On'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'name',
+              'dataType' => 'String',
+              'label' => E::ts('Name'),
+              'sortable' => TRUE,
+              'rewrite' => '',
+            ],
+            [
+              'type' => 'field',
+              'key' => 'status_id:label',
+              'dataType' => 'Integer',
+              'label' => E::ts('Status'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'exported_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Export Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'text' => '',
+              'style' => 'default',
+              'size' => 'btn-xs',
+              'icon' => 'fa-bars',
+              'links' => [
+                [
+                  'path' => '',
+                  'icon' => 'fa-trash',
+                  'text' => E::ts('Delete Batch'),
+                  'style' => 'danger',
+                  'condition' => [],
+                  'task' => 'delete',
+                  'entity' => 'InventoryBatch',
+                  'action' => '',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                ],
+              ],
+              'type' => 'menu',
+              'alignment' => 'text-right',
+            ],
+          ],
+          'actions' => FALSE,
+          'classes' => [
+            'table',
+            'table-striped',
+          ],
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
+
+  // Saved Search for Inventory_Product_Changelog.
+  [
+    'name' => 'SavedSearch_Inventory_Product_Changelog',
+    'entity' => 'SavedSearch',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Product_Changelog',
+        'label' => E::ts('Inventory Product Changelog'),
+        'api_entity' => 'InventoryProductChangelog',
+        'api_params' => [
+          'version' => 4,
+          'select' => [
+            'id',
+            'created_date',
+            'status_id:label',
+            'InventoryProductChangelog_InventoryBatch_batch_id_01.status_id:label',
+            'InventoryProductChangelog_InventoryProductVariant_product_variant_id_01.product_variant_unique_id',
+            'InventoryProductChangelog_InventoryProductVariant_product_variant_id_01.contact_id.display_name',
+          ],
+          'orderBy' => [],
+          "where" => [],
+          "groupBy" => [],
+          'join' => [
+            [
+              'InventoryBatch AS InventoryProductChangelog_InventoryBatch_batch_id_01',
+              'INNER',
+              [
+                'batch_id',
+                '=',
+                'InventoryProductChangelog_InventoryBatch_batch_id_01.id',
+              ],
+            ],
+            [
+              'InventoryProductVariant AS InventoryProductChangelog_InventoryProductVariant_product_variant_id_01',
+              'INNER',
+              [
+                'product_variant_id',
+                '=',
+                'InventoryProductChangelog_InventoryProductVariant_product_variant_id_01.id',
+              ],
+            ],
+          ],
+          "having" => [],
+        ],
+      ],
+      'match' => [
+        'name',
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Product_Changelog_Table_1.
+  [
+    'name' => 'SearchDisplay_Inventory_Product_Changelog_Table_1',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Product_Changelog_Table_1',
+        'label' => E::ts('Inventory Product Changelog Table 1'),
+        'saved_search_id.name' => 'Inventory_Product_Changelog',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [],
+          'limit' => 50,
+          'pager' => [],
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'field',
+              'key' => 'created_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created On'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'InventoryProductChangelog_InventoryProductVariant_product_variant_id_01.product_variant_unique_id',
+              'dataType' => 'String',
+              'label' => E::ts('Device'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'InventoryProductChangelog_InventoryProductVariant_product_variant_id_01.contact_id.display_name',
+              'dataType' => 'String',
+              'label' => E::ts('Member'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'status_id:label',
+              'dataType' => 'String',
+              'label' => E::ts('Change Request'),
+              'sortable' => TRUE,
+            ],
+            [
+              'text' => '',
+              'style' => 'default',
+              'size' => 'btn-xs',
+              'icon' => 'fa-bars',
+              'links' => [
+                [
+                  'path' => '',
+                  'icon' => 'fa-trash',
+                  'text' => E::ts('Delete Change Request'),
+                  'style' => 'danger',
+                  'condition' => [
+                    'InventoryProductChangelog_InventoryBatch_batch_id_01.status_id:name',
+                    '=',
+                    'Open',
+                  ],
+                  'task' => 'delete',
+                  'entity' => 'InventoryProductChangelog',
+                  'action' => '',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                ],
+                [
+                  'task' => 'update',
+                  'entity' => 'InventoryProductChangelog',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                  'icon' => 'fa-save',
+                  'text' => E::ts('Update Change Request'),
+                  'style' => 'default',
+                  'path' => '',
+                  'action' => '',
+                  'condition' => [
+                    'InventoryProductChangelog_InventoryBatch_batch_id_01.status_id:name',
+                    '=',
+                    'Open',
+                  ],
+                ],
+              ],
+              'type' => 'menu',
+              'alignment' => 'text-right',
+            ],
+          ],
+          'actions' => FALSE,
+          'classes' => [
+            'table',
+            'table-striped',
+          ],
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
 ];
+
