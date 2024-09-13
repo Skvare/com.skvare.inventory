@@ -64,7 +64,7 @@
   </table>
   <div>
     {foreach from=$tags item=tag}
-      <a class="{$tag.class}" style="color: #ffffff;" crm-icon="fa-undo" id="change-request" href="/civicrm/contact/view/inventory-productvariant?action=update&change={$tag.id}&id={$productDetails.product_variant.id}&cid={$productDetails.product_variant.contact_id}"><i class="fa fa-fw fa-plus"></i>{$tag.label}</a>
+      <a class="{$tag.class}" style="color: #ffffff;" crm-icon="fa-undo" id="change-request" href="/civicrm/contact/view/inventory-productvariant?action=update&change={$tag.id}&id={$productDetails.product_variant.id}&cid={$productDetails.product_variant.contact_id}#?id={$productDetails.product_variant.id}"><i class="fa fa-fw fa-plus"></i>{$tag.label}</a>
     {/foreach}
   </div>
   <table>
