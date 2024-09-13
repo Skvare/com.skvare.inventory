@@ -1310,7 +1310,7 @@ return [
 
   // Search Display for Inventory_Product_Contact_Tab_Table_1.
   [
-    'name' => 'SearchDisplay_Inventory_Product_Changelog_Table_1',
+    'name' => 'SearchDisplay_Inventory_Product_Contact_Tab_Table_1',
     'entity' => 'SearchDisplay',
     'cleanup' => 'always',
     'update' => 'unmodified',
