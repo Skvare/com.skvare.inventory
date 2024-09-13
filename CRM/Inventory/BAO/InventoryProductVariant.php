@@ -102,7 +102,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
   public static function getProductVariant(int $id, bool $allRelatedEntity = FALSE): array {
     if ($allRelatedEntity) {
       $inventoryProductVariants = InventoryProductVariant::get(TRUE)
-        ->addSelect('*', 'product_id.*', 'membership_id.*')
+        ->addSelect('*', 'status:label', 'product_id.*', 'membership_id.*', 'membership_id.status_id:name', 'contact_id.display_name')
         ->addWhere('id', '=', $id)
         ->setLimit(1)
         ->execute();
@@ -115,15 +115,21 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
         ->execute();
     }
     $result = $inventoryProductVariants->first();
+
     if ($allRelatedEntity) {
       $resultComponent = [];
       foreach ($result as $key => $value) {
         [$pre, $newKey] = explode('.', $key, 2);
+        $newKey = str_replace(':', '_', $newKey);
+        $key = str_replace(':', '_', $key);
         if ($pre == 'product_id' && !empty($newKey)) {
           $resultComponent['product'][$newKey] = $value;
         }
         elseif ($pre == 'membership_id' && !empty($newKey)) {
           $resultComponent['membership'][$newKey] = $value;
+        }
+        elseif ($pre == 'contact_id' && !empty($newKey)) {
+          $resultComponent['contact'][$newKey] = $value;
         }
         else {
           $resultComponent['product_variant'][$key] = $value;
@@ -214,7 +220,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function setPrimary(bool   $newPrimaryValue, bool   $autoExpire = TRUE, string $expireMessage = NULL): void {
+  public function setPrimary(bool $newPrimaryValue, bool $autoExpire = TRUE, string $expireMessage = NULL): void {
     if ($newPrimaryValue) {
       $this->is_primary = TRUE;
       $this->expire_on = NULL;
@@ -297,6 +303,16 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @return bool
    *   Boolean value.
    */
+  public function isProblem(): bool {
+    return $this->is_problem;
+  }
+
+  /**
+   * Function to check status.
+   *
+   * @return bool
+   *   Boolean value.
+   */
   public function isReadyForShipment(): bool {
     return $this->is_active && !$this->is_suspended && is_null($this->expire_on)
       && is_null($this->membership_id) && is_null($this->contact_id);
@@ -318,8 +334,69 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @return bool
    *   Boolean value.
    */
+  public function isSuspended(): bool {
+    return $this->is_suspended;
+  }
+
+  /**
+   * Function to check status.
+   *
+   * @return bool
+   *   Boolean value.
+   */
   public function isAssigned(): bool {
     return $this->contact_id && $this->membership_id && $this->status === 'assigned_to_member';
+  }
+
+  /**
+   * Function to get button label and class.
+   *
+   * @return array[]
+   *   Status array.
+   */
+  public static function statusTagClass(): array {
+    return [
+      //'unlink' => ['id' => 'unlink', 'label' => 'Unlink from Member','class' => 'btn btn-danger'],
+      'reactivate' => ['id' => 'REACTIVATE', 'label' => 'Reactivate', 'class' => 'btn btn-success'],
+      'terminated' => ['id' => 'TERMINATE', 'label' => 'Terminate', 'class' => 'btn btn-danger'],
+      'lost' => ['id' => 'LOST', 'label' => 'Lost', 'class' => 'btn btn-danger'],
+      'problem' => ['id' => 'PROBLEM', 'label' => 'Problem', 'class' => 'btn btn-danger'],
+      'suspend' => ['id' => 'SUSPEND', 'label' => 'Suspend', 'class' => 'btn btn-primary'],
+      'update' => ['id' => 'UPDATE', 'label' => 'Update', 'class' => 'btn btn-primary'],
+    ];
+  }
+
+  /**
+   * Function to get tag for product variant.
+   *
+   * @param int $id
+   *   Product ID.
+   *
+   * @return array
+   *   Tags.
+   */
+  public static function getTagsForVariant($id): array {
+    $searchParams = ['id' => $id];
+    $values = [];
+    $mapping =
+      [
+        'isInactive' => ['label' => 'inactive', 'class' => 'btn btn-danger'],
+        'isAssigned' => ['label' => 'assigned', 'class' => 'btn btn-success'],
+        'isReadyForShipment' => ['label' => 'readyforshipment', 'class' => 'btn btn-success'],
+        'isTerminated' => ['label' => 'terminated', 'class' => 'btn btn-danger'],
+        'isProblem' => ['label' => 'problem', 'class' => 'btn btn-primary'],
+        'isSuspended' => ['label' => 'suspended', 'class' => 'btn btn-primary'],
+      ];
+    $actions = ['isInactive', 'isAssigned', 'isReadyForShipment', 'isTerminated', 'isProblem', 'isSuspended'];
+    $productVariantObject =
+      CRM_Inventory_BAO_InventoryProductVariant::getValues($searchParams, $values)[$id];
+    $htmlForTag = [];
+    foreach ($actions as $action) {
+      if ($productVariantObject->$action()) {
+        $htmlForTag[$action] = "<span class='{$mapping[$action]['class']}'>{$mapping[$action]['label']}</span>";
+      }
+    }
+    return $htmlForTag;
   }
 
 }

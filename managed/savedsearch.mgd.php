@@ -1164,7 +1164,12 @@ return [
         'type' => 'table',
         'settings' => [
           'description' => NULL,
-          'sort' => [],
+          'sort' => [
+            [
+              'created_date',
+              'DESC',
+            ],
+          ],
           'limit' => 50,
           'pager' => [],
           'placeholder' => 5,
@@ -1210,8 +1215,11 @@ return [
                   'style' => 'danger',
                   'condition' => [
                     'InventoryProductChangelog_InventoryBatch_batch_id_01.status_id:name',
-                    '=',
-                    'Open',
+                    'IN',
+                    [
+                      'Open',
+                      'Reopened',
+                    ],
                   ],
                   'task' => 'delete',
                   'entity' => 'InventoryProductChangelog',
@@ -1231,8 +1239,11 @@ return [
                   'action' => '',
                   'condition' => [
                     'InventoryProductChangelog_InventoryBatch_batch_id_01.status_id:name',
-                    '=',
-                    'Open',
+                    'IN',
+                    [
+                      'Open',
+                      'Reopened',
+                    ],
                   ],
                 ],
               ],
@@ -1250,5 +1261,146 @@ return [
       ],
     ],
   ],
-];
 
+  // Saved Search for Inventory_Product_Contact_Tab.
+  [
+    'name' => 'SavedSearch_Inventory_Product_Contact_Tab',
+    'entity' => 'SavedSearch',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Product_Contact_Tab',
+        'label' => E::ts('Inventory Product Contact Tab'),
+        'api_entity' => 'InventoryProductVariant',
+        'api_params' => [
+          'version' => 4,
+          'select' => [
+            'id',
+            'is_active',
+            'created_at',
+            'product_variant_unique_id',
+            'is_discontinued',
+            'is_primary',
+            'is_problem',
+            'is_suspended',
+            'product_id.label',
+            'status:label',
+            'contact_id',
+          ],
+          'orderBy' => [],
+          'where' => [
+            [
+              'contact_id',
+              '=',
+              'user_contact_id',
+            ],
+          ],
+          "groupBy" => [],
+          'join' => [],
+          "having" => [],
+        ],
+      ],
+      'match' => [
+        'name',
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Product_Contact_Tab_Table_1.
+  [
+    'name' => 'SearchDisplay_Inventory_Product_Changelog_Table_1',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Product_Contact_Tab_Table_1',
+        'label' => E::ts('Inventory Product Contact Tab Table 1'),
+        'saved_search_id.name' => 'Inventory_Product_Contact_Tab',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [
+            [
+              'created_date',
+              'DESC',
+            ],
+          ],
+          'limit' => 50,
+          'pager' => [],
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'field',
+              'key' => 'product_id.label',
+              'dataType' => 'String',
+              'label' => E::ts('Model'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'created_at',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'product_variant_unique_id',
+              'dataType' => 'String',
+              'label' => E::ts('Identifier'),
+              'sortable' => TRUE,
+              'rewrite' => '',
+            ],
+            [
+              'type' => 'html',
+              'key' => 'is_active',
+              'dataType' => 'Boolean',
+              'label' => '',
+              'sortable' => TRUE,
+              'rewrite' => "{capture assign=is_active}{\"[is_active]\"}{/capture}\n{capture assign=is_problem}{\"[is_problem]\"}{/capture}\n{capture assign=is_suspended}{\"[is_suspended]\"}{/capture}\n{capture assign=is_primary}{\"[is_primary]\"}{/capture}\n{capture assign=is_replaced}{\"[is_replaced]\"}{/capture}\n{capture assign=is_discontinued}{\"[is_discontinued]\"}{/capture}\n{if \$is_primary == 'Yes'}\n<span class=\"badge badge-dark\">primary</span>\n{/if}\n{if \$is_active == 'Yes'}\n<span class=\"badge badge-success\">active</span>\n{/if}\n{if \$is_problem == 'Yes'}\n<span class=\"badge badge-danger\">problem</span>\n{/if}\n{if \$is_suspended == 'Yes'}\n<span class=\"badge badge-warning\">suspended</span>\n{/if}\n{if \$is_replaced == 'Yes'}\n<span class=\"badge badge-dark\">replaced</span>\n{/if}",
+            ],
+            [
+              'type' => 'field',
+              'key' => 'status:label',
+              'dataType' => 'String',
+              'label' => E::ts('Status'),
+              'sortable' => TRUE,
+            ],
+            [
+              'text' => '',
+              'style' => 'default',
+              'size' => 'btn-xs',
+              'icon' => 'fa-bars',
+              'links' => [
+                [
+                  'path' => 'civicrm/contact/view/inventory-productvariant?action=view&reset=1&cid=[contact_id]&id=[id]#?id=[id]',
+                  'icon' => 'fa-external-link',
+                  'text' => E::ts('View'),
+                  'style' => 'default',
+                  'condition' => [],
+                  'task' => '',
+                  'entity' => '',
+                  'action' => '',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                ],
+              ],
+              'type' => 'menu',
+              'alignment' => 'text-right',
+            ],
+          ],
+          'actions' => FALSE,
+          'classes' => [
+            'table',
+            'table-striped',
+          ],
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
+];

@@ -15,6 +15,9 @@
 <br/>
 <a class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/product-replacement-request?reset=1" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Device Replacement request{/ts}</a>
 
+<br/>
+
+<a class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/batch-list?reset=1" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Device Batch{/ts}</a>
 
 <div>
   More changes coming soon.

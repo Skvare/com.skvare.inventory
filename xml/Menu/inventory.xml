@@ -42,4 +42,10 @@
     <title>ChangeLog</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/contact/view/inventory-productvariant</path>
+    <page_callback>CRM_Inventory_Page_ProductVariant</page_callback>
+    <title>Product Variant</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

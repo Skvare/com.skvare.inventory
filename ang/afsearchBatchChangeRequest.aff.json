@@ -23,7 +23,7 @@
   "allow_verification_by_email": false,
   "email_confirmation_template_id": null,
   "navigation": null,
-  "modified_date": "2024-09-13 02:28:01",
+  "modified_date": "2024-09-13 12:24:17",
   "layout": [
     {
       "#tag": "div",
@@ -45,7 +45,7 @@
           "#tag": "crm-search-display-table",
           "search-name": "Inventory_Product_Changelog",
           "display-name": "Inventory_Product_Changelog_Table_1",
-          "filters": "{batch_id: routeParams.batch_id}"
+          "filters": "{batch_id: routeParams.batch_id, product_variant_id: routeParams.id}"
         },
         {
           "#text": "\n"
