@@ -1325,7 +1325,7 @@ return [
           'description' => NULL,
           'sort' => [
             [
-              'created_date',
+              'created_at',
               'DESC',
             ],
           ],
@@ -1380,6 +1380,18 @@ return [
                   'path' => 'civicrm/contact/view/inventory-productvariant?action=view&reset=1&cid=[contact_id]&id=[id]#?id=[id]',
                   'icon' => 'fa-external-link',
                   'text' => E::ts('View'),
+                  'style' => 'default',
+                  'condition' => [],
+                  'task' => '',
+                  'entity' => '',
+                  'action' => '',
+                  'join' => '',
+                  'target' => 'crm-popup',
+                ],
+                [
+                  'path' => '/civicrm/inventory/device-from#?InventoryProductVariant1=[id]',
+                  'icon' => 'fa-external-link',
+                  'text' => E::ts('Edit'),
                   'style' => 'default',
                   'condition' => [],
                   'task' => '',

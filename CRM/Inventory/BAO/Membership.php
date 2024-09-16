@@ -83,7 +83,7 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    */
   public function terminate(int $id): void {
     /** @var CRM_Member_BAO_Membership $membershipObject */
-    $membershipObject = self::findById($id);
+    $membershipObject = self::findById($id, TRUE);
     $membershipStatus = CRM_Member_BAO_Membership::buildOptions('status_id', 'validate');
     if (!empty($membershipObject->id)) {
       $membershipObject->status_id = array_search('Suspended', $membershipStatus);
@@ -95,11 +95,52 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
       foreach ($productVariants as $productVariantID => $productVariant) {
         /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
         $productVariant->changeStatus($values[$productVariantID],
-          'TERMINATE', "Terminated because membership [membership:{$$id}] terminated.");
+          'TERMINATE', "Terminated because membership [membership:{$id}] terminated.");
       }
       $membershipObject->save();
-      // $this->member->deactivate();
-      // $this->broadcast('terminate', $this);
+    }
+  }
+
+  /**
+   * Function to resume membership.
+   *
+   * @param int $id
+   *   Membership ID.
+   * @param bool $reactivateDevice
+   *   Reactivate Device.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public static function resume(int $id, bool $reactivateDevice = TRUE): void {
+    /** @var CRM_Member_BAO_Membership $membershipObject */
+    $membershipObject = self::findById($id, TRUE);
+    $membershipStatus = CRM_Member_BAO_Membership::buildOptions('status_id', 'validate');
+    if (!empty($membershipObject->id)) {
+      $current_status_id = array_search('Current', $membershipStatus);
+      if ($current_status_id != $membershipObject->status_id) {
+        $membershipObject->status_id = $current_status_id;
+      }
+      if ($reactivateDevice) {
+        $productVariantParams = [];
+        $productVariantParams['membership_id'] = $id;
+        $productVariantParams['is_primary'] = TRUE;
+        $values = [];
+        $productVariants = CRM_Inventory_BAO_InventoryProductVariant::getValues($productVariantParams, $values);
+        // Activate the Primary Device linked with membership.
+        foreach ($productVariants as $productVariantID => $productVariant) {
+          /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
+          if (!$productVariant->is_active || $productVariant->is_suspended) {
+
+          }
+          $productVariant->changeStatus($productVariantID,
+            'REACTIVATE', "Reactivated because membership [membership:{$id}] resumed.");
+        }
+      }
+      // $membershipObject->save();
     }
   }
 

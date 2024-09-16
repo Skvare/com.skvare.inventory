@@ -10,14 +10,29 @@ use CRM_Inventory_ExtensionUtil as E;
 class CRM_Inventory_Form_Setting extends CRM_Core_Form {
 
   /**
+   * @var array
+   */
+  var array $fieldList = [];
+
+  public function preProcess() {
+    $this->fieldList = [
+      'inventory_referral_code' => 'Referral Code Field',
+      'inventory_referral_consumed_code' => 'Referral Code Consumed Field',
+      'inventory_membership_renewal_date' => 'Membership Renewal Date',
+    ];
+  }
+
+  /**
+   * Build form.
+   *
    * @throws \CRM_Core_Exception
    */
   public function buildQuickForm(): void {
     $civicrmFields = CRM_Inventory_Utils::getCiviCRMFields();
-    $this->add('select', "inventory_referral_code", "Referral Code Field",
-      $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
-    $this->add('select', "inventory_referral_consumed_code", "Referral Code Consumed Field",
-      $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
+    foreach ($this->fieldList as $name => $label) {
+      $this->add('select', $name, $label,
+        $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
+    }
     $this->addButtons([
       [
         'type' => 'submit',
@@ -35,8 +50,9 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
     $defaults = [];
     $domainID = CRM_Core_Config::domainID();
     $settings = Civi::settings($domainID);
-    $defaults['inventory_referral_code'] = $settings->get('inventory_referral_code');
-    $defaults['inventory_referral_consumed_code'] = $settings->get('inventory_referral_consumed_code');
+    foreach ($this->fieldList as $name => $label) {
+      $defaults[$name] = $settings->get($name);
+    }
     return $defaults;
   }
 
@@ -44,16 +60,14 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
   public function postProcess(): void {
     // Store the submitted values in an array.
     $params = $this->controller->exportValues($this->_name);
-    // Save the API Key & Save the Security Key
-    $setting = ['inventory_referral_code', 'inventory_referral_consumed_code'];
+    // Save the API Key & Save the Security Key.
     $domainID = CRM_Core_Config::domainID();
     $settings = Civi::settings($domainID);
-    foreach ($setting as $key) {
-      if (CRM_Utils_Array::value($key, $params)) {
-        $settings->set($key, $params[$key]);
+    foreach ($this->fieldList as $name => $label) {
+      if (CRM_Utils_Array::value($name, $params)) {
+        $settings->set($name, $params[$name]);
       }
     }
-
   }
 
   /**

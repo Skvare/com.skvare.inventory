@@ -393,7 +393,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
     $htmlForTag = [];
     foreach ($actions as $action) {
       if ($productVariantObject->$action()) {
-        $htmlForTag[$action] = "<span class='{$mapping[$action]['class']}'>{$mapping[$action]['label']}</span>";
+        $htmlForTag[$action] = "<span class='{$mapping[$action]['class']}' style='border-radius: 2px;margin-right: 4px;'>{$mapping[$action]['label']}</span>";
       }
     }
     return $htmlForTag;

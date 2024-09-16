@@ -375,6 +375,16 @@ function inventory_civicrm_buildForm($formName, &$form) {
       \Civi::service('angularjs.loader')->addModules('afsearchProductMembershipMappingList');
     }
   }
+  elseif ($formName == 'CRM_Member_Form_MembershipView') {
+    $values = [];
+    /** @var  CRM_Member_Form_MembershipView $form */
+    $membershipDevice = CRM_Inventory_BAO_InventoryProductVariant::getValues
+    (['membership_id' => $form->get('membershipID')], $values);
+    foreach ($values as $key => &$value) {
+      $value['tag'] = CRM_Inventory_BAO_InventoryProductVariant::getTagsForVariant($key);
+    }
+    $form->assign('membershipDevices', $values);
+  }
 }
 
 function inventory_civicrm_links(string $op, ?string $objectName, $objectID, array &$links, ?int &$mask, array &$values): void {
@@ -390,10 +400,12 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
 
 /**
  * Implements hook_civicrm_post().
+ * @throws Exception
  */
 function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName === 'Membership' && in_array($op, ['create', 'edit'])) {
     // Get current membership status.
+    /** @var CRM_Member_BAO_Membership $objectRef */
     $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
     // Check our status fit in current membership status list.
     if (isset($objectRef->status_id) && in_array($objectRef->status_id, $activeMembershipStatus)) {
@@ -412,6 +424,26 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         // Get the code.
         $code = CRM_Inventory_BAO_InventoryReferrals::getNewCode();
         $custom_params[$settingInfo['inventory_referral_code_key_name']] = $code;
+        CRM_Core_BAO_CustomValueTable::setValues($custom_params);
+      }
+    }
+  }
+  elseif ($objectName === 'Activity' && $op == 'create') {
+    /** @var  CRM_Activity_BAO_Activity $objectRef */
+    $machineNames = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, 'AND v.value = ' . $objectRef->activity_type_id, 'name');
+    if ($machineNames == 'Membership Renewal' && $objectRef->source_record_id) {
+      // source_record_id is membership ID.
+      // Reactivate the device along with membership status.
+      CRM_Inventory_BAO_Membership::resume($objectRef->source_record_id);
+
+      $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
+      if (array_key_exists('inventory_membership_renewal_date', $settingInfo) &&
+        !empty($settingInfo['inventory_membership_renewal_date'])) {
+        // Update custom field which set about renewal date.
+        $custom_params = [];
+        $custom_params['entityID'] = $objectRef->source_record_id;
+        $custom_params['entityType'] = 'Membership';
+        $custom_params[$settingInfo['inventory_membership_renewal_date']] = date('Y-m-d');
         CRM_Core_BAO_CustomValueTable::setValues($custom_params);
       }
     }

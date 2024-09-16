@@ -34,27 +34,6 @@
       <td class="label">{ts}Expire on{/ts}</td>
       <td>{if $productDetails.product_variant.expire_on}{$productDetails.product_variant.expire_on|crmDate}{else}({ts}not available{/ts}){/if}</td>
     </tr>
-
-    <tr class="crm-inventory-form-block-product_variant_unique_id">
-      <td class="label">{ts}Flag{/ts}</td>
-      <td>
-        {if $productDetails.product_variant.is_primary}
-          <span class="badge badge-dark">primary</span>
-        {/if}
-        {if $productDetails.product_variant.is_active}
-          <span class="badge badge-success">active</span>
-        {/if}
-        {if $productDetails.product_variant.is_problem}
-          <span class="badge badge-danger">problem</span>
-        {/if}
-        {if $productDetails.product_variant.is_suspended}
-          <span class="badge badge-warning">suspended</span>
-        {/if}
-        {if $productDetails.product_variant.is_replaced}
-          <span class="badge badge-dark">replaced</span>
-        {/if}
-      </td>
-    </tr>
     <tr>
       <td class="label">{ts}Tag(s){/ts}</td>
       <td >
@@ -63,8 +42,11 @@
     </tr>
   </table>
   <div>
+    <div>
+      <h5>Change Status</h5>
+    </div>
     {foreach from=$tags item=tag}
-      <a class="{$tag.class}" style="color: #ffffff;" crm-icon="fa-undo" id="change-request" href="/civicrm/contact/view/inventory-productvariant?action=update&change={$tag.id}&id={$productDetails.product_variant.id}&cid={$productDetails.product_variant.contact_id}#?id={$productDetails.product_variant.id}"><i class="fa fa-fw fa-plus"></i>{$tag.label}</a>
+      <a class="{$tag.class}" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="/civicrm/contact/view/inventory-productvariant?action=update&change={$tag.id}&id={$productDetails.product_variant.id}&cid={$productDetails.product_variant.contact_id}#?id={$productDetails.product_variant.id}"><i class="fa fa-fw fa-plus"></i>{$tag.label}</a>
     {/foreach}
   </div>
   <table>
