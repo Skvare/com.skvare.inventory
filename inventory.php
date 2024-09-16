@@ -431,19 +431,21 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   elseif ($objectName === 'Activity' && $op == 'create') {
     /** @var  CRM_Activity_BAO_Activity $objectRef */
     $machineNames = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, 'AND v.value = ' . $objectRef->activity_type_id, 'name');
-    if ($machineNames == 'Membership Renewal' && $objectRef->source_record_id) {
+    if (array_key_exists($objectRef->activity_type_id, $machineNames) &&
+      $machineNames[$objectRef->activity_type_id] == 'Membership Renewal' &&
+      $objectRef->source_record_id) {
       // source_record_id is membership ID.
       // Reactivate the device along with membership status.
       CRM_Inventory_BAO_Membership::resume($objectRef->source_record_id);
 
       $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
-      if (array_key_exists('inventory_membership_renewal_date', $settingInfo) &&
+      if (array_key_exists('inventory_membership_renewal_date_key_name', $settingInfo) &&
         !empty($settingInfo['inventory_membership_renewal_date'])) {
         // Update custom field which set about renewal date.
         $custom_params = [];
         $custom_params['entityID'] = $objectRef->source_record_id;
         $custom_params['entityType'] = 'Membership';
-        $custom_params[$settingInfo['inventory_membership_renewal_date']] = date('Y-m-d');
+        $custom_params[$settingInfo['inventory_membership_renewal_date_key_name']] = date('Ymd');
         CRM_Core_BAO_CustomValueTable::setValues($custom_params);
       }
     }

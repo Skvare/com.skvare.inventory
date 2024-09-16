@@ -147,7 +147,7 @@ class CRM_Inventory_Utils {
     $cache = CRM_Utils_Cache::singleton();
     $params = $cache->get($cacheKey);
     if (!isset($params)) {
-      $setting = ['inventory_referral_code', 'inventory_referral_consumed_code'];
+      $setting = ['inventory_referral_code', 'inventory_referral_consumed_code', 'inventory_membership_renewal_date'];
       $domainID = CRM_Core_Config::domainID();
       $settings = Civi::settings($domainID);
       $params = [];

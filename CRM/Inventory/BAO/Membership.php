@@ -23,17 +23,18 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
    * @param bool $returnObject
    *   Return object or array.
    *
-   * @return array|null
+   * @return array|object|null
    *   Membership details.
    *
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function findById($id, bool $returnObject = FALSE): ?array {
+  public static function findById($id, bool $returnObject = FALSE) {
     if ($returnObject) {
       $membershipObj = new CRM_Member_DAO_Membership();
       $membershipObj->id = $id;
-      return $membershipObj->find(TRUE);
+      $membershipObj->find(TRUE);
+      return $membershipObj;
     }
     else {
       $memberships = Membership::get(TRUE)
@@ -133,11 +134,11 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
         // Activate the Primary Device linked with membership.
         foreach ($productVariants as $productVariantID => $productVariant) {
           /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
+            $productVariant->is_suspended);
           if (!$productVariant->is_active || $productVariant->is_suspended) {
-
+            $productVariant->changeStatus($productVariantID,
+              'REACTIVATE', "Reactivated because membership [membership:{$id}] resumed.");
           }
-          $productVariant->changeStatus($productVariantID,
-            'REACTIVATE', "Reactivated because membership [membership:{$id}] resumed.");
         }
       }
       // $membershipObject->save();
