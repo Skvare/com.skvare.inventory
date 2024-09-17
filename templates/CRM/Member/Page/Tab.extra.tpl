@@ -16,7 +16,7 @@
           <th></th>
           <th>Identifier</th>
           <th>Phone number</th>
-          <th>Device model</th>
+          <th></th>
         </tr>
       </thead>
       {foreach from=$membershipDevices item=membershipDevice}
@@ -24,8 +24,7 @@
           <td style="width: 30%;">{$membershipDevice.tag|implode}</td>
           <td>{$membershipDevice.product_variant_phone_number}</td>
           <td>{$membershipDevice.inventory_product_variant_unique_id}</td>
-          <td>{$membershipDevice.product_id}</td>
-
+          <td>{$membershipDevice.action}</td>
         </tr>
       {/foreach}
     </table>

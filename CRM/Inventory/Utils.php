@@ -1,6 +1,7 @@
 <?php
 
 // phpcs:disable
+use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryBillingPlans;
 use CRM_Inventory_ExtensionUtil as E;
 // phpcs:enable
@@ -260,6 +261,38 @@ class CRM_Inventory_Utils {
       // $this->update(['is_active' => false]);
       // is_active should be custom field.
     }
+  }
+
+  /**
+   * Perform action on device through url request.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public static function action(): void {
+    $productId = CRM_Utils_Request::retrieve('product_id', 'Integer', NULL, TRUE);
+    $contactID = CRM_Utils_Request::retrieve('cid', 'Integer', NULL, TRUE);
+    $status = CRM_Utils_Request::retrieve('status', 'String', NULL, TRUE);
+    $variantObject = new CRM_Inventory_BAO_InventoryProductVariant();
+    try {
+      if ($status == 'active') {
+
+        $variantObject->changeStatus($productId, 'REACTIVATE');
+      }
+      elseif ($status == 'terminate') {
+        $variantObject->changeStatus($productId, 'TERMINATE');
+      }
+    }
+    catch (UnauthorizedException|CRM_Core_Exception $e) {
+      // Do nothing.
+    }
+    $viewContact = CRM_Utils_System::url('civicrm/contact/view',
+      "action=view&reset=1&cid={$contactID}&selectedChild=member"
+    );
+    CRM_Core_Error::statusBounce(ts('Product details updated.'), $viewContact,
+      'Updated');
   }
 
 }

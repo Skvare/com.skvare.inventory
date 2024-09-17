@@ -272,8 +272,6 @@ function inventory_civicrm_navigationMenu(&$menu) {
 
 /**
  * Implements hook_civicrm_alterAPIPermissions().
- *
- * Set Inventory permissions for APIv3.
  */
 function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $permissions['warehouse'] = [
@@ -358,8 +356,6 @@ function _inventory_ApiCall($entity, $action) {
 
 /**
  * Implements hook_civicrm_buildForm().
- *
- * Add Inventory related fields to form.
  */
 function inventory_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Member_Form_MembershipType') {
@@ -378,15 +374,54 @@ function inventory_civicrm_buildForm($formName, &$form) {
   elseif ($formName == 'CRM_Member_Form_MembershipView') {
     $values = [];
     /** @var  CRM_Member_Form_MembershipView $form */
-    $membershipDevice = CRM_Inventory_BAO_InventoryProductVariant::getValues
-    (['membership_id' => $form->get('membershipID')], $values);
-    foreach ($values as $key => &$value) {
-      $value['tag'] = CRM_Inventory_BAO_InventoryProductVariant::getTagsForVariant($key);
+    $membershipDevice = CRM_Inventory_BAO_InventoryProductVariant::getValues(['membership_id' => $form->get('membershipID')], $values);
+    $permissions = [CRM_Core_Permission::VIEW];
+    $permissions[] = CRM_Core_Permission::EDIT;
+    $permissions[] = CRM_Core_Permission::DELETE;
+
+    $mask = CRM_Core_Action::mask($permissions);
+    $links = [];
+    $links[CRM_Core_Action::VIEW] = [
+      'name' => ts('View'),
+      'url' => 'civicrm/contact/view/inventory-productvariant',
+      'qs' => 'action=view&reset=1&cid=%%cid%%&id=%%id%%',
+      'f' => '?id=%%id%%',
+      'title' => ts('Details'),
+      //'class' => 'popup',
+      'target' => 'crm-popup',
+    ];
+    $links[CRM_Core_Action::UPDATE] = [
+      'name' => ts('Update'),
+      'url' => 'civicrm/inventory/device-from',
+      'qs' => 'reset=1',
+      'f' => '?InventoryProductVariant1=%%id%%',
+      'title' => ts('Update'),
+      //'class' => 'popup',
+      'target' => 'crm-popup',
+    ];
+    foreach ($values as $variantID => &$value) {
+      $value['tag'] = CRM_Inventory_BAO_InventoryProductVariant::getTagsForVariant($variantID);
+      $currentMask = $mask;
+      $value['action'] = CRM_Core_Action::formLink($links,
+        $currentMask,
+        [
+          'id' => $variantID,
+          'cid' => $value['contact_id'],
+        ],
+        ts('more') . '...',
+        FALSE,
+        'productVariant.tab.row',
+        'InventoryProductVariant',
+        $variantID
+      );
     }
     $form->assign('membershipDevices', $values);
   }
 }
 
+/**
+ * Implements hook_civicrm_links().
+ */
 function inventory_civicrm_links(string $op, ?string $objectName, $objectID, array &$links, ?int &$mask, array &$values): void {
   if ($op == 'membershipType.manage.action' && $objectName == 'MembershipType') {
     foreach ($links as &$link) {
@@ -396,11 +431,31 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
       }
     }
   }
+  if ($op == 'membership.tab.row' && $objectName == 'Membership') {
+    // Get Device Linked with membership.
+    [$status, $deviceID] = CRM_Inventory_BAO_Membership::getDeviceStatus($values['id']);
+    if (!empty($deviceID)) {
+      $label = E::ts('Activate Device');
+      $statusAction = 'active';
+      if ($status) {
+        $label = E::ts('Terminate Device');
+        $statusAction = 'terminate';
+      }
+      $links[] = [
+        'name' => $label,
+        'url' => "civicrm/inventory/device-action",
+        'qs' => 'reset=1&mid=%%id%%&cid=%%cid%%&product_id=%%product_id%%&status=' . $statusAction,
+        'title' => $label,
+        'class' => '',
+        'weight' => 25,
+      ];
+      $values['product_id'] = $deviceID;
+    }
+  }
 }
 
 /**
  * Implements hook_civicrm_post().
- * @throws Exception
  */
 function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName === 'Membership' && in_array($op, ['create', 'edit'])) {
@@ -481,6 +536,9 @@ function _inventory_activities() {
   return $activities;
 }
 
+/**
+ * Implements hook_civicrm_searchKitTasks().
+ */
 function inventory_civicrm_searchKitTasks(array &$tasks, bool $checkPermissions, ?int $userID) {
   $tasks['InventoryProductChangelog']['export'] = [
     'title' => E::ts('Export Device'),

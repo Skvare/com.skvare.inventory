@@ -48,4 +48,10 @@
     <title>Product Variant</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/device-action</path>
+    <page_callback>CRM_Inventory_Utils::action</page_callback>
+    <title>Device Action</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

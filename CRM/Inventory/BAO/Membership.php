@@ -134,7 +134,6 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
         // Activate the Primary Device linked with membership.
         foreach ($productVariants as $productVariantID => $productVariant) {
           /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
-            $productVariant->is_suspended);
           if (!$productVariant->is_active || $productVariant->is_suspended) {
             $productVariant->changeStatus($productVariantID,
               'REACTIVATE', "Reactivated because membership [membership:{$id}] resumed.");
@@ -206,6 +205,36 @@ class CRM_Inventory_BAO_Membership extends CRM_Member_BAO_Membership {
       'details' => "Membership was extended by {$extendBy} ",
     ];
     civicrm_api3('Activity', 'create', $activityParams);
+  }
+
+  /**
+   * Get device status on membership.
+   *
+   * @param int $mid
+   *   Membership ID.
+   *
+   * @return array
+   *   Device status and id.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public static function getDeviceStatus(int $mid): array {
+    /** @var CRM_Inventory_BAO_Membership $membershipObject */
+    $membershipObject = self::findById($mid, TRUE);
+    $inputParams = ['membership_id' => $membershipObject->id];
+    $values = [];
+    $deviceObject = CRM_Inventory_BAO_InventoryProductVariant::getValues($inputParams, $values);
+    foreach ($deviceObject as $productVariantID => $productVariant) {
+      /** @var CRM_Inventory_BAO_InventoryProductVariant $productVariant */
+      if ($productVariant->id) {
+        if ($productVariant->isTerminated() || $productVariant->isSuspended()) {
+          return [FALSE, $productVariant->id];
+        }
+        return [TRUE, $productVariant->id];
+      }
+    }
+    return [FALSE, NULL];
   }
 
 }
