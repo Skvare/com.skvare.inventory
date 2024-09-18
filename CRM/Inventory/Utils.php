@@ -177,7 +177,7 @@ class CRM_Inventory_Utils {
         // widely used custom field name in form.
         [inventory_referral_code_key_name] => custom_27
          */
-        $params['table'] = $table_name;
+        $params[$key . '_table'] = $table_name;
         $params[$key . '_cg_name'] = $cgName;
         $params[$key . '_cf_name'] = $cf_name;
         $params[$key . '_cf_name_full'] = "{$cgName}.{$cf_name}";

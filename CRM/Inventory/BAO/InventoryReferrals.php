@@ -158,7 +158,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
     //  CUSTOMFIELD-Referral-CODE = 'ABC';
 
     // This field myst be indexed, it gets used heavily.
-    $sql = "select count({$settingInfo['inventory_referral_code']}) from {$settingInfo['table']}  where {$settingInfo['inventory_referral_code']} = %1";
+    $sql = "select count({$settingInfo['inventory_referral_code']}) from {$settingInfo['inventory_referral_code_table']}  where {$settingInfo['inventory_referral_code']} = %1";
     $count = CRM_Core_DAO::singleValueQuery($sql, [1 => [$code, 'String']]);
     return (bool) $count;
   }
