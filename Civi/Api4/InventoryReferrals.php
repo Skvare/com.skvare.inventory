@@ -82,4 +82,16 @@ class InventoryReferrals extends Generic\DAOEntity {
       ->setCheckPermissions($checkPermissions);
   }
 
+  /**
+   * @param bool $checkPermissions
+   *   Permission Check.
+   *
+   * @return Action\InventoryReferrals\GenerateCode
+   *   Information.
+   */
+  public static function generateCode($checkPermissions = TRUE) {
+    return (new Action\InventoryReferrals\GenerateCode(__CLASS__, __FUNCTION__))
+      ->setCheckPermissions($checkPermissions);
+  }
+
 }

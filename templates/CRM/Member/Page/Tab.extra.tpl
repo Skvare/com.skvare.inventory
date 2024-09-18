@@ -31,3 +31,28 @@
     </div>
   {/crmScope}
 {/if}
+{if $action eq 2}
+{literal}
+  <script type="text/javascript">
+    CRM.$(function($) {
+      setTimeout(function waitForField() {
+        if ($("[data-crm-custom='Referrals:Referral_Code']").length > 0) {
+          $("[data-crm-custom='Referrals:Referral_Code']").after('&nbsp;&nbsp;&nbsp;<a id="generateCode" href="#" onClick="return false;"><strong>GenerateCode</strong></a>');
+
+          $("#generateCode").click(function() {
+            CRM.api4('InventoryReferrals', 'generateCode', {
+            }).then(function(results) {
+              $("[data-crm-custom='Referrals:Referral_Code']").val(results.code);
+            }, function(failure) {
+            });
+          });
+        }
+      }, 2500);
+
+
+    });
+  </script>
+{/literal}
+
+
+{/if}
