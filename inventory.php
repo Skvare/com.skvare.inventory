@@ -374,7 +374,8 @@ function inventory_civicrm_buildForm($formName, &$form) {
   elseif ($formName == 'CRM_Member_Form_MembershipView') {
     $values = [];
     /** @var  CRM_Member_Form_MembershipView $form */
-    $membershipDevice = CRM_Inventory_BAO_InventoryProductVariant::getValues(['membership_id' => $form->get('membershipID')], $values);
+    $membershipID = CRM_Utils_Request::retrieve('id', 'Positive', NULL, TRUE);
+    $membershipDevice = CRM_Inventory_BAO_InventoryProductVariant::getValues(['membership_id' => $membershipID], $values);
     $permissions = [CRM_Core_Permission::VIEW];
     $permissions[] = CRM_Core_Permission::EDIT;
     $permissions[] = CRM_Core_Permission::DELETE;
