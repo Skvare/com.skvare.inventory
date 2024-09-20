@@ -228,5 +228,19 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
+  <field>
+    <name>rate_id</name>
+    <title>Rate ID</title>
+    <uniqueName>inventory_shipment_label_rate_id</uniqueName>
+    <type>varchar</type>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
 
 </table>

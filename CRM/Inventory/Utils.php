@@ -3,6 +3,7 @@
 // phpcs:disable
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryBillingPlans;
+use Civi\Api4\Address;
 use CRM_Inventory_ExtensionUtil as E;
 // phpcs:enable
 
@@ -13,6 +14,13 @@ use CRM_Inventory_ExtensionUtil as E;
  * Utility functions.
  */
 class CRM_Inventory_Utils {
+
+  const US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+  ];
+  const US_TERRITORIES = [
+    'AA', 'AE', 'AE', 'AE', 'AE', 'AP', 'AS', 'FM', 'GU', 'MH', 'MP', 'PR', 'PW', 'VI',
+  ];
 
   /**
    * Membership Type available to limited countries.
@@ -285,7 +293,7 @@ class CRM_Inventory_Utils {
         $variantObject->changeStatus($productId, 'TERMINATE');
       }
     }
-    catch (UnauthorizedException|CRM_Core_Exception $e) {
+    catch (UnauthorizedException | CRM_Core_Exception $e) {
       // Do nothing.
     }
     $viewContact = CRM_Utils_System::url('civicrm/contact/view',
@@ -293,6 +301,68 @@ class CRM_Inventory_Utils {
     );
     CRM_Core_Error::statusBounce(ts('Product details updated.'), $viewContact,
       'Updated');
+  }
+
+  /**
+   * Function to get object.
+   *
+   * @param string $daoName
+   *   DAO object.
+   * @param array $params
+   *   Input params.
+   *
+   * @return array|object
+   *   Array of object.
+   */
+  public static function commonRetrieveAll(string $daoName, array $params, $single = TRUE): array|object {
+    $object = new $daoName();
+    $object->copyValues($params);
+    if ($single) {
+      $object->find(TRUE);
+      return $object;
+    }
+    else {
+      $object->find();
+    }
+    $details = [];
+    while ($object->fetch()) {
+      $details[$object->id] = $object;
+    }
+    return $details;
+  }
+
+  /**
+   * Get Address of contact.
+   *
+   * @param int $contactID
+   *   Contact ID.
+   *
+   * @return array
+   *   Address.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public static function getAddress(int $contactID): array {
+    $addresses = Address::get(TRUE)
+      ->addSelect('name', 'street_address', 'supplemental_address_1', 'supplemental_address_2', 'city', 'state_province_id:abbr', 'country_id:abbr', 'postal_code')
+      ->addWhere('is_primary', '=', TRUE)
+      ->addWhere('contact_id', '=', $contactID)
+      ->setLimit(1)
+      ->execute();
+    $addressCorrect = [];
+    foreach ($addresses->first() as $key => $value) {
+      if ($key == 'state_province_id:abbr') {
+        $addressCorrect['state'] = $value;
+      }
+      elseif ($key == 'country_id:abbr') {
+        $addressCorrect['country'] = $value;
+      }
+      else {
+        $addressCorrect[$key] = $value;
+      }
+    }
+    return $addressCorrect;
   }
 
 }

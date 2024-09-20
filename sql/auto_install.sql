@@ -357,6 +357,7 @@ CREATE TABLE `civicrm_inventory_shipment_labels` (
   `shipment` text COMMENT 'Shipment details.',
   `purchase` text COMMENT 'Shipment Purchase details.',
   `contact_id` int unsigned COMMENT 'FK to Contact',
+  `rate_id` varchar(255) NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_inventory_shipment_labels_sales_id FOREIGN KEY (`sales_id`) REFERENCES `civicrm_inventory_sales`(`id`) ON DELETE CASCADE,
   CONSTRAINT FK_civicrm_inventory_shipment_labels_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE)
