@@ -365,4 +365,11 @@ class CRM_Inventory_Utils {
     return $addressCorrect;
   }
 
+  public static function getContact(int $contactID): array {
+    $lineItems = \Civi\Api4\LineItem::get(TRUE)
+      ->addWhere('sale_id', 'IS NOT NULL')
+      ->setLimit(25)
+      ->execute();
+  }
+
 }

@@ -1,0 +1,133 @@
+#
+# Parcels are matched from top to bottom of the file, in order.
+#
+# The first one is chosen where all the items specified for a parcel definition
+# are matched against the items in the order.
+#
+# So, smaller parcels should be later.
+#
+# Item definition is:
+#
+# items:
+#   arbitrary_label:
+#     class: <the class of the Product or "Item" when there is no product>
+#     names: <array to match product.name, or title of line item if no product>
+#
+# This is ugly but works for now.
+#
+hotspot_with_shirt:
+  items:
+    shirt:
+      class: "Premium"
+      names:
+        - "Apparel"
+    modem:
+      class: "DeviceModel"
+      names:
+        - "mifi-x"
+        - "quanta-5g"
+        - "mifi-m2000"
+        - "mifi-8000"
+        - "linkzone-2"
+        - "franklin-t9"
+        - "franklin-t10"
+        - "coolpad-surf"
+        - "jextream"
+  length: 8
+  width: 6
+  height: 4
+  distance_unit: "in"
+  weight: 1.5
+  mass_unit: "lb"
+phone_with_shirt:
+  items:
+    shirt:
+      class: "Premium"
+      names:
+        - "Apparel"
+    modem:
+      class: "DeviceModel"
+      names:
+        - "pixel-4a-5g"
+        - "pixel-4a"
+        - "pixel-6"
+        - "pixel-6a"
+        - "pixel-6-pro"
+  length: 8
+  width: 6
+  height: 4
+  distance_unit: "in"
+  weight: 1.625
+  mass_unit: "lb"
+hotspot_only:
+  items:
+    modem:
+      class: "DeviceModel"
+      names:
+        - "mifi-x"
+        - "quanta-5g"
+        - "mifi-m2000"
+        - "mifi-8000"
+        - "linkzone-2"
+        - "franklin-t9"
+        - "franklin-t10"
+        - "coolpad-surf"
+        - "jextream"
+  length: 8
+  width: 6
+  height: 4
+  distance_unit: "in"
+  weight: 1
+  mass_unit: "lb"
+phone_only:
+  items:
+    modem:
+      class: "DeviceModel"
+      names:
+        - "pixel-4a-5g"
+        - "pixel-4a"
+        - "pixel-6"
+        - "pixel-6a"
+        - "pixel-6-pro"
+  length: 8
+  width: 6
+  height: 4
+  distance_unit: "in"
+  weight: 1.125
+  mass_unit: "lb"
+shirt_only:
+  items:
+    shirt:
+      class: "Premium"
+      names:
+        - "Apparel"
+  length: 8
+  width: 8
+  height: 0.5
+  distance_unit: "in"
+  weight: 0.5
+  mass_unit: "lb"
+sim_only:
+  items:
+    sim:
+      class: "Item"
+      names:
+        - "SIM Replacement"
+  length: 8
+  width: 4
+  height: 0.25
+  distance_unit: "in"
+  weight: 0.13
+  mass_unit: "lb"
+sim_only2:
+  items:
+    sim:
+      class: "DeviceModel"
+      names:
+        - "sim-card"
+  length: 8
+  width: 4
+  height: 0.25
+  distance_unit: "in"
+  weight: 1
+  mass_unit: "lb"

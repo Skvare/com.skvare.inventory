@@ -10,45 +10,11 @@ use Civi\Api4\InventoryShipmentLabels;
  *
  */
 class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_InventoryShipmentLabels {
+  use CRM_Inventory;
 
-  /**
-   * Object.
-   *
-   * @var CRM_Inventory_DAO_InventoryShipmentLabels
-   */
-  private $shipmentLabel = NULL;
-
-  /**
-   * Object.
-   *
-   * @var CRM_Inventory_DAO_InventorySales
-   */
-  private $sales  = NULL;
-
-  /**
-   * Object.
-   *
-   * @var CRM_Inventory_DAO_InventoryProduct
-   */
-  private $product = NULL;
-
-  /**
-   * Object.
-   *
-   * @var CRM_Inventory_DAO_InventoryProductVariant
-   */
-  private $productVariant = NULL;
-
-  /**
-   * Object.
-   *
-   * @var array
-   */
-  private $address = NULL;
-
-  const  shippo_carriers = ["UPS", "USPS"];
-  const shippo_preferred_domestic_carriers = ["UPS"];
-  const shippo_preferred_international_carriers = ["USPS"];
+  const  SHIPPO_CARRIERS = ["UPS", "USPS"];
+  const SHIPPO_PREFERRED_DOMESTIC_CARRIERS = ["UPS"];
+  const SHIPPO_PREFERRED_INTERNATIONAL_CARRIERS = ["USPS"];
 
   /**
    * Function to preload the object.
@@ -64,40 +30,13 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function boot(string $columName, mixed $value) {
-    $this->shipmentLabel = self::findById($columName, $value, TRUE);
-    if ($this->shipmentLabel->sales_id) {
-      $this->sales = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventorySales', ['id' => $this->shipmentLabel->sales_id], TRUE);
-      if ($this->sales->id) {
-        $this->productVariant = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventoryProductVariant', ['sale_id' => $this->sales->id], TRUE);
-        if ($this->productVariant->id) {
-          $this->product = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventoryProduct', ['id' => $this->productVariant->product_id], TRUE);
-        }
-        if ($this->productVariant->contact_id) {
-          $this->address = CRM_Inventory_Utils::getAddress($this->productVariant->contact_id);
-        }
-      }
-    }
-  }
-  public function saleProductVariantes() {
-    if ($this->productVariant === NULL){
-      $this->productVariant = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventoryProductVariant', ['sale_id' => $this->sales->id], TRUE);
-    }
-    return $this->productVariant;
-  }
-
-  public function sales() {
-    if ($this->sales === NULL){
-      $this->sales = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventorySales', ['id' => $this->shipmentLabel->sales_id], TRUE);
-    }
-    return $this->sales;
-  }
-
-  public function sales2() {
-    if ($this->sales === NULL) {
-      $this->sales = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventorySales', ['id' => $this->shipmentLabel->sales_id], TRUE);
-    }
-    return $this->sales;
+  public function load(string $columName = 'id', mixed $value = ''): void {
+    $this->shipmentLabel = $this->findEntityById($columName, $value, 'InventoryShipmentLabels', TRUE);
+    $this->sales = $this->getSales($this->shipmentLabel);
+    $this->address = $this->getShipmentAddress($this->sales);
+    $this->lineItem = $this->getSalesLineItems($this->sales);
+    $this->productVariant = $this->getProductVariant($this->sales);
+    $this->product = $this->getProduct($this->productVariant);
   }
 
   /**
@@ -116,7 +55,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function findById($searchColumn = 'id', int|string $searchValue = '', bool $returnObject = FALSE) {
+  public static function findById2($searchColumn = 'id', int|string $searchValue = '', bool $returnObject = FALSE) {
     if ($returnObject) {
       $shipmentObj = new CRM_Inventory_BAO_InventoryShipmentLabels();
       $shipmentObj->$searchColumn = $searchValue;
@@ -160,11 +99,25 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Get Rate and pay.
    *
+   * Runs a delayed job in the background to get the rates and purchase label.
+   *
+   * If there is an error, we raise an exception so that the job will be
+   * tried again.
+   *
+   * Signer is the name we send to shippo for who validated the customs
+   * information.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function asyncGetRatesAndPay($signer) {
+  public function asyncGetRatesAndPay() {
     if (!$this->shipmentLabel->is_valid || $this->shipmentExpired()) {
-      $this->getRates($signer);
+      $this->getRates();
     }
     if (!$this->shipmentLabel->is_paid && $this->shipmentLabel->is_valid && $this->shipmentLabel->rate_id) {
       $this->pay();
@@ -175,9 +128,14 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Refund.
    *
+   * @return void
+   *   Nothing.
+   *
+   * @throws Exception
    */
-  public function asyncRefund() {
+  public function asyncRefund(): void {
     if ($this->shipmentLabel->is_paid) {
       $this->refund();
     }
@@ -187,10 +145,23 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * IS ready to pay for label.
    *
+   * @return bool
+   *   Is ready.
    */
-  public function readyToPay() {
+  public function readyToPay(): bool {
     return $this->hasRates() && !$this->shipmentLabel->is_paid && !is_null($this->shipmentLabel->rate_id);
+  }
+
+  /**
+   * Does label have rate?
+   *
+   * @return bool
+   *   Has rates.
+   */
+  public function hasRates(): bool {
+    return !empty($this->shipmentLabel->shipment['rates']);
   }
 
   /**
@@ -213,6 +184,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Check Shipment is expired.
    *
+   * The shipment data is only valid for 24 hours.
+   *
    * @return bool
    *   Is Expired.
    */
@@ -231,7 +204,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @return array|string|string[]
    *   Mixed info.
    */
-  public function trackingUrl() {
+  public function trackingUrl(): array|string {
     $environment = CRM_Core_Config::environment();
     if (!empty($this->shipmentLabel->purchase['tracking_url_provider']) &&
       $environment == 'Production') {
@@ -243,24 +216,40 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
-   * Get Rates.
+   * Gets a list of all rates for this parcel and addresses.
    *
-   * @param $customsSigner
+   * For international shipments, we need the name of the 'signer' who is
+   * certifying the contents of the shipment. It should be the name of the
+   * current user.
    *
    * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function getRates($customsSigner = NULL) {
+  public function getRates(): void {
     $this->clearMessages();
+    $saleID = $this->shipmentLabel->sales_id;
+    $customsSigner = CRM_Core_Session::singleton()->getLoggedInContactID();
+    $displayName = CRM_Contact_BAO_Contact::displayName($customsSigner);
+
+    $parcel = CRM_Inventory_BAO_InventorySales::parcel($saleID);
+
     try {
-      $response = Http::post('https://api.goshippo.com/shipments', [
+      $shippoParams = [
         'address_from' => $this->getAddressFrom(),
         'address_to' => $this->getAddressTo(),
-        'parcels' => $this->getDimensions(),
-        'customs_declaration' => $this->createCustomsDeclaration($customsSigner),
+        'parcels' => $parcel,
+        'customs_declaration' => $this->createCustomsDeclaration($saleID, $customsSigner),
+        'meta_data' => "Contact ID {$customsSigner}, name {$displayName}",
         'async' => FALSE,
-      ]);
-      $this->shipmentLabel->shipment = $response->json();
-      foreach ($this->shipmentLabel->shipment['messages'] as $message) {
+      ];
+
+      $response = CRM_Shippo_Connect::shipment($shippoParams);
+      $result = json_decode(json_encode($response), TRUE);
+      $this->shipmentLabel->shipment = $result;
+      foreach ($this->shipmentLabel->shipment['messages'] as &$message) {
         if ($this->isErrorMessage($message)) {
           if ($this->shipmentLabel->shipment['status'] == 'SUCCESS') {
             $message['type'] = 'warning';
@@ -276,6 +265,12 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->addError($exc, 'shipment');
     }
     finally {
+      if (is_array($this->shipmentLabel->shipment)) {
+        $this->shipmentLabel->shipment = json_encode($this->shipmentLabel->shipment);
+      }
+      if (is_array($this->shipmentLabel->purchase)) {
+        $this->shipmentLabel->purchase = json_encode($this->shipmentLabel->purchase);
+      }
       $this->shipmentLabel->save();
     }
   }
@@ -283,7 +278,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Function to pay for label.
    *
-   * @param string $rateId
+   * Buys the label, charges the account for the shipping.
+   *
+   * @param string|null $rateId
    *   Rate ID.
    *
    * @return void
@@ -293,12 +290,14 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     try {
       $this->clearMessages();
       $rateId = $rateId ?: $this->shipmentLabel->rate_id;
-      $response = Http::post('https://api.goshippo.com/transactions', [
+      $param = [
         'rate' => $rateId,
         'label_file_type' => 'PNG',
         'async' => FALSE,
-      ]);
-      $this->shipmentLabel->purchase = $response->json();
+      ];
+      $response = CRM_Shippo_Connect::transactions($param);
+      $result = json_decode(json_encode($response), TRUE);
+      $this->shipmentLabel->purchase = $result;
       $this->updateFromTransaction($this->shipmentLabel->purchase);
       $this->attachLabelImage($this->shipmentLabel->purchase);
     }
@@ -306,14 +305,17 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->addError($exc);
     }
     finally {
-      $this->save();
+      $this->shipmentLabel->save();
     }
   }
 
   /**
    * Function to refund label fee.
    *
+   * If the label has not been used, we can take it back.
+   *
    * @return void
+   *   Nothing.
    */
   public function refund(): void {
     $this->clearMessages();
@@ -321,16 +323,17 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       return;
     }
     try {
-      $response = Http::post('https://api.goshippo.com/refunds', [
+      $param = [
         'transaction' => $this->shipmentLabel->purchase['object_id'],
         'async' => FALSE,
-      ]);
-      $refund = $response->json();
+      ];
+      $response = CRM_Shippo_Connect::refund($param);
+      $refund = json_decode(json_encode($response), TRUE);
       if (empty($refund)) {
         $this->addError('Empty response. Maybe label doesn\'t exist?');
       }
       elseif ($refund['status'] == 'SUCCESS' || $refund['status'] == 'PENDING') {
-        $this->shipmentLabel->purchase = [];
+        $this->shipmentLabel->purchase = json_encode([]);
         $this->shipmentLabel->is_paid = FALSE;
         $this->shipmentLabel->provider = NULL;
         $this->shipmentLabel->amount = 0;
@@ -353,29 +356,49 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Get Best Rate.
    *
-   * @param $shipment
+   * RATE GUESSING.
+   *
+   * Fallback rule:
+   *    choose the cheapest ups
+   * PO BOX rule:
+   *    Choose cheapest usps if po box
+   * International rule:
+   *    Choose cheapest usps if international
+   * Faster rule:
+   *    Choose next cheapest ups if it is 2 days faster and not more than $2
+   * more.
+   * Envelope rule:
+   *    Choose cheapest usps if cheapest ups is $5 more & weight < 1 pound.
+   *
+   * This does not always choose the cheapest, if there is another rate that
+   * is slightly more but much faster.
+   *
+   * @param array $shipment
    *   Shipment details.
    *
    * @return mixed|null
-   *   Mixed.
+   *   Returns the best shipping rates for the parcel and address..
    */
-  public function getBestRate($shipment): mixed {
+  public function getBestRate(array $shipment): mixed {
     if (empty($shipment) || empty($shipment['rates'])) {
       return NULL;
     }
-    if (!is_array(self::shippo_carriers) ||
-      !is_array(self::shippo_preferred_international_carriers) ||
-      !is_array(self::shippo_preferred_domestic_carriers)) {
-      throw new Exception('Setting shippo_carriers is misconfigured');
+    if (!is_array(self::SHIPPO_CARRIERS) ||
+      !is_array(self::SHIPPO_PREFERRED_INTERNATIONAL_CARRIERS) ||
+      !is_array(self::SHIPPO_PREFERRED_DOMESTIC_CARRIERS)) {
+      throw new Exception('Setting SHIPPO_CARRIERS is misconfigured');
     }
 
     $rates = ['all' => []];
-    $ratesByCost = array_map(function ($rate) {
-      return $rate['amount'];
-    }, $shipment['rates']);
-    asort($ratesByCost);
+
+    // Rate by Cost.
+    usort($shipment['rates'], function ($item, $compare) {
+      return $item['amount'] >= $compare['amount'];
+    });
+
+    $ratesByCost = $shipment['rates'];
     foreach ($ratesByCost as $rate) {
-      foreach (self::shippo_carriers as $carrier) {
+      foreach (self::SHIPPO_CARRIERS as $carrier) {
         if (!isset($rates[$carrier])) {
           $rates[$carrier] = [];
         }
@@ -385,18 +408,16 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
         }
       }
     }
-
-    $rate = $rates[self::shippo_preferred_domestic_carriers[0]][0] ?? $rates['all'][0];
-
+    $rate = $rates[self::SHIPPO_PREFERRED_DOMESTIC_CARRIERS[0]][0] ?? $rates['all'][0];
     if (empty($rate)) {
-      $this->addError('No rates available for shipping providers ' . implode(', ', self::shippo_carriers) . '. Try again later.', 'shipment');
+      $this->addError('No rates available for shipping providers ' . implode(', ', self::SHIPPO_CARRIERS) . '. Try again later.', 'shipment');
       $rate = NULL;
     }
     elseif (count($rates['all']) == 1) {
       $rate = $rates['all'][0];
     }
     elseif (!$this->isDomestic($shipment['address_from'], $shipment['address_to'])) {
-      $rate = $rates[self::shippo_preferred_international_carriers[0]][0];
+      $rate = $rates[self::SHIPPO_PREFERRED_INTERNATIONAL_CARRIERS[0]][0];
     }
     elseif ($this->isPoBox($shipment['address_to']) && !empty($rates['USPS'])) {
       $rate = $rates['USPS'][0];
@@ -408,7 +429,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $rate = $faster;
     }
 
-    return $rate['object_id'] ?? NULL;
+    return [$rate['object_id'], $rate['amount']] ?? [NULL, 0];
   }
 
   /**
@@ -420,10 +441,18 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   Storage value.
    *
    * @return void
+   *   Nothing.
    */
   private function addError(string $msg, string $storage = 'purchase'): void {
-    $this->shipmentLabel->$storage['messages'] = $this->shipmentLabel->$storage['messages'] ?? [];
-    $this->shipmentLabel->$storage['messages'][] = ['text' => (string) $msg, 'code' => 'error'];
+    if ($storage == 'shipment') {
+      $this->shipmentLabel->shipment['messages'] = $this->shipmentLabel->shipment['messages'] ?? [];
+      $this->shipmentLabel->shipment['messages'][] = ['text' => (string) $msg, 'code' => 'error'];
+    }
+    else {
+      $this->shipmentLabel->purchase['messages'] = $this->shipmentLabel->purchase['messages'] ?? [];
+      $this->shipmentLabel->purchase['messages'][] = ['text' => (string) $msg, 'code' => 'error'];
+    }
+
     $this->has_error = TRUE;
   }
 
@@ -434,8 +463,20 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   Nothing.
    */
   private function clearMessages(): void {
-    $this->shipmentLabel->shipment['messages'] = [];
-    $this->shipmentLabel->purchase['messages'] = [];
+    if (!is_array($this->shipmentLabel->shipment)) {
+      $this->shipmentLabel->shipment = [];
+      $this->shipmentLabel->shipment['messages'] = [];
+    }
+    else {
+      $this->shipmentLabel->shipment['messages'] = [];
+    }
+    if (!is_array($this->shipmentLabel->purchase)) {
+      $this->shipmentLabel->purchase = [];
+      $this->shipmentLabel->purchase['messages'] = [];
+    }
+    else {
+      $this->shipmentLabel->purchase['messages'] = [];
+    }
   }
 
   /**
@@ -448,10 +489,10 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   IsError.
    */
   public function isErrorMessage(array $msg): bool {
-    if ($msg['type'] == 'warning') {
+    if (array_key_exists('type', $msg) && $msg['type'] == 'warning') {
       return FALSE;
     }
-    elseif ($msg['type'] == 'fatal') {
+    elseif (array_key_exists('type', $msg) && $msg['type'] == 'fatal') {
       return TRUE;
     }
     else {
@@ -462,6 +503,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
 
   /**
    * Get Rate.
+   *
+   * Given a rate id, return the rate hash from the list of possible rates
+   * for this parcel and address.
    *
    * @param string $rateId
    *   Rate ID.
@@ -505,6 +549,10 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     if (is_null(empty($address))) {
       throw new Exception('Member does not have an address');
     }
+    if (empty($address['name'])) {
+      $displayName = CRM_Contact_BAO_Contact::displayName($this->sales->contact_id);
+      $address['name'] = $displayName;
+    }
     $fromAddress = CRM_Shippo_Utils::getFromAddress();
     if ($address['country'] == $fromAddress['country']) {
       return $address;
@@ -536,6 +584,12 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Is Domestic Shipment.
    *
+   * A shipment is domestic if the country code is the same. For the US we
+   * only treat the 50 states plus DC as domestic (because that is how
+   * carriers handle it). US territories, US Virgin Islands, and Puerto Rico
+   * are all considered international (except for the purposes of customs
+   * declaration).
+   *
    * @param array $from
    *   From Address.
    * @param array $to
@@ -544,7 +598,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @return bool
    *   Is domestic.
    */
-  private function isDomestic($from, $to) {
+  private function isDomestic(array $from, array $to): bool {
     if ($from && $to) {
       $fromCountry = $from['country'];
       $toCountry = $to['country'];
@@ -568,6 +622,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Get Two day Faster rate.
    *
+   * If the second-cheapest rate is 2 days faster, choose that one if it is
+   * under $2 more.
+   *
    * @param array $rates
    *   Rate details.
    * @param array $defaultRate
@@ -589,7 +646,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
-   * Get Cheat rate.
+   * Get Cheap rate.
+   *
+   *  Choose cheapest USPS if cheapest ups is $5 more & weight < 1 pound.
    *
    * @param array $rates
    *   Rate details.
@@ -603,7 +662,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    */
   private function smallAndCheap(array $rates, array $defaultRate, array $shipment): mixed {
     if ($shipment['parcels'][0]['mass_unit'] == 'lb' && $shipment['parcels'][0]['weight'] <= 1) {
-      if (in_array('UPS', self::shippo_carriers) && in_array('USPS', self::shippo_carriers)) {
+      if (in_array('UPS', self::SHIPPO_CARRIERS) && in_array('USPS', self::SHIPPO_CARRIERS)) {
         $uspsRate = $rates['USPS'][0];
         if ($defaultRate['amount'] > $uspsRate['amount'] + 3) {
           return $uspsRate;
@@ -647,8 +706,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *
    * @throws Exception
    */
-  private function getDimensions() {
-    $parcelDimensions = $this->order->parcel;
+  private function getDimensions($product) {
+    $parcelDimensions = $this->product;
     if (is_null($parcelDimensions)) {
       throw new Exception('Could not guess the parcel dimensions');
     }
@@ -656,24 +715,33 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Get Custom details for item.
    *
+   * @param int $saleID
+   *   Sale ID.
+   *
+   * @return array
+   *   Item details.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  private function getItemsForCustoms() {
+  public static function getItemsForCustoms(int $saleID): array {
+    $lineItems = CRM_Inventory_BAO_InventorySales::getProductDetailOfLineItem($saleID);
     $items = [];
-    foreach ($this->order->orderItems as $oi) {
-      if ($oi->isShippingRequired()) {
-        $value = $oi->item->priceOrValue();
-        if ($value < 1) {
-          $value = 1;
+    foreach ($lineItems as $li) {
+      if ($li['is_shipping_required']) {
+        if ($li['line_total'] < 1) {
+          $li['line_total'] = 1;
         }
         $items[] = [
-          'description' => $oi->item->displayName(),
-          'quantity' => $oi->quantity,
-          'net_weight' => ($oi->quantity * $oi->item->weight),
-          'mass_unit' => $oi->item->massUnit(),
-          'value_amount' => ($oi->quantity * $value),
-          'value_currency' => $oi->item->currency,
-          'origin_country' => Conf::shipping_from_country(),
+          'description' => $li['item'],
+          'quantity' => $li['qty'],
+          'net_weight' => ($li['qty'] * $li['packed_weight']),
+          'mass_unit' => $li['mass_unit'],
+          'value_amount' => $li['line_total'],
+          'value_currency' => 'USD',
+          'origin_country' => 'USA',
         ];
       }
     }
@@ -681,9 +749,20 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Create Custom Declaration.
    *
+   * @param int $saleID
+   *   Sale ID.
+   * @param string|null $signer
+   *   Signer Contact.
+   *
+   * @return array|null
+   *   Customs Declaration details.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  private function createCustomsDeclaration($signer) {
+  private function createCustomsDeclaration(int $saleID, string $signer = NULL): ?array {
     if (empty($this->address)) {
       return NULL;
     }
@@ -697,14 +776,17 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       'state' => $fromAddress['state'],
     ];
     if ($this->customsDeclarationRequired($to, $from)) {
-      return Http::post('https://api.goshippo.com/customs/declarations', [
+      $params = [
         'contents_type' => 'GIFT',
         'contents_explanation' => 'Membership Premiums',
         'non_delivery_option' => 'RETURN',
         'certify' => TRUE,
         'certify_signer' => $signer,
-        'items' => $this->getItemsForCustoms(),
-      ])->json();
+        'items' => $this->getItemsForCustoms($saleID),
+      ];
+      /** @var OpenAPI\Client\Model\CustomsDeclaration $result */
+      $result = CRM_Shippo_Connect::declarations($params);
+      return json_decode(json_encode($result), TRUE);
     }
     else {
       return NULL;
@@ -722,7 +804,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     else {
       $this->shipmentLabel->has_error = TRUE;
     }
-    $this->shipmentLabel->rate_id = $this->getBestRate($shipment);
+    [$this->shipmentLabel->rate_id, $this->shipmentLabel->amount] = $this->getBestRate($shipment);
     foreach ($shipment['messages'] as $message) {
       if ($this->isErrorMessage($message)) {
         $this->shipmentLabel->is_valid = FALSE;
@@ -732,17 +814,23 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Update various fields based on the Shipment object returned from Shippo.
    *
+   * @param array $transaction
+   *   Transaction details.
+   *
+   * @return void
+   *   Nothing.
    */
-  private function updateFromTransaction($transaction) {
+  private function updateFromTransaction(array $transaction): void {
     $rate = $this->getRate($transaction['rate']);
     $this->is_paid = $transaction['status'] == 'SUCCESS';
     $this->rate_id = $transaction['rate'];
     $this->resource_id = $transaction['object_id'];
     $this->tracking_id = $transaction['tracking_number'];
-    $this->provider = $rate['provider'];
-    $this->amount = $rate['amount'];
-    $this->currency = $rate['currency'];
+    $this->provider = $rate['provider'] ?? NULL;
+    $this->amount = $rate['amount'] ?? 0;
+    $this->currency = $rate['currency'] ?? 'USD';
     if ($transaction['status'] != 'SUCCESS') {
       $this->addError('Unable to complete purchase');
     }
@@ -752,12 +840,19 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Downloads the image from Shippo and saves it to active_storage.
    *
+   * @param array $purchase
+   *   Payment details.
+   *
+   * @return void
+   *   Nothing.
    */
-  private function attachLabelImage($purchase) {
+  private function attachLabelImage(array $purchase): void {
     if (!empty($purchase['label_url'])) {
-      $this->image->purge();
-      $this->image->attach(file_get_contents($purchase['label_url']), 'label.png');
+      // $this->image->purge();
+      // $this->image->attach(file_get_contents($purchase['label_url']),'label.png');
+      file_get_contents($purchase['label_url']);
     }
   }
 
