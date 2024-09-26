@@ -56,14 +56,16 @@ trait CRM_Inventory {
    */
 
   /**
-   * @param $searchColumn
+   * Get Entity record.
+   *
+   * @param string $searchColumn
    * @param int|string $searchValue
    * @param string $entity
    * @param bool $returnObject
    * @return mixed|null
    */
-  public function findEntityById($searchColumn = 'id', int|string $searchValue = '', string $entity, bool $returnObject = TRUE) {
-    $ENTITY_CLASS = [
+  public function findEntityById($searchColumn, int|string $searchValue, string $entity, bool $returnObject = TRUE): mixed {
+    $entityClass = [
       'InventoryShipment' => 'CRM_Inventory_BAO_InventoryShipment',
       'InventoryShipmentLabels' => 'CRM_Inventory_BAO_InventoryShipmentLabels',
       'InventoryBatch' => 'CRM_Inventory_BAO_InventoryBatch',
@@ -78,14 +80,22 @@ trait CRM_Inventory {
       'Contact' => 'CRM_Contact_BAO_Contact',
       'Contribution' => 'CRM_Contribute_BAO_Contribution',
     ];
-    if (!array_key_exists($entity, $ENTITY_CLASS)) {
+    if (!array_key_exists($entity, $entityClass)) {
       return NULL;
     }
     if ($returnObject) {
-      $class = $ENTITY_CLASS[$entity];
+      $class = $entityClass[$entity];
       $shipmentObj = new $class();
       $shipmentObj->$searchColumn = $searchValue;
       $shipmentObj->find(TRUE);
+      if ($class == 'CRM_Inventory_BAO_InventoryShipmentLabels') {
+        if (!empty($shipmentObj->shipment) && !is_array($shipmentObj->shipment)) {
+          $shipmentObj->shipment = json_decode($shipmentObj->shipment, TRUE);
+        }
+        if (!empty($shipmentObj->purchase) && !is_array($shipmentObj->purchase)) {
+          $shipmentObj->purchase = json_decode($shipmentObj->purchase, TRUE);
+        }
+      }
       return $shipmentObj;
     }
     else {
@@ -112,10 +122,11 @@ trait CRM_Inventory {
    * @throws \Civi\API\Exception\UnauthorizedException
    */
   public function getShipmentAddress(&$classObject): array {
-    if ($classObject->address === NULL && $classObject->N && !empty($classObject->contact_id)) {
-      $classObject->address = CRM_Inventory_Utils::getAddress($classObject->contact_id);
+    $address = [];
+    if ($classObject->N && !empty($classObject->contact_id)) {
+      $address = CRM_Inventory_Utils::getAddress($classObject->contact_id);
     }
-    return $classObject->address;
+    return $address;
   }
 
   /**
@@ -135,13 +146,13 @@ trait CRM_Inventory {
       $value = $classObject->product_id;
       $column = 'id';
     }
-    if ($classObject->product === NULL && $classObject->N && !empty($value)) {
-      $classObject->product = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProduct', [$column => $value], TRUE);
+    if ($classObject->N && !empty($value)) {
+      $product = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProduct', [$column => $value], TRUE);
     }
     else {
-      $classObject->product = new CRM_Inventory_BAO_InventoryProduct();
+      $product = new CRM_Inventory_BAO_InventoryProduct();
     }
-    return $classObject->product;
+    return $product;
   }
 
   /**
@@ -173,13 +184,13 @@ trait CRM_Inventory {
       $value = $classObject->id;
       $column = 'contact_id';
     }
-    if ($classObject->productVariant === NULL && $classObject->N && !empty($value)) {
-      $classObject->productVariant = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProductVariant', [$column => $value], TRUE);
+    if ($classObject->N && !empty($value)) {
+      $productVariant = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProductVariant', [$column => $value], TRUE);
     }
     else {
-      $classObject->productVariant = new CRM_Inventory_BAO_InventoryProductVariant();
+      $productVariant = new CRM_Inventory_BAO_InventoryProductVariant();
     }
-    return $classObject->productVariant;
+    return $productVariant;
   }
 
   /**
@@ -206,13 +217,13 @@ trait CRM_Inventory {
       $value = $classObject->id;
       $column = 'contact_id';
     }
-    if ($classObject->productChangelog === NULL && $classObject->N && !empty($value)) {
-      $classObject->productChangelog = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProductChangelog', [$column => $value], TRUE);
+    if ($classObject->N && !empty($value)) {
+      $productChangelog = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryProductChangelog', [$column => $value], TRUE);
     }
     else {
-      $classObject->productChangelog = new CRM_Inventory_BAO_InventoryProductChangelog();
+      $productChangelog = new CRM_Inventory_BAO_InventoryProductChangelog();
     }
-    return $classObject->productChangelog;
+    return $productChangelog;
   }
 
   /**
@@ -243,13 +254,13 @@ trait CRM_Inventory {
       $value = $classObject->id;
       $column = 'contact_id';
     }
-    if ($classObject->sale === NULL && $classObject->N && !empty($value)) {
-      $classObject->sale = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventorySales', [$column => $value], TRUE);
+    if ($classObject->N && !empty($value)) {
+      $sale = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventorySales', [$column => $value], TRUE);
     }
     else {
-      $classObject->sale = new CRM_Inventory_BAO_InventorySales();
+      $sale = new CRM_Inventory_BAO_InventorySales();
     }
-    return $classObject->sale;
+    return $sale;
   }
 
   /**
@@ -273,13 +284,13 @@ trait CRM_Inventory {
       $value = $classObject->id;
       $column = 'contact_id';
     }
-    if ($classObject->shipmentLabel === NULL && $classObject->N && !empty($value)) {
-      $classObject->shipmentLabel = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryShipmentLabels', [$column => $value], TRUE);
+    if ($classObject->N && !empty($value)) {
+      $shipmentLabel = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventoryShipmentLabels', [$column => $value], TRUE);
     }
     else {
-      $classObject->shipmentLabel = new CRM_Inventory_BAO_InventoryShipmentLabels();
+      $shipmentLabel = new CRM_Inventory_BAO_InventoryShipmentLabels();
     }
-    return $classObject->shipmentLabel;
+    return $shipmentLabel;
   }
 
   /**
@@ -288,7 +299,7 @@ trait CRM_Inventory {
    * @param object $classObject
    *   Class object.
    *
-   * @return array
+   * @return CRM_Price_BAO_LineItem[]
    *   Array of line item.
    */
   public function getSalesLineItems(&$classObject): array {
@@ -308,12 +319,12 @@ trait CRM_Inventory {
     }
 
     if ($classObject->N && !empty($value)) {
-      $classObject->lineItem = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_BAO_LineItem', [$column => $value], FALSE);
+      $lineItem = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_BAO_LineItem', [$column => $value], FALSE);
     }
     else {
-      $classObject->lineItem = [];
+      $lineItem = [];
     }
-    return $classObject->lineItem;
+    return $lineItem;
   }
 
 }

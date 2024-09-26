@@ -40,6 +40,29 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Create a new InventoryShipmentLabels based on array-data.
+   *
+   * @param array $params
+   *   Key-value pairs.
+   *
+   * @return CRM_Inventory_DAO_InventoryShipmentLabels|null
+   *   Object of sales.
+   */
+  public static function create($params) {
+    $className = 'CRM_Inventory_DAO_InventoryShipmentLabels';
+    $entityName = 'InventoryShipmentLabels';
+    $hook = empty($params['id']) ? 'create' : 'edit';
+
+    CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
+    $instance = new $className();
+    $instance->copyValues($params);
+    $instance->save();
+    CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
+
+    return $instance;
+  }
+
+  /**
    * Function to get Shipment Label using id.
    *
    * @param string $searchColumn
@@ -115,7 +138,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function asyncGetRatesAndPay() {
+  public function asyncGetRatesAndPay(): void {
     if (!$this->shipmentLabel->is_valid || $this->shipmentExpired()) {
       $this->getRates();
     }
@@ -259,6 +282,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
           }
         }
       }
+
       $this->updateFromShipment($this->shipmentLabel->shipment);
     }
     catch (Exception $exc) {
@@ -288,7 +312,15 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    */
   public function pay(string $rateId = NULL): void {
     try {
-      $this->clearMessages();
+      // $this->clearMessages();
+      $this->shipmentLabel->purchase = [];
+      $this->shipmentLabel->purchase['messages'] = [];
+      if (!is_array($this->shipmentLabel->shipment)) {
+        $this->shipmentLabel->shipment = json_decode($this->shipmentLabel->shipment);
+      }
+      if (!is_array($this->shipmentLabel->purchase)) {
+        $this->shipmentLabel->purchase = json_decode($this->shipmentLabel->purchase);
+      }
       $rateId = $rateId ?: $this->shipmentLabel->rate_id;
       $param = [
         'rate' => $rateId,
@@ -305,6 +337,12 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->addError($exc);
     }
     finally {
+      if (is_array($this->shipmentLabel->shipment)) {
+        $this->shipmentLabel->shipment = json_encode($this->shipmentLabel->shipment);
+      }
+      if (is_array($this->shipmentLabel->purchase)) {
+        $this->shipmentLabel->purchase = json_encode($this->shipmentLabel->purchase);
+      }
       $this->shipmentLabel->save();
     }
   }
@@ -377,7 +415,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   Shipment details.
    *
    * @return mixed|null
-   *   Returns the best shipping rates for the parcel and address..
+   *   Returns the best shipping rates for the parcel and address.
+   *
+   * @throws Exception
    */
   public function getBestRate(array $shipment): mixed {
     if (empty($shipment) || empty($shipment['rates'])) {
@@ -429,7 +469,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $rate = $faster;
     }
 
-    return [$rate['object_id'], $rate['amount']] ?? [NULL, 0];
+    return $rate ?? [];
   }
 
   /**
@@ -507,16 +547,18 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * Given a rate id, return the rate hash from the list of possible rates
    * for this parcel and address.
    *
-   * @param string $rateId
-   *   Rate ID.
+   * @param array $rateInfo
+   *   Rate info (TransactionRate).
    *
    * @return array|mixed
    *   Rate info.
    */
-  private function getRate(string $rateId): mixed {
-    foreach ($this->shipmentLabel->shipment['rates'] as $rate) {
-      if ($rate['object_id'] == $rateId) {
-        return $rate;
+  private function getRate(array $rateInfo): mixed {
+    if (!empty($rateInfo['object_id'])) {
+      foreach ($this->shipmentLabel->shipment['rates'] as $rate) {
+        if ($rate['object_id'] == $rateInfo['object_id']) {
+          return $rate;
+        }
       }
     }
     return [];
@@ -794,9 +836,17 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Update Shipment details.
    *
+   * @param array $shipment
+   *   Shipment details.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws Exception
    */
-  private function updateFromShipment($shipment) {
+  private function updateFromShipment(array $shipment): void {
     if ($shipment['status'] == 'SUCCESS') {
       $this->shipmentLabel->is_valid = TRUE;
       $this->shipmentLabel->has_error = FALSE;
@@ -804,7 +854,13 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     else {
       $this->shipmentLabel->has_error = TRUE;
     }
-    [$this->shipmentLabel->rate_id, $this->shipmentLabel->amount] = $this->getBestRate($shipment);
+    $rate = $this->getBestRate($shipment);
+    if (!empty($rate)) {
+      $this->shipmentLabel->rate_id = $rate['object_id'];
+      $this->shipmentLabel->amount = $rate['amount'];
+      $this->shipmentLabel->currency = $rate['currency'];
+      $this->shipmentLabel->provider = $rate['provider'];
+    }
     foreach ($shipment['messages'] as $message) {
       if ($this->isErrorMessage($message)) {
         $this->shipmentLabel->is_valid = FALSE;
@@ -824,18 +880,27 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    */
   private function updateFromTransaction(array $transaction): void {
     $rate = $this->getRate($transaction['rate']);
-    $this->is_paid = $transaction['status'] == 'SUCCESS';
-    $this->rate_id = $transaction['rate'];
-    $this->resource_id = $transaction['object_id'];
-    $this->tracking_id = $transaction['tracking_number'];
-    $this->provider = $rate['provider'] ?? NULL;
-    $this->amount = $rate['amount'] ?? 0;
-    $this->currency = $rate['currency'] ?? 'USD';
+    $this->shipmentLabel->is_paid = $transaction['status'] == 'SUCCESS';
+    if (!empty($rate)) {
+      $this->rate_id = $transaction['rate'];
+    }
+    $this->shipmentLabel->resource_id = $transaction['object_id'];
+    $this->shipmentLabel->tracking_id = $transaction['tracking_number'];
+    $this->shipmentLabel->tracking_url = $transaction['tracking_url_provider'];
+    if (!empty($rate['provider'])) {
+      $this->shipmentLabel->provider = $rate['provider'];
+    }
+    if (!empty($rate['amount'])) {
+      $this->shipmentLabel->amount = $rate['amount'];
+    }
+    if (!empty($rate['currency'])) {
+      $this->shipmentLabel->currency = $rate['currency'];
+    }
     if ($transaction['status'] != 'SUCCESS') {
       $this->addError('Unable to complete purchase');
     }
     else {
-      $this->has_error = FALSE;
+      $this->shipmentLabel->has_error = FALSE;
     }
   }
 
@@ -850,9 +915,19 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    */
   private function attachLabelImage(array $purchase): void {
     if (!empty($purchase['label_url'])) {
-      // $this->image->purge();
-      // $this->image->attach(file_get_contents($purchase['label_url']),'label.png');
-      file_get_contents($purchase['label_url']);
+      $path = CRM_Core_Config::singleton()->customFileUploadDir . '/' .
+        $purchase['object_id'] . '.png';
+      if (copy($purchase['label_url'], $path)) {
+        echo "copy : copied  into $path";
+        $this->shipmentLabel->label_url = $purchase['object_id'] . '.png';
+      }
+      else {
+        if ($img = file_get_contents($purchase['label_url'])) {
+          file_put_contents($img, $path);
+          echo "file_get_contents : copied  into $path";
+          $this->shipmentLabel->label_url = $purchase['object_id'] . '.png';
+        }
+      }
     }
   }
 

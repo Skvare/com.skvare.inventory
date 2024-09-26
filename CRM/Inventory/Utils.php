@@ -1,6 +1,7 @@
 <?php
 
 // phpcs:disable
+use Civi\Api4\LineItem;
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryBillingPlans;
 use Civi\Api4\Address;
@@ -304,6 +305,56 @@ class CRM_Inventory_Utils {
   }
 
   /**
+   * Perform action on device through url request.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public static function shipmentAction(): void {
+    $entity = CRM_Utils_Request::retrieve('entity', 'String', NULL, TRUE);
+    if ($entity == 'shipment') {
+      $params = [];
+      $params['id'] = CRM_Utils_Request::retrieve('id', 'Integer', NULL, TRUE);
+      $is_shipped = CRM_Utils_Request::retrieve('is_shipped', 'String', NULL);
+      if (isset($is_shipped)) {
+        $params['is_shipped'] = $is_shipped;
+        if (!empty($params['is_shipped'])) {
+          $params['shipped_date'] = date('Y-m-d');
+        }
+      }
+      $is_finished = CRM_Utils_Request::retrieve('is_finished', 'String', NULL);
+      if (isset($is_finished)) {
+        $params['is_finished'] = $is_finished;
+      }
+      civicrm_api3('InventoryShipment', 'create', $params);
+      $viewPage = CRM_Utils_System::url('civicrm/inventory/shipment-details',
+        "reset=1&id={$params['id']}"
+      );
+    }
+    if ($entity == 'shipment_label') {
+      $params = [];
+      $params['id'] = CRM_Utils_Request::retrieve('id', 'Integer', NULL, TRUE);
+      $is_shipped = CRM_Utils_Request::retrieve('is_shipped', 'String', NULL);
+      if (isset($is_shipped)) {
+        $params['is_shipped'] = $is_shipped;
+        if (!empty($params['is_shipped'])) {
+          $params['shipped_date'] = date('Y-m-d');
+        }
+      }
+      $is_finished = CRM_Utils_Request::retrieve('is_finished', 'String', NULL);
+      if (isset($is_finished)) {
+        $params['is_finished'] = $is_finished;
+      }
+      $result = civicrm_api3('InventoryShipmentLabels', 'create', $params);
+    }
+
+    CRM_Core_Error::statusBounce(ts('Product details updated.'), $viewPage,
+      'Updated');
+  }
+
+  /**
    * Function to get object.
    *
    * @param string $daoName
@@ -365,11 +416,106 @@ class CRM_Inventory_Utils {
     return $addressCorrect;
   }
 
+  /**
+   *
+   */
   public static function getContact(int $contactID): array {
-    $lineItems = \Civi\Api4\LineItem::get(TRUE)
+    $lineItems = LineItem::get(TRUE)
       ->addWhere('sale_id', 'IS NOT NULL')
       ->setLimit(25)
       ->execute();
+  }
+
+  /**
+   * Get Shipping label.
+   *
+   * @return void
+   *   Download file.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function renderShippingLabelFromCivi(): void {
+    $photo = CRM_Utils_Request::retrieve('photo', 'String', CRM_Core_DAO::$_nullObject);
+    if (!preg_match('/^[^\/]+\.(jpg|jpeg|png|gif)$/i', $photo)) {
+      throw new CRM_Core_Exception(ts('Malformed shipping label'));
+    }
+
+    $sql = "SELECT id FROM civicrm_inventory_shipment_labels WHERE label_url like %1;";
+    $params = [
+      1 => ["%" . $photo, 'String'],
+    ];
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    $id = NULL;
+    while ($dao->fetch()) {
+      $id = $dao->id;
+    }
+    if ($id) {
+      $config = CRM_Core_Config::singleton();
+      $fileExtension = pathinfo($photo, PATHINFO_EXTENSION);
+      $path = $config->customFileUploadDir . $photo;
+
+      if (!file_exists($path)) {
+        header("HTTP/1.0 404 Not Found");
+        return;
+      }
+      elseif (!is_readable($path)) {
+        header('HTTP/1.0 403 Forbidden');
+        return;
+      }
+      $ttl = 43200;
+      self::download(
+        $path,
+        'image/' . (strtolower($fileExtension) == 'jpg' ? 'jpeg' : $fileExtension),
+        $ttl
+      );
+    }
+    else {
+      header("HTTP/1.0 404 Not Found");
+    }
+    CRM_Utils_System::civiExit();
+  }
+
+  /**
+   * Download image.
+   *
+   * @param string $file
+   *   Local file path.
+   * @param string $mimeType
+   *   Mime Type.
+   * @param int $ttl
+   *   Time to live (seconds).
+   *
+   * @return void
+   *   Nothing.
+   */
+  public static function download(string $file, string $mimeType, int $ttl): void {
+    if (!file_exists($file)) {
+      header("HTTP/1.0 404 Not Found");
+      return;
+    }
+    elseif (!is_readable($file)) {
+      header('HTTP/1.0 403 Forbidden');
+      return;
+    }
+    CRM_Utils_System::setHttpHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', CRM_Utils_Time::getTimeRaw() + $ttl));
+    CRM_Utils_System::setHttpHeader("Content-Type", $mimeType);
+    CRM_Utils_System::setHttpHeader("Content-Disposition", "inline; filename=\"" . basename($file) . "\"");
+    CRM_Utils_System::setHttpHeader("Cache-Control", "max-age=$ttl, public");
+    CRM_Utils_System::setHttpHeader('Pragma', 'public');
+    readfile($file);
+  }
+
+  /**
+   * UPS is very picky about what characters it will allow in the CSV
+   */
+  public static function csv_str($str) {
+    return
+      preg_replace(
+        ['/[.\'"`]/', '/ +/', '/\r\n/', '/\n+/'],
+        ['', ' ', "\n", "\n"],
+        trim($str)
+      );
   }
 
 }

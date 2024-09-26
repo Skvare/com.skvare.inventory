@@ -11,6 +11,30 @@ use Civi\Api4\LineItem;
  *
  */
 class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales {
+  use CRM_Inventory;
+
+  /**
+   * Function to preload the object.
+   *
+   * @param string $columName
+   *   Field column.
+   * @param mixed $value
+   *   Field Value.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public function load(string $columName = 'id', mixed $value = ''): void {
+    $this->sales = $this->findEntityById($columName, $value, 'InventorySales', TRUE);
+    $this->shipmentLabel = $this->getShipmentLabels($this->sales);
+    $this->address = $this->getShipmentAddress($this->sales);
+    $this->lineItem = $this->getSalesLineItems($this->sales);
+    $this->productVariant = $this->getProductVariant($this->sales);
+    $this->product = $this->getProduct($this->productVariant);
+  }
 
   /**
    * Create a new InventorySales based on array-data.
@@ -33,6 +57,34 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
     CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
 
     return $instance;
+  }
+
+  /**
+   * Callback for hook_civicrm_post().
+   *
+   * @param \Civi\Core\Event\PostEvent $event
+   *   Object event.
+   *
+   * @throws \CRM_Core_Exception
+   */
+  public static function self_hook_civicrm_post(\Civi\Core\Event\PostEvent $event): void {
+    if ($event->action === 'update' || $event->action === 'edit') {
+      // CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($event->id);
+    }
+  }
+
+  /**
+   * Callback for hook_civicrm_pre().
+   *
+   * @param \Civi\Core\Event\PreEvent $event
+   *   Object event.
+   *
+   * @throws \CRM_Core_Exception
+   */
+  public static function self_hook_civicrm_pre(\Civi\Core\Event\PreEvent $event): void {
+    if ($event->action === 'update' || $event->action === 'edit') {
+      // Check the call.
+    }
   }
 
   /**
@@ -199,6 +251,55 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
       ->addWhere('id', '=', $saleID)
       ->addWhere('shipment_id', '=', $shipmentID)
       ->execute();
+  }
+
+  public function missingDevices() {
+
+    if (!isset($this->missing_devices)) {
+      $this->missing_devices = array_filter(array_map(function ($oi) {
+        if ($oi->sales->needs_assignment && !$oi->sales->has_assignment) {
+          return [$oi->item->product, $oi->membership];
+        }
+        return NULL;
+      }, $this->lineItem));
+    }
+    return $this->missing_devices;
+  }
+
+  /**
+   * Find Assignable Sale Line item.
+   *
+   * Returns the first order line item that is assignable and that match the
+   * criteria.
+   *
+   * @param $membership
+   * @param $deviceModel
+   * @param $device
+   * @return mixed|null
+   */
+  public function findAssignableOrderItem($membership = 'unset', $deviceModel = 'unset', $device = 'unset'): mixed {
+    return array_values(array_filter($this->lineItem, function ($oi) use ($membership, $device, $deviceModel) {
+      /** @var CRM_Price_BAO_LineItem $oi */
+      return $oi->needs_assignment &&
+        ($membership == 'unset' || ($oi->entity_id == $membership->id && $oi->entity_table == 'civicrm_membership')) &&
+        ($device == 'unset' || $oi->product_variant_id == $device->id) &&
+        ($deviceModel == 'unset' || $oi->item->product == $deviceModel);
+    }))[0] ?? NULL;
+  }
+
+  public function updateFlags() {
+    $this->sales->is_shipping_required = FALSE;
+    $this->sales->needs_assignment = FALSE;
+    $this->sales->has_assignment = FALSE;
+    $missingAssignments = [];
+    foreach ($this->lineItem as $oi) {
+      if ($oi->needs_assignment && !$oi->has_assignment) {
+        $missingAssignments[] = $oi;
+      }
+    }
+    if ($this->sales->needs_assignment && empty($missingAssignments)) {
+      $this->sales->has_assignment = TRUE;
+    }
   }
 
   /**

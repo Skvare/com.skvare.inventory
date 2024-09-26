@@ -458,7 +458,15 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
 /**
  * Implements hook_civicrm_post().
  */
-function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef, $params) {
+  if ($objectName === 'InventorySales' && in_array($op, ['create', 'edit'])) {
+    /** @var CRM_Inventory_BAO_InventorySales $saleObject */
+    $saleObject = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventorySales', ['id' => $objectId], TRUE);
+    // When sale order is crated andi it is paid , assign it to shipment.
+    if ($saleObject->is_paid && !$saleObject->shipment_id) {
+      CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($saleObject->id);
+    }
+  }
   if ($objectName === 'Membership' && in_array($op, ['create', 'edit'])) {
     // Get current membership status.
     /** @var CRM_Member_BAO_Membership $objectRef */

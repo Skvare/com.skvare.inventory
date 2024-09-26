@@ -54,4 +54,22 @@
     <title>Device Action</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/shipment-action</path>
+    <page_callback>CRM_Inventory_Utils::shipmentAction</page_callback>
+    <title>Device Action</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/inventory/shipping-label</path>
+    <title>Get Shipping Label</title>
+    <page_callback>CRM_Inventory_Utils::renderShippingLabelFromCivi</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/inventory/shipment-details</path>
+    <page_callback>CRM_Inventory_Page_ShipmentDetails</page_callback>
+    <title>Shipment Details</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

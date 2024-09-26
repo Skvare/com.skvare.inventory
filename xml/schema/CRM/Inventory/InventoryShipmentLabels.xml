@@ -6,7 +6,6 @@
   <name>civicrm_inventory_shipment_labels</name>
   <comment>FIXME</comment>
   <log>true</log>
-
   <field>
     <name>id</name>
     <type>int unsigned</type>
@@ -20,7 +19,6 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
   <field>
     <name>created_date</name>
     <title>Created Date</title>
@@ -35,7 +33,6 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
-
   <field>
     <name>updated_date</name>
     <title>Updated Date</title>
@@ -50,7 +47,6 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
-
   <field>
     <name>sales_id</name>
     <title>Sales ID</title>
@@ -67,7 +63,6 @@
     <key>id</key>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
-
   <field>
     <name>is_valid</name>
     <title>Is Valid?</title>
@@ -80,7 +75,6 @@
       <type>CheckBox</type>
     </html>
   </field>
-
   <field>
     <name>is_paid</name>
     <title>Is Paid?</title>
@@ -93,7 +87,6 @@
       <type>CheckBox</type>
     </html>
   </field>
-
   <field>
     <name>has_error</name>
     <title>Has Error?</title>
@@ -106,7 +99,6 @@
       <type>CheckBox</type>
     </html>
   </field>
-
   <field>
     <name>provider</name>
     <title>Shipment Provider</title>
@@ -121,7 +113,6 @@
       <type>Text</type>
     </html>
   </field>
-
   <field>
     <name>amount</name>
     <uniqueName>inventory_shipment_label_amount</uniqueName>
@@ -135,7 +126,6 @@
       <label>Label Amount</label>
     </html>
   </field>
-
   <field>
     <name>currency</name>
     <title>Currency</title>
@@ -150,8 +140,6 @@
       <type>Text</type>
     </html>
   </field>
-
-
   <field>
     <name>resource_id</name>
     <title>Resource ID</title>
@@ -166,7 +154,6 @@
       <type>Text</type>
     </html>
   </field>
-
   <field>
     <name>tracking_id</name>
     <title>Tracking ID</title>
@@ -181,7 +168,6 @@
       <type>Text</type>
     </html>
   </field>
-
   <field>
     <name>shipment</name>
     <title>Shipment Details</title>
@@ -196,7 +182,6 @@
     <import>true</import>
     <add>5.63</add>
   </field>
-
   <field>
     <name>purchase</name>
     <title>Shipment Label Purchase</title>
@@ -211,15 +196,14 @@
     <import>true</import>
     <add>5.63</add>
   </field>
-
   <field>
     <name>contact_id</name>
-    <title>Contact ID</title>
+    <title>Signer ID</title>
     <type>int unsigned</type>
     <comment>FK to Contact</comment>
     <html>
       <type>EntityRef</type>
-      <label>Contact</label>
+      <label>Signer Contact</label>
     </html>
   </field>
   <foreignKey>
@@ -238,6 +222,37 @@
     <export>true</export>
     <import>true</import>
     <add>5.63</add>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+  <field>
+    <name>label_url</name>
+    <title>Shipment Label URL</title>
+    <uniqueName>inventory_shipment_label_url</uniqueName>
+    <type>varchar</type>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <comment>Label URL</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>tracking_url</name>
+    <title>Shipment Tracking URL</title>
+    <uniqueName>inventory_shipment_tracking_url</uniqueName>
+    <type>varchar</type>
+    <length>255</length>
+    <required>false</required>
+    <export>true</export>
+    <import>true</import>
+    <add>5.63</add>
+    <comment>Shipment Tracking URL</comment>
     <html>
       <type>Text</type>
     </html>
