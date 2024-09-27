@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * @file
+ */
+
 require_once 'inventory.civix.php';
 // phpcs:disable
+use Civi\Core\DAO\Event\PreUpdate;
+use Civi\Core\DAO\Event\PostUpdate;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use CRM_Inventory_ExtensionUtil as E;
 // phpcs:enable
 
@@ -39,14 +46,15 @@ function inventory_civicrm_enable() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
  */
-//function inventory_civicrm_preProcess($formName, &$form) {
+// Function inventory_civicrm_preProcess($formName, &$form) {
 //
-//}
+// }.
 
 /**
  * Implementation of hook_civicrm_permission.
  *
- * @param array $permissions Does not contain core perms -- only extension-defined perms.
+ * @param array $permissions
+ *   Does not contain core perms -- only extension-defined perms.
  */
 function inventory_civicrm_permission(array &$permissions) {
   if (CRM_Core_Config::singleton()->userPermissionClass->isModulePermissionSupported()) {
@@ -65,59 +73,59 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
   }
   $entityTypes[$membershipType]['fields_callback'][]
     = function ($class, &$fields) {
-    $fields['may_renew'] = [
-      'name' => 'may_renew',
-      'type' => CRM_Utils_Type::T_BOOLEAN,
-      'title' => E::ts('May Renew?'),
-      'description' => E::ts('If true, a member may renew at this membership level.'),
-      'required' => FALSE,
-      'usage' => [
-        'import' => TRUE,
+      $fields['may_renew'] = [
+        'name' => 'may_renew',
+        'type' => CRM_Utils_Type::T_BOOLEAN,
+        'title' => E::ts('May Renew?'),
+        'description' => E::ts('If true, a member may renew at this membership level.'),
+        'required' => FALSE,
+        'usage' => [
+          'import' => TRUE,
+          'export' => TRUE,
+          'duplicate_matching' => FALSE,
+          'token' => FALSE,
+        ],
+        'where' => 'civicrm_membership_type.may_renew',
         'export' => TRUE,
-        'duplicate_matching' => FALSE,
-        'token' => FALSE,
-      ],
-      'where' => 'civicrm_membership_type.may_renew',
-      'export' => TRUE,
-      'default' => '1',
-      'table_name' => 'civicrm_membership_type',
-      'entity' => 'MembershipType',
-      'bao' => 'CRM_Member_BAO_MembershipType',
-      'localizable' => 0,
-      'html' => [
-        'type' => 'CheckBox',
-      ],
-      'add' => NULL,
-    ];
+        'default' => '1',
+        'table_name' => 'civicrm_membership_type',
+        'entity' => 'MembershipType',
+        'bao' => 'CRM_Member_BAO_MembershipType',
+        'localizable' => 0,
+        'html' => [
+          'type' => 'CheckBox',
+        ],
+        'add' => NULL,
+      ];
 
-    $fields['shippable_to'] = [
-      'name' => 'shippable_to',
-      'type' => CRM_Utils_Type::T_STRING,
-      'title' => ts('Membership Shippable to Country'),
-      'description' => 'List of country where this membership is shippable.',
-      'localizable' => 0,
-      'maxlength' => 128,
-      'size' => CRM_Utils_Type::HUGE,
-      'import' => TRUE,
-      'where' => 'civicrm_membership_type.shippable_to',
-      'export' => TRUE,
-      'table_name' => 'civicrm_membership_type',
-      'entity' => 'MembershipType',
-      'bao' => 'CRM_Member_BAO_MembershipType',
-      'input_attrs' => [
-        'multiple' => '1',
-      ],
-      'html' => [
-        'type' => 'Select',
-        'multiple' => TRUE,
-        'label' => ts("Shippable To Country."),
-      ],
-      'pseudoconstant' => [
-        'callback' => 'CRM_Inventory_Utils::membershipTypeShippableTo',
-      ],
-      'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
-    ];
-  };
+      $fields['shippable_to'] = [
+        'name' => 'shippable_to',
+        'type' => CRM_Utils_Type::T_STRING,
+        'title' => ts('Membership Shippable to Country'),
+        'description' => 'List of country where this membership is shippable.',
+        'localizable' => 0,
+        'maxlength' => 128,
+        'size' => CRM_Utils_Type::HUGE,
+        'import' => TRUE,
+        'where' => 'civicrm_membership_type.shippable_to',
+        'export' => TRUE,
+        'table_name' => 'civicrm_membership_type',
+        'entity' => 'MembershipType',
+        'bao' => 'CRM_Member_BAO_MembershipType',
+        'input_attrs' => [
+          'multiple' => '1',
+        ],
+        'html' => [
+          'type' => 'Select',
+          'multiple' => TRUE,
+          'label' => ts("Shippable To Country."),
+        ],
+        'pseudoconstant' => [
+          'callback' => 'CRM_Inventory_Utils::membershipTypeShippableTo',
+        ],
+        'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
+      ];
+    };
 
   $lineItem = 'CRM_Price_DAO_LineItem';
   if (version_compare($civiVersion, '5.75.0') >= 0) {
@@ -125,78 +133,78 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
   }
   $entityTypes[$lineItem]['fields_callback'][]
     = function ($class, &$fields) {
-    $fields['product_variant_id'] = [
-      'name' => 'product_variant_id',
-      'title' => ts('Product ID'),
-      'sql_type' => 'int unsigned',
-      'input_type' => 'EntityRef',
-      'type' => CRM_Utils_Type::T_INT,
-      'description' => ts('Product ID.'),
-      'add' => '5.75',
-      'default' => '0',
-      'input_attrs' => [
-        'label' => ts('Product ID'),
-      ],
-      'html' => [
-        'type' => 'Number',
-      ],
-      'entity_reference' => [
-        'entity' => 'InventoryProductVariant',
-        'key' => 'id',
-        'on_delete' => 'SET NULL',
-      ],
-      'where' => 'civicrm_line_item.product_variant_id',
-      'table_name' => 'civicrm_line_item',
-      'entity' => 'LineItem',
-      'bao' => 'CRM_Price_BAO_LineItem',
-    ];
-    $fields['sale_id'] = [
-      'name' => 'sale_id',
-      'title' => ts('Sale ID'),
-      'sql_type' => 'int unsigned',
-      'input_type' => 'EntityRef',
-      'type' => CRM_Utils_Type::T_INT,
-      'description' => ts('Sale ID.'),
-      'add' => '5.75',
-      'default' => '0',
-      'input_attrs' => [
-        'label' => ts('Sale ID'),
-      ],
-      'html' => [
-        'type' => 'Number',
-      ],
-      'entity_reference' => [
-        'entity' => 'InventorySales',
-        'key' => 'id',
-        'on_delete' => 'SET NULL',
-      ],
-      'where' => 'civicrm_line_item.sale_id',
-      'table_name' => 'civicrm_line_item',
-      'entity' => 'LineItem',
-      'bao' => 'CRM_Price_BAO_LineItem',
-    ];
+      $fields['product_variant_id'] = [
+        'name' => 'product_variant_id',
+        'title' => ts('Product ID'),
+        'sql_type' => 'int unsigned',
+        'input_type' => 'EntityRef',
+        'type' => CRM_Utils_Type::T_INT,
+        'description' => ts('Product ID.'),
+        'add' => '5.75',
+        'default' => '0',
+        'input_attrs' => [
+          'label' => ts('Product ID'),
+        ],
+        'html' => [
+          'type' => 'Number',
+        ],
+        'entity_reference' => [
+          'entity' => 'InventoryProductVariant',
+          'key' => 'id',
+          'on_delete' => 'SET NULL',
+        ],
+        'where' => 'civicrm_line_item.product_variant_id',
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+      ];
+      $fields['sale_id'] = [
+        'name' => 'sale_id',
+        'title' => ts('Sale ID'),
+        'sql_type' => 'int unsigned',
+        'input_type' => 'EntityRef',
+        'type' => CRM_Utils_Type::T_INT,
+        'description' => ts('Sale ID.'),
+        'add' => '5.75',
+        'default' => '0',
+        'input_attrs' => [
+          'label' => ts('Sale ID'),
+        ],
+        'html' => [
+          'type' => 'Number',
+        ],
+        'entity_reference' => [
+          'entity' => 'InventorySales',
+          'key' => 'id',
+          'on_delete' => 'SET NULL',
+        ],
+        'where' => 'civicrm_line_item.sale_id',
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+      ];
 
-    $fields['additional_details'] = [
-      'name' => 'additional_details',
-      'title' => ts('Product Additional Details'),
-      'type' => CRM_Utils_Type::T_STRING,
-      'sql_type' => 'varchar(255)',
-      'input_type' => 'Text',
-      'description' => ts('Product Additional Details.'),
-      'add' => '5.75',
-      'default' => 'NULL',
-      'html' => [
-        'type' => 'Text',
-      ],
-      'input_attrs' => [
-        'label' => ts('Product Additional Details.'),
-      ],
-      'where' => 'civicrm_line_item.additional_details',
-      'table_name' => 'civicrm_line_item',
-      'entity' => 'LineItem',
-      'bao' => 'CRM_Price_BAO_LineItem',
-    ];
-  };
+      $fields['additional_details'] = [
+        'name' => 'additional_details',
+        'title' => ts('Product Additional Details'),
+        'type' => CRM_Utils_Type::T_STRING,
+        'sql_type' => 'varchar(255)',
+        'input_type' => 'Text',
+        'description' => ts('Product Additional Details.'),
+        'add' => '5.75',
+        'default' => 'NULL',
+        'html' => [
+          'type' => 'Text',
+        ],
+        'input_attrs' => [
+          'label' => ts('Product Additional Details.'),
+        ],
+        'where' => 'civicrm_line_item.additional_details',
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+      ];
+    };
 }
 
 /**
@@ -215,8 +223,10 @@ function inventory_civicrm_navigationMenu(&$menu) {
       'active' => 1,
       'icon' => 'crm-i fa-ticket',
       'weight' => 35,
-      'permission' => 'access Inventory'
-    ]]];
+      'permission' => 'access Inventory',
+    ],
+  ],
+  ];
   array_splice($menu, 6, 0, $parentMenu);
 
   _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
@@ -226,7 +236,7 @@ function inventory_civicrm_navigationMenu(&$menu) {
     'permission' => NULL,
     'operator' => NULL,
     'separator' => 0,
-    'permission' => 'access Inventory'
+    'permission' => 'access Inventory',
   ]);
 
   _inventory_civix_insert_navigation_menu($menu, 'inventory_main', [
@@ -276,59 +286,59 @@ function inventory_civicrm_navigationMenu(&$menu) {
 function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $permissions['warehouse'] = [
     'default' => [['access warehouse', 'create warehouse', 'edit warehouse']],
-    'get' => [['access warehouse',]],
-    'delete' => [['access warehouse', 'delete warehouse',]],
-    'create' => [['access warehouse', 'create warehouse',]],
-    'update' => [['access warehouse', 'edit warehouse',]],
+    'get' => [['access warehouse']],
+    'delete' => [['access warehouse', 'delete warehouse']],
+    'create' => [['access warehouse', 'create warehouse']],
+    'update' => [['access warehouse', 'edit warehouse']],
   ];
   $permissions['inventory_product'] = [
-    'default' => [['access inventory product', 'create inventory product', 'edit inventory product',]],
-    'get' => [['access inventory product',]],
-    'delete' => [['access inventory product', 'delete inventory product',]],
-    'create' => [['access inventory product', 'create inventory product',]],
-    'update' => [['access inventory product', 'edit inventory product',]],
+    'default' => [['access inventory product', 'create inventory product', 'edit inventory product']],
+    'get' => [['access inventory product']],
+    'delete' => [['access inventory product', 'delete inventory product']],
+    'create' => [['access inventory product', 'create inventory product']],
+    'update' => [['access inventory product', 'edit inventory product']],
   ];
 
   $permissions['inventory_product_variant'] = [
-    'default' => [['access inventory product', 'create inventory product', 'edit inventory product',]],
-    'get' => [['access inventory product',]],
-    'delete' => [['access inventory product', 'delete inventory product',]],
-    'create' => [['access inventory product', 'create inventory product',]],
-    'update' => [['access inventory product', 'edit inventory product',]],
+    'default' => [['access inventory product', 'create inventory product', 'edit inventory product']],
+    'get' => [['access inventory product']],
+    'delete' => [['access inventory product', 'delete inventory product']],
+    'create' => [['access inventory product', 'create inventory product']],
+    'update' => [['access inventory product', 'edit inventory product']],
   ];
 
   $permissions['inventory_sales'] = [
     'default' => [['access inventory sales', 'create inventory sales', 'edit inventory sales']],
-    'get' => [['access inventory sales',]],
-    'delete' => [['access inventory sales', 'delete inventory sales',]],
-    'create' => [['access inventory sales', 'create inventory sales',]],
+    'get' => [['access inventory sales']],
+    'delete' => [['access inventory sales', 'delete inventory sales']],
+    'create' => [['access inventory sales', 'create inventory sales']],
     'update' => [['access inventory sales', 'edit inventory sales']],
   ];
 
   $permissions['inventory_shipment'] = [
     'default' => [['access shipment', 'create shipment', 'edit shipment']],
-    'get' => [['access shipment',]],
-    'delete' => [['access shipment', 'delete shipment',]],
-    'create' => [['access shipment', 'create shipment',]],
+    'get' => [['access shipment']],
+    'delete' => [['access shipment', 'delete shipment']],
+    'create' => [['access shipment', 'create shipment']],
     'update' => [['access shipment', 'edit shipment']],
   ];
 
   $permissions['inventory_batch'] = [
     'default' => [['access device batch', 'administer Inventory']],
-    'get' => [['access device batch',]],
-    'delete' => [['delete device batch', 'administer Inventory',]],
-    'create' => [['create device batch', 'administer Inventory',]],
-    'update' => [['edit device batch', 'administer Inventory',]],
+    'get' => [['access device batch']],
+    'delete' => [['delete device batch', 'administer Inventory']],
+    'create' => [['create device batch', 'administer Inventory']],
+    'update' => [['edit device batch', 'administer Inventory']],
   ];
 
   $permissions['inventory_product_variant_replacement'] = [
     'default' => [['access device replacement', 'administer Inventory']],
-    'get' => [['access device replacement',]],
-    'delete' => [['delete device replacement', 'administer Inventory',]],
-    'create' => [['create device replacement', 'administer Inventory',]],
-    'update' => [['edit device replacement', 'administer Inventory',]],
+    'get' => [['access device replacement']],
+    'delete' => [['delete device replacement', 'administer Inventory']],
+    'create' => [['create device replacement', 'administer Inventory']],
+    'update' => [['edit device replacement', 'administer Inventory']],
   ];
-  // allow fairly liberal access to the InventoryProduct, InventoryProductVariant.
+  // Allow fairly liberal access to the InventoryProduct, InventoryProductVariant.
   if (_inventory_ApiCall($entity, $action)) {
     $params['check_permissions'] = FALSE;
   }
@@ -336,11 +346,13 @@ function inventory_civicrm_alterAPIPermissions($entity, $action, &$params, &$per
 
 /**
  * This is a helper function to inventory_civicrm_alterAPIPermissions.
+ *
  * @param string $entity
  *   The noun in an API call (e.g., volunteer_project)
  * @param string $action
  *   The verb in an API call (e.g., get)
- * @return boolean
+ *
+ * @return bool
  *   True if the API call is of the type that the vol opps UI depends on.
  */
 function _inventory_ApiCall($entity, $action) {
@@ -388,7 +400,7 @@ function inventory_civicrm_buildForm($formName, &$form) {
       'qs' => 'action=view&reset=1&cid=%%cid%%&id=%%id%%',
       'f' => '?id=%%id%%',
       'title' => ts('Details'),
-      //'class' => 'popup',
+      // 'class' => 'popup',
       'target' => 'crm-popup',
     ];
     $links[CRM_Core_Action::UPDATE] = [
@@ -397,7 +409,7 @@ function inventory_civicrm_buildForm($formName, &$form) {
       'qs' => 'reset=1',
       'f' => '?InventoryProductVariant1=%%id%%',
       'title' => ts('Update'),
-      //'class' => 'popup',
+      // 'class' => 'popup',
       'target' => 'crm-popup',
     ];
     foreach ($values as $variantID => &$value) {
@@ -560,4 +572,81 @@ function inventory_civicrm_searchKitTasks(array &$tasks, bool $checkPermissions,
       'errorMsg' => E::ts('An error occurred while attempting to run export on %1 batch.'),
     ],
   ];
+}
+
+/**
+ * Hook to add the symfony event listeners.
+ *
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+ *
+ * @throws \CRM_Core_Exception
+ */
+function inventory_civicrm_container(ContainerBuilder $container) {
+  $container->findDefinition('dispatcher')
+    ->addMethodCall('addListener', [
+      'civi.dao.preUpdate',
+      'inventory_trigger_preupdate',
+    ])
+    ->addMethodCall('addListener', [
+      'civi.dao.postUpdate',
+      'inventory_trigger_postupdate',
+    ]);
+}
+
+/**
+ * This event is called before an entity is updated in the database.
+ *
+ * @param \Civi\Core\DAO\Event\PreUpdate $event
+ */
+function inventory_trigger_preupdate(PreUpdate $event) {
+  try {
+    $objectName = CRM_Inventory_Utils::getObjectNameFromObject($event->object);
+    // Convert array into json string before storing into database.
+    if ($objectName == 'InventoryShipmentLabels') {
+      /** @var CRM_Inventory_BAO_InventoryShipmentLabels $event->object */
+      if (is_array($event->object->shipment)) {
+        $event->object->shipment = json_encode($event->object->shipment);
+      }
+      if (is_array($event->object->purchase)) {
+        $event->object->purchase = json_encode($event->object->purchase);
+      }
+    }
+  }
+  catch (\Exception $ex) {
+    // Do nothing.
+  }
+}
+
+/**
+ * This event is called after an entity is updated in the database.
+ *
+ * @param Civi\Core\DAO\Event\PostUpdate $event
+ */
+function inventory_trigger_postupdate(PostUpdate $event) {
+  try {
+    $objectName = CRM_Inventory_Utils::getObjectNameFromObject($event->object);
+    // Convert json string into array after storing into database.
+    if ($objectName == 'InventoryShipmentLabels') {
+      /** @var CRM_Inventory_BAO_InventoryShipmentLabels $event->object */
+      if (!is_array($event->object->shipment)) {
+        if (!empty($event->object->shipment)) {
+          $event->object->shipment = json_decode($event->object->shipment, TRUE);
+        }
+        else {
+          $event->object->shipment = [];
+        }
+      }
+      if (!is_array($event->object->purchase)) {
+        if (!empty($event->object->purchase)) {
+          $event->object->purchase = json_decode($event->object->purchase, TRUE);
+        }
+        else {
+          $event->object->purchase = [];
+        }
+      }
+    }
+  }
+  catch (\Exception $ex) {
+
+  }
 }

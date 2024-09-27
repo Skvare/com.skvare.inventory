@@ -232,9 +232,9 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
   public function payForLabels(int $shipmentID): void {
     foreach ($this->ordersWithUnpaidShippingLabels($shipmentID) as &$sale) {
       // Create shipping label record.
-      if (!$sale['inventory_shipment_labels.id']) {
+      if (empty($sale['inventory_shipment_labels.id'])) {
         $paramsLabels = [
-          'sale_id' => $sale['id'],
+          'sales_id' => $sale['id'],
           'is_valid' => FALSE,
           'is_paid' => FALSE,
           'amount' => 0,
@@ -244,7 +244,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       }
       if ($sale['shipment_id'] && $sale['inventory_shipment_labels.id']) {
         $shipment = new CRM_Inventory_BAO_InventoryShipmentLabels();
-        $shipment->load('id', $sale['id']);
+        $shipment->load('id', $sale['inventory_shipment_labels.id']);
         $shipment->asyncGetRatesAndPay();
       }
     }
@@ -275,14 +275,17 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     $inventorySales = InventorySales::get(TRUE)
       ->addSelect('*', 'inventory_shipment_labels.*')
       ->addJoin('InventoryShipmentLabels AS inventory_shipment_labels',
-        'LEFT', ['inventory_shipment_labels.is_paid', '=', 1])
-      ->addWhere('inventory_shipment_labels.id', 'IS NULL')
+        'LEFT', ['is_paid', '=', 1])
+      //->addWhere('inventory_shipment_labels.id', 'IS NULL')
       ->addWhere('shipment_id', '=', $shipmentID)
+      ->addWhere('is_paid', '=', 1)
       ->setLimit(0)
       ->execute();
     $inventorySalesList = [];
     foreach ($inventorySales as $inventorySale) {
-      $inventorySalesList[] = $inventorySale;
+      if (empty($inventorySale['inventory_shipment_labels.is_paid'])) {
+        $inventorySalesList[] = $inventorySale;
+      }
     }
     return $inventorySalesList;
   }

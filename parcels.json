@@ -2,7 +2,7 @@
   "hotspot_with_shirt": {
     "items": {
       "shirt": {
-        "class": "Premium",
+        "class": "T-Shirt",
         "names": [
           "Apparel"
         ]
@@ -17,8 +17,12 @@
           "linkzone-2",
           "franklin-t9",
           "franklin-t10",
+          "franklin-r850",
           "coolpad-surf",
-          "jextream"
+          "jextream",
+          "quanta-5g",
+          "gateway6100d",
+          "franklin-r910"
         ]
       }
     },
@@ -32,7 +36,7 @@
   "phone_with_shirt": {
     "items": {
       "shirt": {
-        "class": "Premium",
+        "class": "T-Shirt",
         "names": [
           "Apparel"
         ]
@@ -67,8 +71,12 @@
           "linkzone-2",
           "franklin-t9",
           "franklin-t10",
+          "franklin-r850",
           "coolpad-surf",
-          "jextream"
+          "jextream",
+          "quanta-5g",
+          "gateway6100d",
+          "franklin-r910"
         ]
       }
     },
@@ -102,7 +110,7 @@
   "shirt_only": {
     "items": {
       "shirt": {
-        "class": "Premium",
+        "class": "T-Shirt",
         "names": [
           "Apparel"
         ]

@@ -56,6 +56,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
     $instance = new $className();
     $instance->copyValues($params);
+    // Array data on shipment and purchase column converted in to json using
+    // addListener.
     $instance->save();
     CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
 
@@ -146,7 +148,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->pay();
     }
     if ($this->shipmentLabel->has_error) {
-      throw new Exception($this->errorMessages());
+      throw new Exception($this->shipmentLabel->errorMessages());
     }
   }
 
@@ -185,6 +187,12 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    */
   public function hasRates(): bool {
     return !empty($this->shipmentLabel->shipment['rates']);
+  }
+
+  public function errorMessages() {
+    return implode('. ', array_filter(array_map(function ($m) {
+      return $this->isErrorMessage($m) ? $m["text"] : NULL;
+    }, $this->shipmentLabel->purchase['messages'])));
   }
 
   /**
@@ -258,7 +266,6 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     $displayName = CRM_Contact_BAO_Contact::displayName($customsSigner);
 
     $parcel = CRM_Inventory_BAO_InventorySales::parcel($saleID);
-
     try {
       $shippoParams = [
         'address_from' => $this->getAddressFrom(),
@@ -268,9 +275,13 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
         'meta_data' => "Contact ID {$customsSigner}, name {$displayName}",
         'async' => FALSE,
       ];
-
-      $response = CRM_Shippo_Connect::shipment($shippoParams);
-      $result = json_decode(json_encode($response), TRUE);
+      try {
+        $response = CRM_Shippo_Connect::shipment($shippoParams);
+        $result = json_decode(json_encode($response), TRUE);
+      }
+      catch (Exception $ex) {
+        throw new Exception($ex->getMessage());
+      }
       $this->shipmentLabel->shipment = $result;
       foreach ($this->shipmentLabel->shipment['messages'] as &$message) {
         if ($this->isErrorMessage($message)) {
@@ -286,15 +297,11 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->updateFromShipment($this->shipmentLabel->shipment);
     }
     catch (Exception $exc) {
-      $this->addError($exc, 'shipment');
+      $this->addError($exc->getMessage(), 'shipment');
     }
     finally {
-      if (is_array($this->shipmentLabel->shipment)) {
-        $this->shipmentLabel->shipment = json_encode($this->shipmentLabel->shipment);
-      }
-      if (is_array($this->shipmentLabel->purchase)) {
-        $this->shipmentLabel->purchase = json_encode($this->shipmentLabel->purchase);
-      }
+      // Array data on shipment and purchase column converted in to json using
+      // addListener.
       $this->shipmentLabel->save();
     }
   }
@@ -315,12 +322,6 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       // $this->clearMessages();
       $this->shipmentLabel->purchase = [];
       $this->shipmentLabel->purchase['messages'] = [];
-      if (!is_array($this->shipmentLabel->shipment)) {
-        $this->shipmentLabel->shipment = json_decode($this->shipmentLabel->shipment);
-      }
-      if (!is_array($this->shipmentLabel->purchase)) {
-        $this->shipmentLabel->purchase = json_decode($this->shipmentLabel->purchase);
-      }
       $rateId = $rateId ?: $this->shipmentLabel->rate_id;
       $param = [
         'rate' => $rateId,
@@ -334,15 +335,11 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->attachLabelImage($this->shipmentLabel->purchase);
     }
     catch (Exception $exc) {
-      $this->addError($exc);
+      $this->addError($exc->getMessage());
     }
     finally {
-      if (is_array($this->shipmentLabel->shipment)) {
-        $this->shipmentLabel->shipment = json_encode($this->shipmentLabel->shipment);
-      }
-      if (is_array($this->shipmentLabel->purchase)) {
-        $this->shipmentLabel->purchase = json_encode($this->shipmentLabel->purchase);
-      }
+      // Array data on shipment and purchase column converted in to json using
+      // addListener.
       $this->shipmentLabel->save();
     }
   }
@@ -356,11 +353,14 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   Nothing.
    */
   public function refund(): void {
-    $this->clearMessages();
+    // $this->clearMessages();
     if (!$this->shipmentLabel->is_paid) {
       return;
     }
     try {
+      if (empty($this->shipmentLabel->purchase['object_id'])) {
+        throw new Exception('Purchase object ID is required for refund.');
+      }
       $param = [
         'transaction' => $this->shipmentLabel->purchase['object_id'],
         'async' => FALSE,
@@ -371,22 +371,25 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
         $this->addError('Empty response. Maybe label doesn\'t exist?');
       }
       elseif ($refund['status'] == 'SUCCESS' || $refund['status'] == 'PENDING') {
-        $this->shipmentLabel->purchase = json_encode([]);
+        $this->shipmentLabel->purchase = [];
         $this->shipmentLabel->is_paid = FALSE;
-        $this->shipmentLabel->provider = NULL;
+        $this->shipmentLabel->provider = '';
         $this->shipmentLabel->amount = 0;
-        $this->shipmentLabel->resource_id = NULL;
-        $this->shipmentLabel->tracking_id = NULL;
-        // $this->image->purge();
+        $this->shipmentLabel->resource_id = '';
+        $this->shipmentLabel->tracking_id = '';
+        // Remove the shipping label.
+        $this->deleteLabelImage();
       }
       else {
         $this->addError('Unable to complete refund (' . $refund['status'] . ')');
       }
     }
     catch (Exception $exc) {
-      $this->addError($exc);
+      $this->addError($exc->getMessage());
     }
     finally {
+      // Array data on shipment and purchase column converted in to json using
+      // addListener.
       $this->shipmentLabel->save();
     }
   }
@@ -914,20 +917,43 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *   Nothing.
    */
   private function attachLabelImage(array $purchase): void {
-    if (!empty($purchase['label_url'])) {
-      $path = CRM_Core_Config::singleton()->customFileUploadDir . '/' .
-        $purchase['object_id'] . '.png';
-      if (copy($purchase['label_url'], $path)) {
-        echo "copy : copied  into $path";
-        $this->shipmentLabel->label_url = $purchase['object_id'] . '.png';
-      }
-      else {
-        if ($img = file_get_contents($purchase['label_url'])) {
-          file_put_contents($img, $path);
-          echo "file_get_contents : copied  into $path";
+    try {
+      if (!empty($purchase['label_url'])) {
+        $path = CRM_Core_Config::singleton()->customFileUploadDir . '/' .
+          $purchase['object_id'] . '.png';
+        if (copy($purchase['label_url'], $path)) {
           $this->shipmentLabel->label_url = $purchase['object_id'] . '.png';
         }
+        else {
+          if ($img = file_get_contents($purchase['label_url'])) {
+            file_put_contents($img, $path);
+            $this->shipmentLabel->label_url = $purchase['object_id'] . '.png';
+          }
+        }
       }
+    }
+    catch (\Exception $e) {
+    }
+  }
+
+  /**
+   * Delete shipping label file from civicrm.
+   *
+   * @return void
+   *   Nothing.
+   */
+  private function deleteLabelImage(): void {
+    try {
+      if (!empty($this->shipmentLabel->label_url)) {
+        $path = CRM_Core_Config::singleton()->customFileUploadDir . '/' . $this->shipmentLabel->label_url;
+        if (file_exists($path)) {
+          @unlink($path);
+          $this->shipmentLabel->label_url = '';
+          $this->shipmentLabel->tracking_url = '';
+        }
+      }
+    }
+    catch (\Exception $e) {
     }
   }
 
