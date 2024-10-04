@@ -208,6 +208,19 @@
     </html>
   </field>
   <field>
+    <name>shipped_on</name>
+    <uniqueName>inventory_product_variant_shipped_on</uniqueName>
+    <title>Shipped on</title>
+    <type>datetime</type>
+    <import>true</import>
+    <headerPattern>/shipped on(.?date)?/i</headerPattern>
+    <dataPattern>/^\d{4}-?\d{2}-?\d{2} ?(\d{2}:?\d{2}:?(\d{2})?)?$/</dataPattern>
+    <html>
+      <type>Select Date</type>
+      <formatType>activityDateTime</formatType>
+    </html>
+  </field>
+  <field>
     <name>warranty_start_date</name>
     <uniqueName>inventory_product_variant_warranty_start_date</uniqueName>
     <title>Warranty start on</title>

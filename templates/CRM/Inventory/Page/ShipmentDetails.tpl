@@ -1,6 +1,9 @@
 <!-- Tab links -->
 <h2>Shipment {$shipmentID}
-  <span class="date" title="{$shipmentInfo.created_date}">{$shipmentInfo.created_date|crmDate}</span></h2>
+  <div class="muted">
+  <span class="date" title="{$shipmentInfo.created_date}">{$shipmentInfo.created_date|crmDate:'%Y-%m-%d'}</span>
+  </div>
+</h2>
 <div class="shipment_tab">
   <button class="shipment_tablinks active" style="display: block;" onclick="openShippingTab(event, 'default')">Default</button>
   <button class="shipment_tablinks" onclick="openShippingTab(event, 'shipping')">Shipping</button>
@@ -18,7 +21,7 @@
           <td>{$order.sale_date}</td>
           <td>{$order.sort_name}</td>
           <td>
-            {if $order.needs_assignment}
+            {if $order.needs_assignment && !$order.has_assignment}
               <span class="badge badge-danger">needs device</span>
             {/if}
             {if $order.has_assignment}
@@ -65,10 +68,115 @@
   </table>
 </div>
 <div id="assign_device" class="shipment_tabcontent">
-  <h3>Assign Device here</h3>
+  <h3>Assign Devices to Members</h3>
+
+  <form action="/civicrm/inventory/shipment-details?id={$shipmentID}" accept-charset="UTF-8" method="post">
+    <input type="hidden" name="id" id="id" value="{$shipmentID}" autocomplete="off">
+    <input type="hidden" name="operation" id="operation" value="assigndevice" autocomplete="off">
+    <input type="hidden" name="action" id="action" value="renew" autocomplete="off">
+    <table class="form-row">
+      <td class="col">
+        <input class="form-control" placeholder="Order Code" autofocus="autofocus" type="text" name="order_id" id="order_id">
+      </td>
+      <td class="col">
+        <input class="form-control" placeholder="Device IMEI" autofocus="autofocus" type="text" name="device_id" id="device_id">
+      </td>
+      <td class="col">
+        <button class="btn btn-outline-primary" type="submit">
+          <i class="fa fa-fw fa-check"></i> Assign
+        </button>
+      </td>
+    </table>
+  </form>
+  <h4 style="color: red;">Unassigned<i class="fa fa-fw fa-times"></i></h4>
+  <table>
+    {assign var="is_any_unassigned" value="true"}
+    {foreach from=$shipmentDetails key=$model item=shipments}
+      {foreach from=$shipments item=order}
+        {if $order.needs_assignment && !$order.has_assignment}
+          {assign var="is_any_unassigned" value="false"}
+        <tr>
+          <td>{$order.code}</td>
+          <td>{$order.sort_name}</td>
+          <td>{$order.product_label}</td>
+        </tr>
+        {/if}
+      {/foreach}
+    {/foreach}
+    {if $is_any_unassigned}
+      <td>No Record</td>
+    {/if}
+  </table>
+  <h4 style="color:green;">Assigned</h4>
+  {assign var="is_any_assigned" value="true"}
+  <table>
+    {foreach from=$shipmentDetails key=$model item=shipments}
+      {foreach from=$shipments item=order}
+        {if $order.needs_assignment && $order.has_assignment}
+          {assign var="is_any_assigned" value="false"}
+          <tr>
+            <td>{$order.code}</td>
+            <td>{$order.sort_name}</td>
+            <td>{$order.product_label}</td>
+          </tr>
+        {/if}
+      {/foreach}
+    {/foreach}
+    {if $is_any_unassigned}
+      <td>No Record</td>
+    {/if}
+  </table>
 </div>
 <div id="move_order" class="shipment_tabcontent">
-  <h3>Move shipment other shipment</h3>
+  <h3>Move selected devices to a different shipment</h3>
+  <form action="/civicrm/inventory/shipment-details?id={$shipmentID}" accept-charset="UTF-8" method="post">
+    <input type="hidden" name="id" id="id" value="{$shipmentID}" autocomplete="off">
+    <input type="hidden" name="operation" id="operation" value="newshipment" autocomplete="off">
+    <input type="hidden" name="action" id="action" value="renew" autocomplete="off">
+    <button class="btn btn-outline-primary" type="submit">
+      <i class="fa fa-fw fa-check"></i> Create New Shipment
+    </button>
+  </form>
+  <br/><br/>
+  <form action="/civicrm/inventory/shipment-details?id={$shipmentID}" accept-charset="UTF-8" method="post">
+    <input type="hidden" name="id" id="id" value="{$shipmentID}" autocomplete="off">
+    <input type="hidden" name="operation" id="operation" value="moveshipment" autocomplete="off">
+    <input type="hidden" name="action" id="action" value="renew" autocomplete="off">
+    <table class="form-row">
+      <td class="col">
+        <select class="form-control" name="new_shipment_id" id="new_shipment_id">
+          {foreach from=$openShipmentList key=listShipmentID item=listShipmentLabel}
+            <option value="{$listShipmentID}">{$listShipmentLabel}</option>
+          {/foreach}
+        </select>
+      </td>
+      <td class="col">
+        <button class="btn btn-outline-primary" type="submit">
+          <i class="fa fa-fw fa-check"></i> Move Selected
+        </button>
+      </td>
+    </table>
+    <table>
+      {foreach from=$shipmentDetails key=$model item=shipments}
+        {foreach from=$shipments item=order}
+          <tr>
+            <td><input type="checkbox" name="sale_id[{$order.sale_id}]" value="{$order.sale_id}" /></td>
+            <td>{$order.code}</td>
+            <td>{$order.sale_date}</td>
+            <td>{$order.sort_name}</td>
+            <td>{$order.product_label}</td>
+            <td>
+              {if $order.label_url}
+                <span class="badge badge-success">has label</span>
+              {else}
+                <span class="badge badge-danger">no label</span>
+              {/if}
+            </td>
+          </tr>
+        {/foreach}
+      {/foreach}
+    </table>
+  </form>
 </div>
 {literal}
   <script>
@@ -104,7 +212,8 @@
 
     /* Style the buttons that are used to open the tab content */
     .shipment_tab button {
-      background-color: inherit;
+      background-color: gray;
+      color: black;
       float: left;
       border: solid 1px white;
       outline: none;
@@ -129,6 +238,11 @@
       padding: 6px 12px;
       border: 1px solid #ccc;
       border-top: none;
+    }
+    .muted {
+      color: #6c757d;
+      font-weight: normal;
+      display: inline-block;
     }
   </style>
 {/literal}

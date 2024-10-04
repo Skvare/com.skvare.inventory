@@ -72,4 +72,10 @@
     <title>Shipment Details</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/upload-device</path>
+    <page_callback>CRM_Inventory_Form_UploadDevice</page_callback>
+    <title>UploadDevice</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

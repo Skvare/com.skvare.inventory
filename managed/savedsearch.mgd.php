@@ -1290,13 +1290,7 @@ return [
             'contact_id',
           ],
           'orderBy' => [],
-          'where' => [
-            [
-              'contact_id',
-              '=',
-              'user_contact_id',
-            ],
-          ],
+          'where' => [],
           "groupBy" => [],
           'join' => [],
           "having" => [],

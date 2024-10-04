@@ -125,6 +125,22 @@
       <callback>CRM_Inventory_Utils::productSalesStatus</callback>
     </pseudoconstant>
   </field>
+  <field>
+    <name>product_id</name>
+    <title>Model ID</title>
+    <type>int unsigned</type>
+    <comment>FK to product</comment>
+    <html>
+      <type>EntityRef</type>
+      <label>Product/Model</label>
+    </html>
+  </field>
+  <foreignKey>
+    <name>product_id</name>
+    <table>civicrm_inventory_product</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 
   <field>
     <name>is_shipping_required</name>

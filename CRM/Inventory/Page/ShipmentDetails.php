@@ -17,8 +17,53 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     elseif (!empty($action) && $action & CRM_Core_Action::EXPORT && $operation === 'manifests') {
       CRM_Inventory_BAO_InventoryShipment::manifestForBatch($shipmentID, TRUE);
     }
+    elseif (!empty($action) && $action & CRM_Core_Action::RENEW && $operation == 'assigndevice' && !empty($shipmentID)) {
+      $orderCode = CRM_Utils_Request::retrieve('order_id', 'String', NULL);
+      $deviceID = CRM_Utils_Request::retrieve('device_id', 'String', NULL);
+      if ($orderCode && $deviceID) {
+        $inventoryShipment = new CRM_Inventory_BAO_InventoryShipment();
+        $output = $inventoryShipment->assignDeviceToOrder($orderCode, $deviceID);
+        if (!empty($output)) {
+          $viewShipment = CRM_Utils_System::url('civicrm/inventory/shipment-details',
+            "action=browser&reset=1&id={$shipmentID}"
+          );
+          $error = implode('<br />', $output);
+          CRM_Core_Error::statusBounce($error, $viewShipment);
+        }
+        else {
+          CRM_Core_Session::setStatus(E::ts('Device assigned successfully.'));
+        }
+      }
+    }
+    elseif (!empty($action) && $action & CRM_Core_Action::RENEW && $operation == 'moveshipment' && !empty($shipmentID)) {
+      $newShipmentId = CRM_Utils_Request::retrieve('new_shipment_id', 'Integer', NULL);
+      $saleIds = $_POST['sale_id'];
+      if (!empty($newShipmentId) && !empty($saleIds)) {
+        $moved = CRM_Inventory_BAO_InventoryShipment::moveSalesOrderToOtherShipment($newShipmentId, $saleIds);
+        $viewShipment = CRM_Utils_System::url('civicrm/inventory/shipment-details',
+          "action=browser&reset=1&id={$shipmentID}"
+        );
+        if ($moved) {
+          $msg = 'Moved Order successfully.';
+        }
+        else {
+          $msg = 'Moved Order failed.';
+        }
+        CRM_Core_Error::statusBounce($msg, $viewShipment);
+      }
+    }
+    elseif (!empty($action) && $action & CRM_Core_Action::RENEW && $operation == 'newshipment' && !empty($shipmentID)) {
+      CRM_Inventory_BAO_InventoryShipment::createOpenShipment();
+      $viewShipment = CRM_Utils_System::url('civicrm/inventory/shipment-details',
+        "action=browser&reset=1&id={$shipmentID}"
+      );
+      CRM_Core_Error::statusBounce('New shipment created', $viewShipment);
+    }
     $shipmentDetails = CRM_Inventory_BAO_InventoryShipment::shipmentSalesListing($shipmentID);
     $shipmentInfo = CRM_Inventory_DAO_InventoryShipment::findById($shipmentID);
+    $openShipmentList = CRM_Inventory_BAO_InventoryShipment
+      ::findOpenShipmentList();
+    $this->assign('openShipmentList', $openShipmentList);
     $shipmentInfo = $shipmentInfo->toArray();
     $this->assign('shipmentInfo', $shipmentInfo);
     $this->assign('shipmentDetails', $shipmentDetails);

@@ -287,19 +287,16 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
     }))[0] ?? NULL;
   }
 
+  /**
+   * Update Flags.
+   *
+   * @return void
+   *  Noting.
+   */
   public function updateFlags() {
-    $this->sales->is_shipping_required = FALSE;
-    $this->sales->needs_assignment = FALSE;
-    $this->sales->has_assignment = FALSE;
-    $missingAssignments = [];
-    foreach ($this->lineItem as $oi) {
-      if ($oi->needs_assignment && !$oi->has_assignment) {
-        $missingAssignments[] = $oi;
-      }
-    }
-    if ($this->sales->needs_assignment && empty($missingAssignments)) {
-      $this->sales->has_assignment = TRUE;
-    }
+    $this->is_shipping_required = 0;
+    $this->needs_assignment = 0;
+    $this->has_assignment = 1;
   }
 
   /**

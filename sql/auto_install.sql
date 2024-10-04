@@ -320,6 +320,7 @@ CREATE TABLE `civicrm_inventory_sales` (
   `contribution_id` int unsigned NULL COMMENT 'Contribution ID Associated with product.',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status_id` varchar(100) NOT NULL COMMENT 'Sales Status: \'placed\', \'shipped\', \'completed\'',
+  `product_id` int unsigned COMMENT 'FK to product',
   `is_shipping_required` tinyint NULL DEFAULT 0,
   `shipment_id` int unsigned COMMENT 'FK to shipments',
   `is_paid` tinyint NULL DEFAULT 0,
@@ -331,6 +332,7 @@ CREATE TABLE `civicrm_inventory_sales` (
   UNIQUE INDEX `UI_code`(code),
   CONSTRAINT FK_civicrm_inventory_sales_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_sales_contribution_id FOREIGN KEY (`contribution_id`) REFERENCES `civicrm_contribution`(`id`) ON DELETE SET NULL,
+  CONSTRAINT FK_civicrm_inventory_sales_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_inventory_sales_shipment_id FOREIGN KEY (`shipment_id`) REFERENCES `civicrm_inventory_shipment`(`id`) ON DELETE SET NULL)
 ENGINE=InnoDB;
 
@@ -386,6 +388,7 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `replaced_date` datetime,
   `membership_id` int unsigned NULL COMMENT 'Membership ID Associated with product.',
   `order_number` int unsigned COMMENT 'Added into system on specific order number.',
+  `shipped_on` datetime,
   `warranty_start_date` datetime,
   `warranty_end_date` datetime,
   `expire_on` datetime,

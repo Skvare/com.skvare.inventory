@@ -10,28 +10,28 @@ trait CRM_Inventory {
   /**
    * Object.
    *
-   * @var CRM_Inventory_DAO_InventorySales
+   * @var CRM_Inventory_BAO_InventorySales
    */
   public $sales = NULL;
 
   /**
    * Object.
    *
-   * @var CRM_Inventory_DAO_InventoryShipmentLabels
+   * @var CRM_Inventory_BAO_InventoryShipmentLabels
    */
   private $shipmentLabel = NULL;
 
   /**
    * Object.
    *
-   * @var CRM_Inventory_DAO_InventoryProduct
+   * @var CRM_Inventory_BAO_InventoryProduct
    */
   private $product = NULL;
 
   /**
    * Object.
    *
-   * @var CRM_Inventory_DAO_InventoryProductVariant
+   * @var CRM_Inventory_BAO_InventoryProductVariant
    */
   private $productVariant = NULL;
 

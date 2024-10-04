@@ -12,6 +12,7 @@ use Civi\Api4\InventoryShipment;
  *
  */
 class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShipment {
+  use CRM_Inventory;
 
   /**
    * Error message for validation.
@@ -144,6 +145,25 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     return self::findById($shipmentObjectID, TRUE);
   }
 
+  public static function findOpenShipmentList() {
+    $sql = "SELECT shipment.id, shipment.created_date, COUNT(inventory_sales.shipment_id) as total_orders
+      FROM civicrm_inventory_shipment shipment
+      LEFT JOIN (civicrm_inventory_sales inventory_sales) ON inventory_sales.shipment_id = shipment.id
+      WHERE (shipment.is_shipped = '0')
+      AND (shipment.is_finished = '0')
+      GROUP BY shipment.id
+      ORDER BY shipment.created_date DESC";
+    $shipmentObject = CRM_Core_DAO::executeQuery($sql);
+    $list = [];
+    while ($shipmentObject->fetch()) {
+      $list[$shipmentObject->id] = "Shipment {$shipmentObject->id} • (" .
+        $shipmentObject->total_orders . ' orders) • ' .
+        CRM_Utils_Date::processDate($shipmentObject->created_date, '', FALSE,
+          'Y-m-d');
+    }
+    return $list;
+  }
+
   /**
    * Function to reset is_fulfilled flag on all shipment order.
    *
@@ -152,7 +172,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @return void
    *   Nothing.
    */
-  public function resetAllOrders():void {
+  public function resetAllOrders(): void {
     if (!$this->is_shipped) {
       $salesParams = ['shipment_id' => $this->id];
       $values = [];
@@ -276,7 +296,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       ->addSelect('*', 'inventory_shipment_labels.*')
       ->addJoin('InventoryShipmentLabels AS inventory_shipment_labels',
         'LEFT', ['is_paid', '=', 1])
-      //->addWhere('inventory_shipment_labels.id', 'IS NULL')
+      // ->addWhere('inventory_shipment_labels.id', 'IS NULL')
       ->addWhere('shipment_id', '=', $shipmentID)
       ->addWhere('is_paid', '=', 1)
       ->setLimit(0)
@@ -337,24 +357,25 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
         `shipment_labels`.`label_url`,
         `product`.`label`,
         `product`.`product_code`,
-        `contact`.`sort_name`
+        `contact`.`sort_name`,
+        `membership`.`id` AS `membership_id`
 
         FROM civicrm_inventory_shipment a
         INNER JOIN (civicrm_inventory_sales sales) ON a.id = sales.shipment_id
         LEFT JOIN (civicrm_inventory_shipment_labels shipment_labels) ON sales.id = shipment_labels.sales_id
-        LEFT JOIN civicrm_line_item li ON (li.sale_id = sales.id)
+        LEFT JOIN civicrm_line_item li ON (li.sale_id = sales.id and li.entity_table = 'civicrm_membership')
         LEFT JOIN civicrm_membership membership ON (membership.id = li.entity_id = li.entity_table = 'civicrm_membership')
         LEFT JOIN civicrm_inventory_product_membership mem_prod ON (mem_prod.membership_type_id = membership.membership_type_id and mem_prod.is_product_serialize and mem_prod.is_active)
         INNER JOIN civicrm_inventory_product product ON (product.id = mem_prod.product_id and mem_prod.is_product_serialize and mem_prod.is_active)
         LEFT JOIN civicrm_contact contact ON sales.contact_id =  contact.id
-        where a.id = %1
-        order by `product`.`product_code`, `sales`.`sale_date` desc
+        where sales.shipment_id = %1
         LIMIT 100
         OFFSET 0";
     $inputParams = [1 => [$shipmentID, 'Integer']];
     $resultDAO = CRM_Core_DAO::executeQuery($sql, $inputParams);
     $shipmentSalesList = [];
     while ($resultDAO->fetch()) {
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['sale_id'] = $resultDAO->sale_id;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['code'] = $resultDAO->code;
       $formatedSaleDate = CRM_Utils_Date::customFormat($resultDAO->sale_date, '%Y-%m-%d');
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['sale_date'] = $formatedSaleDate;
@@ -374,9 +395,13 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     return $shipmentSalesList;
   }
 
+  /**
+   *
+   */
   public static function manifestForBatch(int $shipmentID) {
 
   }
+
   /**
    *
    */
@@ -442,6 +467,170 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       $row[self::$COLUMN_INDEX[$key]] = $value;
     }
     return $row;
+  }
+
+  /**
+   * Assign device to contact based on order.
+   *
+   * @param string $orderID
+   *   Order Code.
+   * @param string $deviceID
+   *   Device IMEI number.
+   * @param bool $isPrimary
+   *   Set Device is primary device to contact.
+   *
+   * @return array|void
+   *   Error details.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public function assignDeviceToOrder(string $orderID, string $deviceID, $isPrimary = TRUE) {
+    $this->sales = $this->findEntityById('code', $orderID, 'InventorySales', TRUE);
+    $errors = [];
+    if ($this->sales->id) {
+      $lineParams = [
+        'sale_id' => $this->sales->id,
+        'entity_table' => 'civicrm_membership',
+      ];
+      /** @var CRM_Price_DAO_LineItem $lineObject */
+      $lineObject = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_DAO_LineItem', $lineParams, TRUE);
+      if ($lineObject->id) {
+        $membershipID = $lineObject->entity_id;
+        if ($lineObject->product_variant_id) {
+          $errors['order_id'] = 'A device has already been assigned for item';
+        }
+        /** @var CRM_Member_DAO_Membership $membershipDetail */
+        $membershipDetail = CRM_Inventory_BAO_Membership::findById($membershipID, TRUE);
+        if (empty($membershipDetail->id)) {
+          $errors['order_id'] = "No such membership ID";
+        }
+      }
+    }
+    else {
+      if (!$this->sales->id) {
+        $errors['order_id'] = "No such order ID";
+      }
+    }
+
+    $this->productVariant = $this->findEntityById('product_variant_unique_id', $deviceID, 'InventoryProductVariant', TRUE);
+    if (!$this->productVariant->id) {
+      $errors['device_id'] = "No such device ID";
+    }
+    elseif ($this->productVariant->contact_id || $this->productVariant->membership_id) {
+      $errors['device_id'] = "Device already assigned";
+    }
+
+    // sale/order is present, product is matched, membership details present,
+    // line item matched and no error.
+    if ($this->sales->id && $this->productVariant->id && !empty($membershipDetail) && $lineObject->id && empty($errors)) {
+      $expectedProductModelID = $this->getDeviceModelForSale($this->sales->id);
+      if ($this->productVariant->product_id != $expectedProductModelID) {
+        $errors['device_id'] = "That device does not match that order";
+      }
+
+      if (empty($errors)) {
+        $this->assignDeviceToContactOrder($membershipDetail, $lineObject, $isPrimary);
+      }
+    }
+    return $errors;
+  }
+
+  /**
+   * Assign Device To Contact Order.
+   *
+   * @param CRM_Member_DAO_Membership $membershipDetail
+   *   Membership Object.
+   * @param CRM_Price_DAO_LineItem $lineObject
+   *   Line item object.
+   * @param bool $isPrimary
+   *   Set as Primary device.
+   *
+   * @return void
+   *   Nothing.
+   */
+  public function assignDeviceToContactOrder(CRM_Member_DAO_Membership $membershipDetail, CRM_Price_DAO_LineItem $lineObject, $isPrimary = TRUE) {
+    // Assign contact ID in variant table.
+    // Add variant id on the line item table.
+    $this->productVariant->shipped_on = $this->productVariant->shipped_on ?? date('Y-m-d H:i:s');
+    $lineObject->product_variant_id = $this->productVariant->id;
+    $lineObject->save();
+
+    $this->sales->is_shipping_required = 0;
+    $this->sales->needs_assignment = 1;
+    $this->sales->has_assignment = 1;
+    $this->sales->save();
+
+    $this->productVariant->contact_id = $this->sales->contact_id;
+    $this->productVariant->sales_id = $this->sales->id;
+    if ($this->productVariant->isTerminated()) {
+      try {
+        $this->productVariant->changeStatus($this->productVariant->id, 'REACTIVATE', "Reactivating because assigned to [order:{$this->sales->code}]");
+      }
+      catch (UnauthorizedException|CRM_Core_Exception $e) {
+
+      }
+    }
+    $this->productVariant->expire_on = NULL;
+    $this->productVariant->status = 'assigned_to_member';
+    $this->productVariant->save();
+    if ($isPrimary) {
+      $this->productVariant->setPrimary(TRUE, TRUE);
+    }
+  }
+
+  /**
+   * Get Product or model id for sale.
+   *
+   * @param int $saleID
+   *   Sale Id.
+   *
+   * @return string|null
+   *   Product Model ID.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public function getDeviceModelForSale(int $saleID): ?string {
+    $sql = "select mem_prod.product_id as product_id
+      FROM civicrm_inventory_sales sales
+      INNER JOIN civicrm_line_item li
+        ON (li.sale_id = sales.id and li.entity_table = 'civicrm_membership')
+      INNER JOIN civicrm_membership membership
+        ON (membership.id = li.entity_id = li.entity_table = 'civicrm_membership')
+      INNER JOIN civicrm_inventory_product_membership mem_prod
+        ON (mem_prod.membership_type_id = membership.membership_type_id and mem_prod.is_product_serialize and mem_prod.is_active)
+      INNER JOIN civicrm_inventory_product product
+        ON (product.id = mem_prod.product_id and mem_prod.is_product_serialize and mem_prod.is_active)
+      where sales.id = {$saleID}";
+    return CRM_Core_DAO::singleValueQuery($sql);
+  }
+
+  /**
+   * Move sale order to another shipment.
+   *
+   * @param int $newShipmentID
+   *   New Shipment ID.
+   * @param array $saleIDs
+   *   Sale id list.
+   *
+   * @return bool
+   *   Moved.
+   */
+  public static function moveSalesOrderToOtherShipment(int $newShipmentID, array $saleIDs): bool {
+    $moved = FALSE;
+    if (!empty($saleIDs)) {
+      try {
+        $saleIDs = array_unique($saleIDs);
+        $saleIdString = implode(',', $saleIDs);
+        $sql = "UPDATE civicrm_inventory_sales SET shipment_id = $newShipmentID WHERE id IN ($saleIdString)";
+        CRM_Core_DAO::executeQuery($sql);
+        $moved = TRUE;
+      }
+      catch (Exception $e) {
+
+      }
+    }
+    return $moved;
   }
 
 }
