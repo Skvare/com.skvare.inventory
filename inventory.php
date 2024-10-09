@@ -5,6 +5,7 @@
  */
 
 require_once 'inventory.civix.php';
+require_once 'vendor/autoload.php';
 // phpcs:disable
 use Civi\Core\DAO\Event\PreUpdate;
 use Civi\Core\DAO\Event\PostUpdate;

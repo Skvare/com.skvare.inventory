@@ -1,0 +1,134 @@
+body, td, th, h3 {
+  font-size: 10pt;
+  line-height: 1.4em;
+  /* font-family: Times, Times New Roman, Georgia, serif; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#crm-container h3 {
+  font-weight: bold;
+}
+
+#crm-container table.table {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+#crm-container th {
+  text-align: right;
+}
+
+#crm-container td,
+#crm-container th {
+  border: 1px solid #ccc;
+  padding: 6px;
+  vertical-align: top;
+}
+
+#crm-container ol,
+#crm-container ul {
+  margin: 0;
+}
+
+#crm-container .plain {
+  border: none;
+}
+
+#crm-container .break:last-child {
+  display: none;
+}
+
+#crm-container tr.striped:nth-of-type(odd) {
+  background-color: #eee;
+}
+
+#crm-container tr.underline {
+  border-bottom: 1px solid #ccc;
+}
+
+#crm-container .small {
+  font-size: 75%;
+}
+
+#crm-container table tr:first-child td,
+#crm-container table tr:first-child th {
+  /* border: none; */
+}
+
+#crm-container .timestamp {
+  font-size: 75%;
+  text-align: right;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+#crm-container table {
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+
+#crm-container tr {
+  background: none transparent;
+}
+
+#crm-container th,
+#crm-container table.display thead th,
+#crm-container table thead.sticky th,
+#crm-container table.caseSelector tr.columnheader th {
+  background-color: #ffffff;
+  border-color: #ffffff #ffffff #cfcec3;
+  border-style: solid;
+  border-width: 1px 1px 2px;
+  color: #a7a7a7;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px;
+  text-align: left;
+  vertical-align: top;
+}
+/* Styles for Sticky Header */
+#crm-container table thead.sticky {
+  background-color: #fff;
+}
+
+#crm-container td {
+  padding: 4px;
+  vertical-align: top;
+}
+
+#crm-container .crm-row-child {
+  margin: 0;
+  padding: 3px 0 3px 0;
+  clear: none;
+  background-color: #f1f8eb;
+}
+
+#crm-container tr.even,
+#crm-container tr.odd,
+#crm-container tbody th {
+  border-color: #fff #fff #efefef #fff;
+}
+
+#crm-container tr.even-row td,
+#crm-container tr.odd-row td,
+#crm-container table.display td,
+#crm-container table.pagerDisplay td {
+  border-color: #efefef;
+  border-right: 1px solid #efefef;
+  border-collapse: collapse;
+}
+#crm-container .odd-row,
+#crm-container .odd,
+tbody.scrollContent {
+  background-color: #fafafa;
+}
+#crm-container .even-row,
+#crm-container .even,
+tbody.scrollContent tr.alternateRow {
+  background-color: #efefef;
+}

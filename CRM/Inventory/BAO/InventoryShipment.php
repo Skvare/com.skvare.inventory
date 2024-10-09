@@ -8,6 +8,7 @@ use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventorySales;
 use Civi\Api4\InventoryShipment;
 use Civi\Api4\LineItem;
+use Picqer\Barcode\Barcode;
 
 /**
  *
@@ -428,6 +429,39 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
           CRM_Contribute_BAO_Contribution::getContributionBalance($inventorySale['contribution_id']);
         $inventorySale['payment_details'] =
           CRM_Contribute_BAO_Contribution::getPaymentInfo($inventorySale['contribution_id'], 'contribution', TRUE);
+        $inventorySale['address'] = CRM_Inventory_Utils::getAddress($inventorySale['contact_id']);
+        if (!empty($inventorySale['address'])) {
+          $inventorySale['address_display'] = CRM_Utils_Address::formatVCard($inventorySale['address']);
+          $inventorySale['display_text'] = CRM_Utils_Address::format($inventorySale['address']);
+          $inventorySale['display_text_2'] = CRM_Utils_Address::format($inventorySale['address']);
+        }
+
+        $inputParams = ['sales_id' => $inventorySale['id']];
+        $productVariant = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_DAO_InventoryProductVariant', $inputParams);
+        if ($productVariant->id) {
+          $productVariantDetails =
+            CRM_Inventory_BAO_InventoryProductVariant::getProductVariant($productVariant->id, TRUE);
+          $inventorySale['product'] = $productVariantDetails;
+          if ($productVariant->membership_id) {
+            $inventorySale['barcode_number'] = $inventorySale['id'] . '-' . $productVariant->membership_id;
+            $colorRed = [0, 0, 0];
+            $barcode = (new Picqer\Barcode\Types\TypeCode128B())->getBarcode($inventorySale['barcode_number']);
+            $renderer = new Picqer\Barcode\Renderers\PngRenderer();
+            $renderer->setForegroundColor($colorRed);
+            // Save PNG to the filesystem, with widthFactor 3 (width of the
+            // barcode x 3) and height of 50 pixel.
+            $rowBarcode = $renderer->render($barcode, $barcode->getWidth() * 1, 30);
+            $mime = 'image/png';
+            $inventorySale['barcode_image'] = "data:{$mime};base64," . base64_encode($rowBarcode);
+            $inventorySale['barcode_number'] .= ' (' . $productVariantDetails['product']['label'] . ')';
+          }
+        }
+        else {
+          $inventorySale['product'] = [];
+          $inventorySale['barcode_number'] = FALSE;
+          $inventorySale['barcode_image'] = FALSE;
+        }
+
         $paymentInstrument = '';
         if (!empty($inventorySale['payment_details']['transaction'])) {
           $paymentMethod = [];
@@ -458,16 +492,46 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    *   Array details.
    *
    * @return void
+   *   Nothing.
+   *
    * @throws SmartyException
+   * @throws CRM_Core_Exception
    */
-  public static function printManifestForBatch($manifestForBatch) {
-    $html = [];
-    $template = new CRM_Core_Smarty();
+  public static function printManifestForBatch(array $manifestForBatch) {
+    $htmlArray = [];
+    $sendTemplateParams = [
+      'groupName' => 'msg_tpl_workflow_manifest',
+      'isTest' => 0,
+      'tplParams' => [],
+    ];
+    $pdfFormat = [
+      'paper_size' => 'letter',
+      'stationery' => NULL,
+      'orientation' => 'portrait',
+      'metric' => 'in',
+      'margin_top' => 0.25,
+      'margin_bottom' => 0.25,
+      'margin_left' => 0.5,
+      'margin_right' => 0.5,
+      'weight' => 2,
+    ];
+
+    $customCss = CRM_Extension_System::singleton()->getMapper()->keyToUrl('com.skvare.inventory') . '/assets/css/style.css';
+    $headerImagePathUrl = CRM_Extension_System::singleton()->getMapper()->keyToUrl('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
+    $headerImagePath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
+    $rowImage = file_get_contents($headerImagePath);
+    $mime = 'image/png';
+    $sendTemplateParams['valueName'] = 'shipping_manifest';
+    $sendTemplateParams['tplParams']['headerImage'] = "data:{$mime};base64," . base64_encode($rowImage);;
+    //$sendTemplateParams['tplParams']['headerImage'] = $headerImagePathUrl;
     foreach ($manifestForBatch as $sale) {
-      $template->assign('sale', $sale);
-      $html[] = $template->fetch('CRM/Inventory/Manifests.tpl');
+      $sendTemplateParams['contactId'] = $sale['contact_id'];
+      $sendTemplateParams['tplParams']['sale'] = $sale;
+      [$sent, $subject, $message, $html] = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+      $htmlArray[] = $html;
     }
-    $combineHtml = implode('<div class="page_break"></div>', $html);
+    CRM_Utils_PDF_Utils::html2pdf($htmlArray, 'shipment_manifest.pdf', FALSE, $pdfFormat);
+    CRM_Utils_System::civiExit();
   }
 
   /**

@@ -1,5 +1,8 @@
 <?php
+
 // phpcs:disable
+use Civi\Api4\OptionValue;
+use Civi\Api4\OptionGroup;
 use CRM_Inventory_ExtensionUtil as E;
 // phpcs:enable
 
@@ -18,7 +21,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
    */
   public function install() {
     // Ensure option group exists (in case OptionGroup_grant_status.mgd.php hasn't loaded yet)
-    \Civi\Api4\OptionGroup::save(FALSE)
+    OptionGroup::save(FALSE)
       ->addRecord([
         'name' => 'product_brand',
         'title' => E::ts('Product Brand'),
@@ -28,7 +31,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
 
     // Create unmanaged option values. They will not be updated by the system ever,
     // but they will be deleted on uninstall because the option group is a managed entity.
-    \Civi\Api4\OptionValue::save(FALSE)
+    OptionValue::save(FALSE)
       ->setDefaults([
         'option_group_id.name' => 'product_brand',
       ])
@@ -46,8 +49,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
       ->setMatch(['option_group_id', 'name'])
       ->execute();
 
-
-    \Civi\Api4\OptionGroup::save(FALSE)
+    OptionGroup::save(FALSE)
       ->addRecord([
         'name' => 'warehouse_shelf',
         'title' => E::ts('Warehouse Shelf'),
@@ -57,7 +59,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
 
     // Create unmanaged option values. They will not be updated by the system ever,
     // but they will be deleted on uninstall because the option group is a managed entity.
-    \Civi\Api4\OptionValue::save(FALSE)
+    OptionValue::save(FALSE)
       ->setDefaults([
         'option_group_id.name' => 'warehouse_shelf',
       ])
@@ -69,8 +71,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
       ->setMatch(['option_group_id', 'name'])
       ->execute();
 
-
-    \Civi\Api4\OptionGroup::save(FALSE)
+    OptionGroup::save(FALSE)
       ->addRecord([
         'name' => 'warranty_type',
         'title' => E::ts('Warranty Type'),
@@ -80,7 +81,7 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
 
     // Create unmanaged option values. They will not be updated by the system ever,
     // but they will be deleted on uninstall because the option group is a managed entity.
-    \Civi\Api4\OptionValue::save(FALSE)
+    OptionValue::save(FALSE)
       ->setDefaults([
         'option_group_id.name' => 'warranty_type',
       ])
@@ -133,28 +134,122 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
   /**
    * Example: Run a simple query when a module is enabled.
    */
-  // public function enable(): void {
+  // Public function enable(): void {
   //  CRM_Core_DAO::executeQuery('UPDATE foo SET is_active = 1 WHERE bar = "whiz"');
-  // }
+  // }.
 
   /**
    * Example: Run a simple query when a module is disabled.
    */
-  // public function disable(): void {
+  // Public function disable(): void {
   //   CRM_Core_DAO::executeQuery('UPDATE foo SET is_active = 0 WHERE bar = "whiz"');
-  // }
+  // }.
 
   /**
    * Example: Run a couple simple queries.
    *
    * @return TRUE on success
+   *
    * @throws CRM_Core_Exception
    */
-  // public function upgrade_4200(): bool {
+  // Public function upgrade_4200(): bool {
   //   $this->ctx->log->info('Applying update 4200');
   //   CRM_Core_DAO::executeQuery('UPDATE foo SET bar = "whiz"');
   //   CRM_Core_DAO::executeQuery('DELETE FROM bang WHERE willy = wonka(2)');
-  //   return TRUE;
-  // }
+  //   return TRUE;.
+
+  /**
+   * }.
+   */
+  public function upgrade_1100() {
+    $this->ctx->log->info('Applying update 1100 - Installing shipment manifest message workflow templates');
+    $this->installManifestMsgWorkflowTpls();
+    return TRUE;
+  }
+
+  /**
+   * Function to install message template.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public function installManifestMsgWorkflowTpls(): void {
+    try {
+      $optionGroup = civicrm_api3('OptionGroup', 'create', [
+        'name' => 'msg_tpl_workflow_manifest',
+        'title' => ts("Message Template Workflow for Shipping Manifest", ['domain' => 'com.skvare.inventory']),
+        'description' => ts("Message Template Workflow for Shipping Manifest", ['domain' => 'com.skvare.inventory']),
+        'is_reserved' => 1,
+        'is_active' => 1,
+      ]);
+      $optionGroupId = $optionGroup['id'];
+    }
+    catch (Exception $e) {
+      // If an exception is thrown, most likely the option group already exists,
+      // in which case we'll just use that one.
+      $optionGroupId = civicrm_api3('OptionGroup', 'getvalue', [
+        'name' => 'msg_tpl_workflow_manifest',
+        'return' => 'id',
+      ]);
+    }
+
+    $msgTpls = [
+      [
+        'description' => ts('Shipping - Manifest', ['domain' => 'com.skvare.inventory']),
+        'label' => ts('Shipping -Manifest', ['domain' => 'com.skvare.inventory']),
+        'name' => 'shipping_manifest',
+        'subject' => ts("Shipping : Manifest", ['domain' => 'com.skvare.inventory']),
+      ],
+    ];
+
+    $this->createMsgTpl($msgTpls, $optionGroupId);
+  }
+
+  /**
+   * Create template.
+   *
+   * @param array $msgTpls
+   *   Msg template details.
+   * @param int $optionGroupId
+   *   Option Group id.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public function createMsgTpl(array $msgTpls, int $optionGroupId): void {
+    $msgTplDefaults = [
+      'is_active' => 1,
+      'is_default' => 1,
+      'is_reserved' => 0,
+    ];
+
+    $baseDir = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/';
+    foreach ($msgTpls as $i => $msgTpl) {
+      $optionValue = civicrm_api3('OptionValue', 'create', [
+        'description' => $msgTpl['description'],
+        'is_active' => 1,
+        'is_reserved' => 1,
+        'label' => $msgTpl['label'],
+        'name' => $msgTpl['name'],
+        'option_group_id' => $optionGroupId,
+        'value' => ++$i,
+        'weight' => $i,
+      ]);
+      $html = file_get_contents($baseDir . 'msg_tpl/' . $msgTpl['name'] . '.html');
+
+      $params = array_merge($msgTplDefaults, [
+        'msg_title' => $msgTpl['label'],
+        'msg_subject' => $msgTpl['subject'],
+        'msg_html' => $html,
+        'workflow_id' => $optionValue['id'],
+      ]);
+      civicrm_api3('MessageTemplate', 'create', $params);
+    }
+
+  }
 
 }
