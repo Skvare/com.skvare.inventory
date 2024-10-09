@@ -3,21 +3,15 @@
 /**
  *
  */
-class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
+class CRM_Inventory_Page_ProductTab extends CRM_Core_Page {
 
   /**
    *
    */
   public function run() {
-    CRM_Utils_System::setTitle(\CRM_Inventory_ExtensionUtil::ts('Dashboard'));
-
-    // Example: Assign a variable for use in a template.
-    $this->assign('currentTime', date('Y-m-d H:i:s'));
-    if (!array_key_exists('snippet', $_GET)) {
-      $this->build();
-    }
-    $dashboardStats = CRM_Inventory_Utils::deviceModelStats();
-    $this->assign('dashboardStats', $dashboardStats);
+    // Example: Set the page-title dynamically; alternatively, declare a static title in xml/Menu/*.xml.
+    CRM_Utils_System::setTitle(\CRM_Inventory_ExtensionUtil::ts('ProductTab'));
+    $this->build();
     parent::run();
   }
 
@@ -32,7 +26,6 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
       $this->setVar('tabHeader', $tabs);
     }
     $this->assign('tabHeader', $tabs);
-    CRM_Core_Error::debug_var('$tabs', $tabs);
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'templates/CRM/common/TabHeader.js', 1, 'html-header')
       ->addSetting([
@@ -80,26 +73,32 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
       'current' => FALSE,
       'class' => FALSE,
       'extra' => FALSE,
+      'template' => FALSE,
       'count' => FALSE,
       'icon' => FALSE,
     ];
 
     $tabs = [
-      'device' => [
-        'title' => ts('Device'),
-        'template' => 'CRM/Inventory/Page/DashboardPart.tpl',
-      ] + $default,
-      'order' => [
-        'title' => ts('Order'),
-        'template' => 'CRM/Inventory/Page/DashboardPart.tpl',
-      ] + $default,
-      'shipping' => [
-        'title' => ts('Shipping'),
-        'template' => 'CRM/Inventory/Page/DashboardPart.tpl',
-      ] + $default,
-      'setting' => [
-          'title' => ts('Setting'),
-          'template' => 'CRM/Inventory/Page/DashboardPart.tpl',
+      'all' => [
+          'title' => ts('All'),
+        ] + $default,
+      'new_inventory' => [
+          'title' => ts('unassigned'),
+        ] + $default,
+      'inactive' => [
+          'title' => ts('Out of service'),
+        ] + $default,
+      'problems' => [
+          'title' => ts('Problems'),
+        ] + $default,
+      'expiring' => [
+          'title' => ts('Expiring'),
+        ] + $default,
+      'loaners' => [
+          'title' => ts('Loaners'),
+        ] + $default,
+      'nomodel' => [
+          'title' => ts('No Model'),
         ] + $default,
     ];
 
@@ -111,7 +110,7 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
       }
 
       $tabs[$key]['link'] = CRM_Utils_System::url(
-        "civicrm/inventory",
+        "civicrm/inventory/device-details",
         "{$reset}&key={$key}", FALSE,
         "status=$key"
       );

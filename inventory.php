@@ -125,6 +125,36 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
         ],
         'serialize' => CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND,
       ];
+
+      $fields['fair_value'] = [
+        'name' => 'fair_value',
+        'type' => CRM_Utils_Type::T_MONEY,
+        'title' => E::ts('Fair Price?'),
+        'description' => E::ts('Fair Price for membership level.'),
+        'required' => FALSE,
+        'usage' => [
+          'import' => TRUE,
+          'export' => TRUE,
+          'duplicate_matching' => FALSE,
+          'token' => FALSE,
+        ],
+        'precision' => [
+          20,
+          2,
+        ],
+        'where' => 'civicrm_membership_type.fair_value',
+        'export' => TRUE,
+        'default' => '0',
+        'table_name' => 'civicrm_membership_type',
+        'entity' => 'MembershipType',
+        'bao' => 'CRM_Member_BAO_MembershipType',
+        'localizable' => 0,
+        'html' => [
+          'type' => 'Text',
+          'label' => E::ts("Fair Price"),
+        ],
+        'add' => NULL,
+      ];
     };
 
   $lineItem = 'CRM_Price_DAO_LineItem';
@@ -184,6 +214,54 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
         'bao' => 'CRM_Price_BAO_LineItem',
       ];
 
+      $fields['membership_id'] = [
+        'name' => 'membership_id',
+        'type' => CRM_Utils_Type::T_INT,
+        'title' => E::ts('Membership ID'),
+        'description' => E::ts('Membership ID Associated with product.'),
+        'required' => FALSE,
+        'usage' => [
+          'import' => TRUE,
+          'export' => TRUE,
+          'duplicate_matching' => TRUE,
+          'token' => FALSE,
+        ],
+        'import' => TRUE,
+        'where' => 'civicrm_line_item.membership_id',
+        'export' => TRUE,
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+        'localizable' => 0,
+        'FKClassName' => 'CRM_Member_DAO_Membership',
+        'html' => [
+          'type' => 'EntityRef',
+          'label' => E::ts("Membership ID"),
+        ],
+        'add' => '5.63',
+      ];
+
+      $fields['subtitle'] = [
+        'name' => 'subtitle',
+        'title' => ts('Subtitle'),
+        'type' => CRM_Utils_Type::T_STRING,
+        'sql_type' => 'varchar(255)',
+        'input_type' => 'Text',
+        'description' => ts('Subtitle.'),
+        'add' => '5.75',
+        'default' => 'NULL',
+        'html' => [
+          'type' => 'Text',
+        ],
+        'input_attrs' => [
+          'label' => ts('Subtitle.'),
+        ],
+        'where' => 'civicrm_line_item.subtitle',
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+      ];
+
       $fields['additional_details'] = [
         'name' => 'additional_details',
         'title' => ts('Product Additional Details'),
@@ -205,6 +283,7 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
         'bao' => 'CRM_Price_BAO_LineItem',
       ];
     };
+
 }
 
 /**

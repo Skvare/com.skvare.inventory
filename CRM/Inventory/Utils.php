@@ -1,6 +1,9 @@
 <?php
 
 // phpcs:disable
+use Civi\Api4\InventorySales;
+use Civi\Api4\InventoryProductVariant;
+use Civi\Api4\InventoryProduct;
 use Civi\Api4\LineItem;
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryBillingPlans;
@@ -507,11 +510,10 @@ class CRM_Inventory_Utils {
   }
 
   /**
-   * UPS is very picky about what characters it will allow in the CSV
+   * UPS is very picky about what characters it will allow in the CSV.
    */
   public static function csv_str($str) {
-    return
-      preg_replace(
+    return preg_replace(
         ['/[.\'"`]/', '/ +/', '/\r\n/', '/\n+/'],
         ['', ' ', "\n", "\n"],
         trim($str)
@@ -525,10 +527,11 @@ class CRM_Inventory_Utils {
    *
    * @param \CRM_Core_DAO $object
    *
-   * @return array|string|NULL
+   * @return array|string|null
    */
   public static function getObjectNameFromObject(\CRM_Core_DAO $object) {
-    static $contact_types = []; // Array with contact ID and value the contact type.
+    // Array with contact ID and value the contact type.
+    static $contact_types = [];
     // Classes renamed in core: https://github.com/civicrm/civicrm-core/pull/29390
     $className = 'CRM_Core_DAO_AllCoreTables::getEntityNameForClass';
     if (!method_exists('CRM_Core_DAO_AllCoreTables', 'getEntityNameForClass')) {
@@ -547,10 +550,146 @@ class CRM_Inventory_Utils {
         $objectName = $contact_types[$object->id];
       }
       catch (\Exception $e) {
-        // Do nothing
+        // Do nothing.
       }
     }
     return $objectName;
+  }
+
+  /**
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function dashboardData(): array {
+    $sql = "select product.id, product.label,
+       count(variant.product_id) as 'available_product', product.reorder_point,
+       product.quantity_available, product.minimum_quantity_stock_level,
+       product.maximum_quantity_stock_level, product.inventory_status
+      from civicrm_inventory_product product
+      inner join civicrm_inventory_product_variant variant on (product.id = variant.product_id)
+      where
+      variant.is_active = 1 and variant.status = 'new_inventory' and
+      product.is_serialize = 1 and product.inventory_display = 1
+
+      group by variant.product_id";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    $id = NULL;
+    $dashboardArray = [];
+    while ($dao->fetch()) {
+      $dashboardArray[$dao->id][] = $dao->id;
+      $dashboardArray[$dao->id][] = $dao->available_product;
+      $dashboardArray[$dao->id][] = $dao->label;
+      $dashboardArray[$dao->id][] = $dao->reorder_point;
+      $dashboardArray[$dao->id][] = $dao->quantity_available;
+      $dashboardArray[$dao->id][] = $dao->minimum_quantity_stock_level;
+      $dashboardArray[$dao->id][] = $dao->maximum_quantity_stock_level;
+      $dashboardArray[$dao->id][] = $dao->inventory_status;
+      $dashboardArray[$dao->id][] = $dao->maximum_quantity_stock_level;
+    }
+    return $dashboardArray;
+  }
+
+  /**
+   * Get Model List.
+   *
+   * @return array
+   *   Model list.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public static function getProductModels(): array {
+    $inventoryProducts = InventoryProduct::get(TRUE)
+      ->addSelect('id', 'label', 'minimum_quantity_stock_level', 'maximum_quantity_stock_level', 'reorder_point', 'inventory_status')
+      ->addWhere('is_serialize', '=', TRUE)
+      ->addWhere('inventory_display', '=', TRUE)
+      // Hotspot.
+      ->addWhere('product_category_id', '=', 2)
+      ->setLimit(150)
+      ->execute();
+    $models = [];
+    foreach ($inventoryProducts as $inventoryProduct) {
+      $models[$inventoryProduct['id']] = $inventoryProduct;
+    }
+    return $models;
+  }
+
+  /**
+   * Device Model wise stats.
+   *
+   * @return array
+   *   Stats
+   */
+  public static function deviceModelStats() {
+    $stats = [];
+    try {
+      foreach (self::getProductModels() as $dm_id => $deviceModel) {
+        $totalInventory = InventoryProductVariant::get(TRUE)
+          ->selectRowCount()
+          ->addWhere('product_id', '=', $dm_id)
+          ->execute()->count();
+
+        $totalAvailableInventory = InventoryProductVariant::get(TRUE)
+          ->selectRowCount()
+          ->addWhere('product_id', '=', $dm_id)
+          ->addWhere('is_active', '=', TRUE)
+          ->addWhere('status', '=', 'new_inventory')
+          ->execute()->count();
+
+        // Estimate days left.
+        $total_shipped = InventoryProductVariant::get(TRUE)
+          ->selectRowCount()
+          ->addWhere('product_id', '=', $dm_id)
+          ->addWhere('is_active', '=', TRUE)
+          ->addWhere('shipped_on', '>', date("YmdHis", strtotime("-60 day")))
+          ->execute()->count();
+
+        $first_shipped_date = InventoryProductVariant::get(TRUE)
+          ->addWhere('product_id', '=', $dm_id)
+          ->addWhere('is_active', '=', TRUE)
+          ->addWhere('shipped_on', '>', date("YmdHis", strtotime("-60 day")))
+          ->addOrderBy('shipped_on', 'ASC')
+          ->setLimit(1)
+          ->execute()->first()['shipped_on'] ?? date('Y-m-d H:i:s', strtotime("-60 day"));
+
+        $active_shipping_days_countCreate = date_create($first_shipped_date);
+        $nowDateCreate = date_create(date("YmdHis"));
+        $active_shipping_days_count = date_diff($nowDateCreate, $active_shipping_days_countCreate);
+        $active_shipping_days_count = $active_shipping_days_count->days ?? 0;
+        if ($active_shipping_days_count == 0) {
+          $active_shipping_days_count = 1;
+        }
+
+        $daily_avg = $total_shipped / $active_shipping_days_count;
+        $monthlyAvg = round($daily_avg * 4.2 * 7);
+        $daysLeft = $daily_avg == 0 ? 0 : round($totalInventory / $daily_avg);
+
+        // Grab outstanding orders.
+        $pendingOrders = InventorySales::get(TRUE)
+          ->selectRowCount()
+          ->addWhere('is_paid', '=', TRUE)
+          ->addWhere('is_fulfilled', '=', FALSE)
+          ->addWhere('product_id', '=', $dm_id)
+          ->setLimit(25)
+          ->execute()->count() ?? 0;
+
+        $stats[$dm_id] = array_merge($deviceModel, [
+          'total_inventory' => $totalInventory,
+          'available_inventory' => $totalAvailableInventory,
+          'pendingOrder' => $pendingOrders,
+          'monthly_avg' => $monthlyAvg,
+          'days_left' => $daysLeft,
+        ]
+        );
+      }
+    }
+    catch (UnauthorizedException $e) {
+
+    }
+    catch (CRM_Core_Exception $e) {
+
+    }
+    return $stats;
   }
 
 }

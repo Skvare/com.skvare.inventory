@@ -1409,4 +1409,129 @@ return [
       ],
     ],
   ],
+
+  // =========
+
+  // Saved Search for Inventory_Shipment.
+  [
+    'name' => 'SavedSearch_Inventory_Shipment',
+    'entity' => 'SavedSearch',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Shipment',
+        'label' => E::ts('Inventory Shipment'),
+        'api_entity' => 'InventoryShipment',
+        'api_params' => [
+          'version' => 4,
+          'select' => [
+            'id',
+            'contact_id',
+            'contact_id.display_name',
+            'created_date',
+            'is_finished',
+            'is_shipped',
+            'shipped_date',
+            'COUNT(InventoryShipment_InventorySales_shipment_id_01.shipment_id) AS COUNT_InventoryShipment_InventorySales_shipment_id_01_shipment_id',
+          ],
+          'orderBy' => [],
+          'where' => [],
+          'groupBy' => [
+            'id',
+          ],
+          'join' => [
+            [
+              'InventorySales AS InventoryShipment_InventorySales_shipment_id_01',
+              'LEFT',
+              [
+                'id',
+                '=',
+                'InventoryShipment_InventorySales_shipment_id_01.shipment_id',
+              ],
+            ],
+          ],
+          "having" => [],
+        ],
+      ],
+      'match' => [
+        'name',
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Shipment_Table_1.
+  [
+    'name' => 'SearchDisplay_Inventory_Shipment_Table_1',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Shipment_Table_1',
+        'label' => E::ts('Inventory Shipment Table 1'),
+        'saved_search_id.name' => 'Inventory_Shipment',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [
+            [
+              'created_at',
+              'DESC',
+            ],
+          ],
+          'limit' => 50,
+          'pager' => [],
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'html',
+              'key' => 'is_finished',
+              'dataType' => 'Boolean',
+              'label' => '',
+              'sortable' => TRUE,
+              'rewrite' => "{capture assign=is_finished}{\"[is_finished]\"}{/capture}\n{capture assign=is_shipped}{\"[is_shipped]\"}{/capture}\n{if \$is_finished == 'Yes'}\n<span class=\"badge badge-success\">Closed</span>\n{else}\n<span class=\"badge badge-dark\">Open</span>\n{/if}\n{if \$is_shipped == 'Yes'}\n<span class=\"badge badge-success\">Shipped</span>\n{else}\n<span class=\"badge badge-dark\">Pending</span>\n{/if}",
+            ],
+            [
+              'type' => 'html',
+              'key' => 'id',
+              'dataType' => 'Integer',
+              'label' => E::ts('ID'),
+              'sortable' => TRUE,
+              'rewrite' => '<a target="_blank" href="/civicrm/inventory/shipment-details?id=[id]#?shipment_id=[id]">Shipment [id]</a>',
+            ],
+            [
+              'type' => 'field',
+              'key' => 'created_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'shipped_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Shipped At'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'COUNT_InventoryShipment_InventorySales_shipment_id_01_shipment_id',
+              'dataType' => 'Integer',
+              'label' => E::ts('Orders'),
+              'sortable' => TRUE,
+            ],
+          ],
+          'actions' => FALSE,
+          'classes' => [
+            'table',
+            'table-striped',
+          ],
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
 ];

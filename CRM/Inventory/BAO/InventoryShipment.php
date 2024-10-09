@@ -7,6 +7,7 @@
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventorySales;
 use Civi\Api4\InventoryShipment;
+use Civi\Api4\LineItem;
 
 /**
  *
@@ -145,6 +146,9 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     return self::findById($shipmentObjectID, TRUE);
   }
 
+  /**
+   *
+   */
   public static function findOpenShipmentList() {
     $sql = "SELECT shipment.id, shipment.created_date, COUNT(inventory_sales.shipment_id) as total_orders
       FROM civicrm_inventory_shipment shipment
@@ -396,10 +400,74 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
   }
 
   /**
+   * Get Manifest for Shipment batch.
    *
+   * @param int $shipmentID
+   *   Shipment ID.
+   *
+   * @return array
+   *   Shipment sales details.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function manifestForBatch(int $shipmentID) {
+  public static function manifestForBatch(int $shipmentID): array {
+    // Get sales record for shipment ID.
+    $inventorySales = InventorySales::get(TRUE)
+      ->addWhere('shipment_id', '=', $shipmentID)
+      ->setLimit(25)
+      ->execute()->getArrayCopy();
+    foreach ($inventorySales as &$inventorySale) {
+      // Get Line item details and its payment information.
+      if (!empty($inventorySale['contribution_id'])) {
+        $inventorySale['line_items'] = LineItem::get(TRUE)
+          ->addWhere('contribution_id', '=', $inventorySale['contribution_id'])
+          ->setLimit(25)
+          ->execute()->getArrayCopy();
+        $inventorySale['amount_due'] =
+          CRM_Contribute_BAO_Contribution::getContributionBalance($inventorySale['contribution_id']);
+        $inventorySale['payment_details'] =
+          CRM_Contribute_BAO_Contribution::getPaymentInfo($inventorySale['contribution_id'], 'contribution', TRUE);
+        $paymentInstrument = '';
+        if (!empty($inventorySale['payment_details']['transaction'])) {
+          $paymentMethod = [];
+          foreach ($inventorySale['payment_details']['transaction'] as $transaction) {
+            $tmp = '';
+            $tmp .= $transaction['payment_instrument'];
+            if (!empty($transaction['check_number'])) {
+              $tmp .= ' (' . $transaction['check_number'] . ')';
+            }
+            $tmp .= ' [' . $transaction['status'] . ']';
+            $paymentMethod[] = $tmp;
+          }
+          if (!empty($paymentMethod)) {
+            $paymentInstrument = implode('<br/> ', $paymentMethod);
+          }
+        }
+        $inventorySale['payment_instrument'] = $paymentInstrument;
+      }
+    }
 
+    return $inventorySales;
+  }
+
+  /**
+   * Print manifest.
+   *
+   * @param array $manifestForBatch
+   *   Array details.
+   *
+   * @return void
+   * @throws SmartyException
+   */
+  public static function printManifestForBatch($manifestForBatch) {
+    $html = [];
+    $template = new CRM_Core_Smarty();
+    foreach ($manifestForBatch as $sale) {
+      $template->assign('sale', $sale);
+      $html[] = $template->fetch('CRM/Inventory/Manifests.tpl');
+    }
+    $combineHtml = implode('<div class="page_break"></div>', $html);
   }
 
   /**
@@ -567,7 +635,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       try {
         $this->productVariant->changeStatus($this->productVariant->id, 'REACTIVATE', "Reactivating because assigned to [order:{$this->sales->code}]");
       }
-      catch (UnauthorizedException|CRM_Core_Exception $e) {
+      catch (UnauthorizedException | CRM_Core_Exception $e) {
 
       }
     }
