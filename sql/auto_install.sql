@@ -318,6 +318,7 @@ CREATE TABLE `civicrm_inventory_sales` (
   `code` varchar(255) NULL COMMENT 'Random and Uniuqe ID Generated.',
   `sale_date` datetime,
   `contribution_id` int unsigned NULL COMMENT 'Contribution ID Associated with product.',
+  `value_amount` decimal(20,2) DEFAULT 0 COMMENT 'Fair market value.',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status_id` varchar(100) NOT NULL COMMENT 'Sales Status: \'placed\', \'shipped\', \'completed\'',
   `product_id` int unsigned COMMENT 'FK to product',
