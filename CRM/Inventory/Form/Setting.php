@@ -14,12 +14,19 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
    */
   var array $fieldList = [];
 
+  var array $fieldListTextField = [];
+
   public function preProcess() {
     $this->fieldList = [
       'inventory_referral_code' => 'Referral Code Field',
       'inventory_referral_consumed_code' => 'Referral Code Consumed Field',
       'inventory_membership_renewal_date' => 'Membership Renewal Date',
     ];
+
+    $this->fieldListTextField = [
+      'inventory_lead_time' => 'Inventory Lead Time (in days)',
+    ];
+
   }
 
   /**
@@ -32,6 +39,9 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
     foreach ($this->fieldList as $name => $label) {
       $this->add('select', $name, $label,
         $civicrmFields, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- any -')]);
+    }
+    foreach ($this->fieldListTextField as $name => $label) {
+      $this->add('text', $name, $label, [], FALSE);
     }
     $this->addButtons([
       [
@@ -53,9 +63,11 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
     foreach ($this->fieldList as $name => $label) {
       $defaults[$name] = $settings->get($name);
     }
+    foreach ($this->fieldListTextField as $name => $label) {
+      $defaults[$name] = $settings->get($name);
+    }
     return $defaults;
   }
-
 
   public function postProcess(): void {
     // Store the submitted values in an array.
@@ -64,6 +76,11 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
     $domainID = CRM_Core_Config::domainID();
     $settings = Civi::settings($domainID);
     foreach ($this->fieldList as $name => $label) {
+      if (CRM_Utils_Array::value($name, $params)) {
+        $settings->set($name, $params[$name]);
+      }
+    }
+    foreach ($this->fieldListTextField as $name => $label) {
       if (CRM_Utils_Array::value($name, $params)) {
         $settings->set($name, $params[$name]);
       }
@@ -90,5 +107,6 @@ class CRM_Inventory_Form_Setting extends CRM_Core_Form {
     }
     return $elementNames;
   }
+
 
 }

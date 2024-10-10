@@ -72,6 +72,7 @@ class CRM_Inventory_Utils {
       'low' => E::ts('Low'),
       'delayed' => E::ts('Delayed'),
       'out' => E::ts('Out'),
+      'reorder' => E::ts('Reorder'),
     ];
   }
 
@@ -165,7 +166,7 @@ class CRM_Inventory_Utils {
       $settings = Civi::settings($domainID);
       $params = [];
       foreach ($setting as $key) {
-        $customField = $settings->get($key);
+        $customField = $settings->get('inventory_lead_time');
         if (empty($customField)) {
           continue;
         }
@@ -576,15 +577,14 @@ class CRM_Inventory_Utils {
     $id = NULL;
     $dashboardArray = [];
     while ($dao->fetch()) {
-      $dashboardArray[$dao->id][] = $dao->id;
-      $dashboardArray[$dao->id][] = $dao->available_product;
-      $dashboardArray[$dao->id][] = $dao->label;
-      $dashboardArray[$dao->id][] = $dao->reorder_point;
-      $dashboardArray[$dao->id][] = $dao->quantity_available;
-      $dashboardArray[$dao->id][] = $dao->minimum_quantity_stock_level;
-      $dashboardArray[$dao->id][] = $dao->maximum_quantity_stock_level;
-      $dashboardArray[$dao->id][] = $dao->inventory_status;
-      $dashboardArray[$dao->id][] = $dao->maximum_quantity_stock_level;
+      $dashboardArray[$dao->id]['id'] = $dao->id;
+      $dashboardArray[$dao->id]['available_product'] = $dao->available_product;
+      $dashboardArray[$dao->id]['label'] = $dao->label;
+      $dashboardArray[$dao->id]['reorder_point'] = $dao->reorder_point;
+      $dashboardArray[$dao->id]['quantity_available'] = $dao->quantity_available;
+      $dashboardArray[$dao->id]['minimum_quantity_stock_level'] = $dao->minimum_quantity_stock_level;
+      $dashboardArray[$dao->id]['maximum_quantity_stock_level'] = $dao->maximum_quantity_stock_level;
+      $dashboardArray[$dao->id]['inventory_status'] = $dao->inventory_status;
     }
     return $dashboardArray;
   }
@@ -609,6 +609,7 @@ class CRM_Inventory_Utils {
       ->execute();
     $models = [];
     foreach ($inventoryProducts as $inventoryProduct) {
+      $inventoryProduct['badge'] = CRM_Inventory_BAO_InventoryProduct::deviceModelBadge($inventoryProduct['inventory_status']);
       $models[$inventoryProduct['id']] = $inventoryProduct;
     }
     return $models;

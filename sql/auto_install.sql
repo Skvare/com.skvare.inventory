@@ -403,6 +403,7 @@ CREATE TABLE `civicrm_inventory_product_variant` (
   `is_active` tinyint NULL DEFAULT 1,
   `is_suspended` tinyint NULL DEFAULT 0,
   `is_problem` tinyint NULL DEFAULT 0,
+  `memo` varchar(256) NULL COMMENT 'Memo for device.',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UI_product_variant_unique_id`(product_variant_unique_id),
   CONSTRAINT FK_civicrm_inventory_product_variant_product_id FOREIGN KEY (`product_id`) REFERENCES `civicrm_inventory_product`(`id`) ON DELETE RESTRICT,

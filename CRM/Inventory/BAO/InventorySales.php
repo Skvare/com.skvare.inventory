@@ -6,6 +6,8 @@
 
 use Civi\Api4\InventorySales;
 use Civi\Api4\LineItem;
+use Civi\Core\Event\PostEvent;
+use Civi\Core\Event\PreEvent;
 
 /**
  *
@@ -67,7 +69,7 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    *
    * @throws \CRM_Core_Exception
    */
-  public static function self_hook_civicrm_post(\Civi\Core\Event\PostEvent $event): void {
+  public static function self_hook_civicrm_post(PostEvent $event): void {
     if ($event->action === 'update' || $event->action === 'edit') {
       // CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($event->id);
     }
@@ -81,7 +83,7 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    *
    * @throws \CRM_Core_Exception
    */
-  public static function self_hook_civicrm_pre(\Civi\Core\Event\PreEvent $event): void {
+  public static function self_hook_civicrm_pre(PreEvent $event): void {
     if ($event->action === 'update' || $event->action === 'edit') {
       // Check the call.
     }
@@ -253,6 +255,9 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
       ->execute();
   }
 
+  /**
+   *
+   */
   public function missingDevices() {
 
     if (!isset($this->missing_devices)) {
@@ -275,6 +280,7 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    * @param $membership
    * @param $deviceModel
    * @param $device
+   *
    * @return mixed|null
    */
   public function findAssignableOrderItem($membership = 'unset', $deviceModel = 'unset', $device = 'unset'): mixed {
@@ -291,7 +297,7 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    * Update Flags.
    *
    * @return void
-   *  Noting.
+   *   Noting.
    */
   public function updateFlags() {
     $this->is_shipping_required = 0;

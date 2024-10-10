@@ -18,6 +18,9 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
     }
     $dashboardStats = CRM_Inventory_Utils::deviceModelStats();
     $this->assign('dashboardStats', $dashboardStats);
+    $membershipDash = new CRM_Member_Page_DashBoard();
+    $membershipDash->preProcess();
+
     parent::run();
   }
 
@@ -32,7 +35,6 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
       $this->setVar('tabHeader', $tabs);
     }
     $this->assign('tabHeader', $tabs);
-    CRM_Core_Error::debug_var('$tabs', $tabs);
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'templates/CRM/common/TabHeader.js', 1, 'html-header')
       ->addSetting([

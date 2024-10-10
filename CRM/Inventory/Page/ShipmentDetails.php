@@ -114,7 +114,6 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
       $this->setVar('tabHeader', $tabs);
     }
     $this->assign('tabHeader', $tabs);
-    CRM_Core_Error::debug_var('$tabs', $tabs);
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'templates/CRM/common/TabHeader.js', 1, 'html-header')
       ->addSetting([

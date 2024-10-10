@@ -10,7 +10,7 @@ use Civi\Core\Event\PreEvent;
  * Product variant class.
  */
 class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_InventoryProductVariant {
-
+  use CRM_Inventory;
   /**
    * Takes an associative array and creates a product variant object.
    *

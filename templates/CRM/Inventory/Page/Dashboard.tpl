@@ -1,4 +1,4 @@
-<div class="crm-block crm-content-block">
+<div class="crm-block crm-content-block" id="bootstrap-theme1">
   <div id="mainTabContainer">
     <ul>
       {foreach from=$tabHeader key=tabName item=tabValue}
@@ -25,8 +25,6 @@
     {/foreach}
   </div>
   <div class="clear" style="padding-bottom: 10px;"></div>
-
-
   <div class="row">
     <div class="col">
       <div class="card">
@@ -61,8 +59,18 @@
       </div>
     </div>
   </div>
-
   <div class="row mt-4">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-text">
+            {include file="CRM/Member/Page/DashBoard.tpl"}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4" id="bootstrap-theme">
     <div class="col">
       <div class="card">
         <div class="card-img-top bg-light">
@@ -86,7 +94,7 @@
               {foreach from=$dashboardStats item=modelStat}
                 <tr>
                   <td>{$modelStat.label}</td>
-                  <td><span class="badge badge-success">{$modelStat.inventory_status}</span></td>
+                  <td><span class="badge {$modelStat.badge}">{$modelStat.inventory_status}</span></td>
                   <td>{$modelStat.total_inventory}</td>
                   <td><a href="/admin/devices?device_model_id=1&amp;filter=new_inventory&amp;view=unassigned">{$modelStat.available_inventory}</a></td>
                   <td><a href="/admin/orders?item=17&amp;view=pending">{$modelStat.pendingOrder}</a></td>
