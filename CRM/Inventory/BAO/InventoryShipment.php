@@ -421,6 +421,10 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     foreach ($inventorySales as &$inventorySale) {
       // Get Line item details and its payment information.
       if (!empty($inventorySale['contribution_id'])) {
+        $inventorySale['total_amount'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution', $inventorySale['contribution_id'], 'total_amount');
+        $deductible = ($inventorySale['total_amount'] ?? 0) - ($inventorySale['value_amount'] ?? 0);
+        $inventorySale['deductible_amount'] = ($deductible < 0) ? 0 : $deductible;
+
         $inventorySale['line_items'] = LineItem::get(TRUE)
           ->addWhere('contribution_id', '=', $inventorySale['contribution_id'])
           ->setLimit(25)
@@ -481,13 +485,14 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
         $inventorySale['payment_instrument'] = $paymentInstrument;
       }
     }
-
     return $inventorySales;
   }
 
   /**
    * Print manifest.
    *
+   * @param int $shipmentID
+   * Shipment ID.
    * @param array $manifestForBatch
    *   Array details.
    *
@@ -497,7 +502,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @throws SmartyException
    * @throws CRM_Core_Exception
    */
-  public static function printManifestForBatch(array $manifestForBatch) {
+  public static function printManifestForBatch(int $shipmentID, array $manifestForBatch) {
     $htmlArray = [];
     $sendTemplateParams = [
       'groupName' => 'msg_tpl_workflow_manifest',
@@ -516,7 +521,9 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       'weight' => 2,
     ];
 
-    $customCss = CRM_Extension_System::singleton()->getMapper()->keyToUrl('com.skvare.inventory') . '/assets/css/style.css';
+    $customCssPath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/css/style.css';
+    $customCss = file_get_contents($customCssPath);
+    CRM_Core_Region::instance('export-document-header')->add(array('style' => "{$customCss}"));
     $headerImagePathUrl = CRM_Extension_System::singleton()->getMapper()->keyToUrl('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
     $headerImagePath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
     $rowImage = file_get_contents($headerImagePath);
@@ -530,7 +537,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       [$sent, $subject, $message, $html] = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
       $htmlArray[] = $html;
     }
-    CRM_Utils_PDF_Utils::html2pdf($htmlArray, 'shipment_manifest.pdf', FALSE, $pdfFormat);
+    CRM_Utils_PDF_Utils::html2pdf($htmlArray, "Shipment_Manifest_{$shipmentID}.pdf", FALSE, $pdfFormat);
     CRM_Utils_System::civiExit();
   }
 

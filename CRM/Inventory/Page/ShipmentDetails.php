@@ -23,7 +23,7 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     elseif (!empty($action) && $action & CRM_Core_Action::EXPORT && $operation === 'manifests') {
       // Export Manifests.
       $manifestForBatch = CRM_Inventory_BAO_InventoryShipment::manifestForBatch($shipmentID);
-      CRM_Inventory_BAO_InventoryShipment::printManifestForBatch($manifestForBatch);
+      CRM_Inventory_BAO_InventoryShipment::printManifestForBatch($shipmentID, $manifestForBatch);
     }
     elseif (!empty($action) && $action & CRM_Core_Action::RENEW && $operation == 'assigndevice' && !empty($shipmentID)) {
       // Assign Device to Order.
