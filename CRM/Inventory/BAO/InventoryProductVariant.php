@@ -164,7 +164,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
       if ($productVariant['product']['has_sim']) {
         CRM_Inventory_BAO_InventoryProductChangelog::logStatusChange($productVariantID, $change);
         if (!empty($msg)) {
-          // $productVariant->memo = $msg;
+          $productVariant->memo = $msg;
         }
         switch ($change) {
           case "REACTIVATE":
@@ -191,7 +191,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
             break;
 
           case "EXPIRE":
-            // $productVariantObj->memo = $msg;
+            $productVariantObj->memo = $msg;
             // The number of days to keep a device active after it has been
             // replaced.
             $productVariantObj->expire_on = date('Y-m-d', strtotime('+14days'));
@@ -224,7 +224,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
     if ($newPrimaryValue) {
       $this->is_primary = TRUE;
       $this->expire_on = NULL;
-      // $this->memo = 'Assigned as primary';
+      $this->memo = 'Assigned as primary';
       if ($this->membership_id) {
         // $this->membership->update(['primary_device_id' => $this->id]);
         $value = [];

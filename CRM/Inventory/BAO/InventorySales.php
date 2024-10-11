@@ -305,30 +305,4 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
     $this->has_assignment = 1;
   }
 
-  /**
-   * Function to create shipping labels.
-   *
-   * @param array $params
-   *   Sale params.
-   *
-   * @return void
-   *   Nothing.
-   */
-  public static function createShippingLabel(array $params):void {
-
-  }
-
-  /**
-   * Function to pay for shipping labels.
-   *
-   * @param array $params
-   *   Sale params.
-   *
-   * @return void
-   *   Nothing.
-   */
-  public static function asyncGetRatesAndPay(array $params):void {
-
-  }
-
 }

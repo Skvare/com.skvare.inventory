@@ -32,21 +32,9 @@ function _civicrm_api3_job_Devicesweeper_spec(&$spec) {
  * @throws API_Exception
  */
 function civicrm_api3_job_Devicesweeper($params) {
-  if (array_key_exists('magicword', $params) && $params['magicword'] == 'sesame') {
-    $returnValues = [
-      // OK, return several data rows.
-      12 => ['id' => 12, 'name' => 'Twelve'],
-      34 => ['id' => 34, 'name' => 'Thirty four'],
-      56 => ['id' => 56, 'name' => 'Fifty six'],
-    ];
-    // ALTERNATIVE: $returnValues = []; // OK, success
-    // ALTERNATIVE: $returnValues = ["Some value"]; // OK, return a single value.
-    // Spec: civicrm_api3_create_success($values = 1, $params = [], $entity = NULL, $action = NULL)
-    return civicrm_api3_create_success($returnValues, $params, 'Job', 'Devicesweeper');
-  }
-  else {
-    throw new API_Exception(/*error_message*/ 'Everyone knows that the magicword is "sesame"', /*error_code*/ 'magicword_incorrect');
-  }
+  DeviceSweeper::sweep();
+  $returnValues = 'Updated Device Sweeper';
+  return civicrm_api3_create_success($returnValues, $params, 'Job', 'Devicesweeper');
 }
 
 /**
@@ -55,9 +43,15 @@ function civicrm_api3_job_Devicesweeper($params) {
 class DeviceSweeper {
 
   /**
+   * Sweep.
    *
+   * @return void
+   *   Noting.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function sweep() {
+  public static function sweep(): void {
     self::expireDevices();
     self::flagProblemDevices();
   }
@@ -88,7 +82,13 @@ class DeviceSweeper {
   }
 
   /**
+   * Flag problem on device.
    *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
   public static function flagProblemDevices(): void {
     // DEVICES MISSING EXPIRATION.
@@ -143,11 +143,6 @@ class DeviceSweeper {
           $inventoryProductVariants->save();
           break;
         }
-        $devices = $membership->devices()->active()->orderBy('created_at', 'asc')->get()->toArray();
-        if (count($devices) > 1) {
-          $oldestDevice = $devices[0];
-          $oldestDevice->update(['is_problem' => TRUE, 'memo' => 'Membership has a newer device']);
-        }
       }
     }
 
@@ -174,7 +169,15 @@ class DeviceSweeper {
     }
   }
 
-  public static function withWrongState() {
+  /**
+   * Finds devices where the active state is different from what is indicated in device_changes
+   *
+   * @return array
+   *   List of device object.
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function withWrongState(): array {
     $sql = "
             SELECT devices.*
             FROM civicrm_inventory_product_variant devices
