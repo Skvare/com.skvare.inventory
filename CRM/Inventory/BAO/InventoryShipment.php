@@ -8,7 +8,8 @@ use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventorySales;
 use Civi\Api4\InventoryShipment;
 use Civi\Api4\LineItem;
-use Picqer\Barcode\Barcode;
+use Picqer\Barcode\Renderers\PngRenderer;
+use Picqer\Barcode\Types\TypeCode128B;
 
 /**
  *
@@ -304,6 +305,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       // ->addWhere('inventory_shipment_labels.id', 'IS NULL')
       ->addWhere('shipment_id', '=', $shipmentID)
       ->addWhere('is_paid', '=', 1)
+      ->addWhere('is_shipping_required', '=', 1)
       ->setLimit(0)
       ->execute();
     $inventorySalesList = [];
@@ -416,7 +418,8 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     // Get sales record for shipment ID.
     $inventorySales = InventorySales::get(TRUE)
       ->addWhere('shipment_id', '=', $shipmentID)
-      ->setLimit(25)
+      ->addWhere('is_shipping_required', '=', 1)
+      ->setLimit(0)
       ->execute()->getArrayCopy();
     foreach ($inventorySales as &$inventorySale) {
       // Get Line item details and its payment information.
@@ -447,16 +450,19 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
             CRM_Inventory_BAO_InventoryProductVariant::getProductVariant($productVariant->id, TRUE);
           $inventorySale['product'] = $productVariantDetails;
           if ($productVariant->membership_id) {
+            // Bar code at footer section.
             $inventorySale['barcode_number'] = $inventorySale['id'] . '-' . $productVariant->membership_id;
             $colorRed = [0, 0, 0];
-            $barcode = (new Picqer\Barcode\Types\TypeCode128B())->getBarcode($inventorySale['barcode_number']);
-            $renderer = new Picqer\Barcode\Renderers\PngRenderer();
+            $barcode = (new TypeCode128B())->getBarcode($inventorySale['barcode_number']);
+            $renderer = new PngRenderer();
             $renderer->setForegroundColor($colorRed);
             // Save PNG to the filesystem, with widthFactor 3 (width of the
             // barcode x 3) and height of 50 pixel.
             $rowBarcode = $renderer->render($barcode, $barcode->getWidth() * 1, 30);
             $mime = 'image/png';
-            $inventorySale['barcode_image'] = "data:{$mime};base64," . base64_encode($rowBarcode);
+            $base64 = base64_encode($rowBarcode);
+            $base64 = preg_replace('/\s+/', '', $base64);
+            $inventorySale['barcode_image'] = "data:{$mime};base64," . rawurlencode($base64);
             $inventorySale['barcode_number'] .= ' (' . $productVariantDetails['product']['label'] . ')';
           }
         }
@@ -492,7 +498,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * Print manifest.
    *
    * @param int $shipmentID
-   * Shipment ID.
+   *   Shipment ID.
    * @param array $manifestForBatch
    *   Array details.
    *
@@ -502,7 +508,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @throws SmartyException
    * @throws CRM_Core_Exception
    */
-  public static function printManifestForBatch(int $shipmentID, array $manifestForBatch) {
+  public static function printManifestForBatch(int $shipmentID, array $manifestForBatch): void {
     $htmlArray = [];
     $sendTemplateParams = [
       'groupName' => 'msg_tpl_workflow_manifest',
@@ -523,14 +529,12 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
 
     $customCssPath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/css/style.css';
     $customCss = file_get_contents($customCssPath);
-    CRM_Core_Region::instance('export-document-header')->add(array('style' => "{$customCss}"));
+    CRM_Core_Region::instance('export-document-header')->add(['style' => "{$customCss}"]);
     $headerImagePathUrl = CRM_Extension_System::singleton()->getMapper()->keyToUrl('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
     $headerImagePath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/image/letterhead-bw.png';
-    $rowImage = file_get_contents($headerImagePath);
-    $mime = 'image/png';
     $sendTemplateParams['valueName'] = 'shipping_manifest';
-    $sendTemplateParams['tplParams']['headerImage'] = "data:{$mime};base64," . base64_encode($rowImage);;
-    //$sendTemplateParams['tplParams']['headerImage'] = $headerImagePathUrl;
+    $image = CRM_Inventory_Utils::imageEncodeBase64($headerImagePath);
+    $sendTemplateParams['tplParams']['headerImage'] = $image;
     foreach ($manifestForBatch as $sale) {
       $sendTemplateParams['contactId'] = $sale['contact_id'];
       $sendTemplateParams['tplParams']['sale'] = $sale;
@@ -542,7 +546,18 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
   }
 
   /**
+   * Export shipment batch.
    *
+   * @param int $shipmentID
+   *   Shipment id.
+   * @param bool $download
+   *   Download the file.
+   *
+   * @return false|string|null
+   *   Download file or return file string.
+   *
+   * @throws CRM_Core_Exception
+   * @throws UnauthorizedException
    */
   public static function exportForBatch(int $shipmentID, bool $download = TRUE) {
     $inventorySales = InventorySales::get(TRUE)
@@ -624,25 +639,26 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function assignDeviceToOrder(string $orderID, string $deviceID, $isPrimary = TRUE) {
+  public function assignDeviceToOrder(string $orderID, string $deviceID, bool $isPrimary = TRUE) {
     $this->sales = $this->findEntityById('code', $orderID, 'InventorySales', TRUE);
     $errors = [];
     if ($this->sales->id) {
       $lineParams = [
         'sale_id' => $this->sales->id,
-        'entity_table' => 'civicrm_membership',
       ];
       /** @var CRM_Price_DAO_LineItem $lineObject */
-      $lineObject = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_DAO_LineItem', $lineParams, TRUE);
-      if ($lineObject->id) {
-        $membershipID = $lineObject->entity_id;
-        if ($lineObject->product_variant_id) {
-          $errors['order_id'] = 'A device has already been assigned for item';
-        }
-        /** @var CRM_Member_DAO_Membership $membershipDetail */
-        $membershipDetail = CRM_Inventory_BAO_Membership::findById($membershipID, TRUE);
-        if (empty($membershipDetail->id)) {
-          $errors['order_id'] = "No such membership ID";
+      $lineItems = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_DAO_LineItem', $lineParams);
+      foreach ($lineItems as $lineObject) {
+        if ($lineObject->id) {
+          $membershipID = $lineObject->entity_id;
+          if ($lineObject->product_variant_id) {
+            $errors['order_id'] = 'A device has already been assigned for item';
+          }
+          /** @var CRM_Member_DAO_Membership $membershipDetail */
+          $membershipDetail = CRM_Inventory_BAO_Membership::findById($membershipID, TRUE);
+          if (empty($membershipDetail->id)) {
+            $errors['order_id'] = "No such membership ID";
+          }
         }
       }
     }
@@ -662,14 +678,14 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
 
     // sale/order is present, product is matched, membership details present,
     // line item matched and no error.
-    if ($this->sales->id && $this->productVariant->id && !empty($membershipDetail) && $lineObject->id && empty($errors)) {
+    if ($this->sales->id && $this->productVariant->id && !empty($membershipDetail) && !empty($lineItems) && empty($errors)) {
       $expectedProductModelID = $this->getDeviceModelForSale($this->sales->id);
       if ($this->productVariant->product_id != $expectedProductModelID) {
         $errors['device_id'] = "That device does not match that order";
       }
 
       if (empty($errors)) {
-        $this->assignDeviceToContactOrder($membershipDetail, $lineObject, $isPrimary);
+        $this->assignDeviceToContactOrder($membershipDetail, $lineItems, $isPrimary);
       }
     }
     return $errors;
@@ -680,7 +696,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    *
    * @param CRM_Member_DAO_Membership $membershipDetail
    *   Membership Object.
-   * @param CRM_Price_DAO_LineItem $lineObject
+   * @param array $lineItems
    *   Line item object.
    * @param bool $isPrimary
    *   Set as Primary device.
@@ -688,20 +704,25 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @return void
    *   Nothing.
    */
-  public function assignDeviceToContactOrder(CRM_Member_DAO_Membership $membershipDetail, CRM_Price_DAO_LineItem $lineObject, $isPrimary = TRUE) {
+  public function assignDeviceToContactOrder(CRM_Member_DAO_Membership $membershipDetail, CRM_Price_DAO_LineItem $lineItems, $isPrimary = TRUE): void {
     // Assign contact ID in variant table.
     // Add variant id on the line item table.
     $this->productVariant->shipped_on = $this->productVariant->shipped_on ?? date('Y-m-d H:i:s');
-    $lineObject->product_variant_id = $this->productVariant->id;
-    $lineObject->save();
+    foreach ($lineItems as $lineObject) {
+      if ($lineObject->entity_table == 'civicrm_membership') {
+        $lineObject->product_variant_id = $this->productVariant->id;
+        $lineObject->save();
+      }
+    }
 
-    $this->sales->is_shipping_required = 0;
+    // $this->sales->is_shipping_required = 1;
     $this->sales->needs_assignment = 1;
     $this->sales->has_assignment = 1;
     $this->sales->save();
 
     $this->productVariant->contact_id = $this->sales->contact_id;
     $this->productVariant->sales_id = $this->sales->id;
+    $this->productVariant->membership_id = $membershipDetail->id;
     if ($this->productVariant->isTerminated()) {
       try {
         $this->productVariant->changeStatus($this->productVariant->id, 'REACTIVATE', "Reactivating because assigned to [order:{$this->sales->code}]");

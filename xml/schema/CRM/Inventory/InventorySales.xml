@@ -50,7 +50,7 @@
     <html>
       <type>Text</type>
     </html>
-    <comment>Random and Uniuqe ID Generated.</comment>
+    <comment>Random and Unique ID Generated.</comment>
   </field>
   <index>
     <name>UI_code</name>
@@ -118,7 +118,18 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
-
+  <field>
+    <name>is_active</name>
+    <title>Is Active</title>
+    <uniqueName>inventory_sales_is_active</uniqueName>
+    <type>boolean</type>
+    <default>1</default>
+    <required>false</required>
+    <export>true</export>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
   <field>
     <name>status_id</name>
     <uniqueName>inventory_sales_status_id</uniqueName>

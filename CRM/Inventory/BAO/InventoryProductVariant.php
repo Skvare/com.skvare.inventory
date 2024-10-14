@@ -11,6 +11,7 @@ use Civi\Core\Event\PreEvent;
  */
 class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_InventoryProductVariant {
   use CRM_Inventory;
+
   /**
    * Takes an associative array and creates a product variant object.
    *
@@ -156,7 +157,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function changeStatus(int $productVariantID, string $change, string $msg = NULL): object {
+  public function changeStatus(int $productVariantID, string $change, ?string $msg = NULL): object {
     $productVariantObj = new CRM_Inventory_BAO_InventoryProductVariant();
     $productVariantObj->id = $productVariantID;
     if ($productVariantObj->find(TRUE)) {
@@ -220,7 +221,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public function setPrimary(bool $newPrimaryValue, bool $autoExpire = TRUE, string $expireMessage = NULL): void {
+  public function setPrimary(bool $newPrimaryValue, bool $autoExpire = TRUE, ?string $expireMessage = NULL): void {
     if ($newPrimaryValue) {
       $this->is_primary = TRUE;
       $this->expire_on = NULL;
@@ -356,7 +357,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
    */
   public static function statusTagClass(): array {
     return [
-      //'unlink' => ['id' => 'unlink', 'label' => 'Unlink from Member','class' => 'btn btn-danger'],
+      // 'unlink' => ['id' => 'unlink', 'label' => 'Unlink from Member','class' => 'btn btn-danger'],
       'reactivate' => ['id' => 'REACTIVATE', 'label' => 'Reactivate', 'class' => 'btn btn-success'],
       'terminated' => ['id' => 'TERMINATE', 'label' => 'Terminate', 'class' => 'btn btn-danger'],
       'lost' => ['id' => 'LOST', 'label' => 'Lost', 'class' => 'btn btn-danger'],

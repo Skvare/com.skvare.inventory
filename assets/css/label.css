@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.two-up-container {
+  width: 100%;
+  display: table;
+  height: 100%;
+}
+.two-up-row {
+  display: table-row;
+  height: 100%;
+}
+
+.two-up-cell {
+  display: table-cell;
+  width: auto;
+  padding: 5px;
+}
+.two-up-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#crm-container {
+  width: 100%;
+}
+
+.four-up-container {
+  width: 100%;
+  display: table;
+  height: 90%;
+}
+
+.four-up-row {
+  display: table-row;
+  height: 50%;
+}
+
+.four-up-cell {
+  display: table-cell;
+  width: auto;
+  padding: 5px;
+}
+
+.four-up-image {
+  max-width: 100%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.row-break {
+  height: 0;
+  width: 100%;
+}
+.page-break {
+  height: 0;
+  page-break-after: always;
+}
+.page-break:last-child {
+  display: none;
+}

@@ -3,6 +3,12 @@
 /**
  *
  */
+
+use Civi\API\Exception\UnauthorizedException;
+
+/**
+ *
+ */
 class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
 
   /**
@@ -19,6 +25,27 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     if (!empty($action) && $action & CRM_Core_Action::EXPORT && $operation === 'export') {
       // Export CSV.
       CRM_Inventory_BAO_InventoryShipment::exportForBatch($shipmentID, TRUE);
+    }
+    elseif (!empty($action) && $action & CRM_Core_Action::EXPORT && $operation
+      === 'purchase') {
+      // Purchase Label.
+      $shipment = new CRM_Inventory_BAO_InventoryShipment();
+      try {
+        $shipment->payForLabels($shipmentID);
+      }
+      catch (UnauthorizedException | CRM_Core_Exception $e) {
+
+      }
+    }
+    elseif (!empty($action) && $action & CRM_Core_Action::EXPORT && in_array($operation, ['print_2', 'print_4'])) {
+
+      try {
+        // Print Label.
+        CRM_Inventory_BAO_InventoryShipmentLabels::printLabels($shipmentID, $operation);
+      }
+      catch (UnauthorizedException | CRM_Core_Exception $e) {
+
+      }
     }
     elseif (!empty($action) && $action & CRM_Core_Action::EXPORT && $operation === 'manifests') {
       // Export Manifests.
@@ -72,8 +99,7 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     }
     $shipmentDetails = CRM_Inventory_BAO_InventoryShipment::shipmentSalesListing($shipmentID);
     $shipmentInfo = CRM_Inventory_DAO_InventoryShipment::findById($shipmentID);
-    $openShipmentList = CRM_Inventory_BAO_InventoryShipment
-      ::findOpenShipmentList();
+    $openShipmentList = CRM_Inventory_BAO_InventoryShipment::findOpenShipmentList();
     $this->assign('openShipmentList', $openShipmentList);
     $shipmentInfo = $shipmentInfo->toArray();
     $this->assign('shipmentInfo', $shipmentInfo);
@@ -82,18 +108,13 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
       'manifests' => ['id' => 'manifests', 'fa' => 'print', 'label' => 'Print Manifests', 'class' => 'btn btn-success'],
       'export' => ['id' => 'export', 'fa' => 'table', 'label' => 'Batch Shipping Export', 'class' => 'btn btn-danger'],
       'purchase' => ['id' => 'purchase', 'fa' => 'dollar-sign', 'label' => ' Purchase Labels', 'class' => 'btn btn-danger'],
-      'print_2' => [
-        'id' => 'print_2',
-        'icon' => '⊟',
-        'label' => 'Print 2-Up',
-        'class' =>
-        'btn btn-primary',
-      ],
+      'print_2' => ['id' => 'print_2', 'icon' => '⊟', 'label' => 'Print 2-Up', 'class' => 'btn btn-primary',],
       'print_4' => ['id' => 'print_4', 'icon' => '⊞', 'label' => 'Print 4-Up', 'class' => 'btn btn-primary'],
     ];
 
     if ($shipmentInfo['is_shipped']) {
-      $links['purchase']['is_disable'] = TRUE;
+      //$links['purchase']['valid'] = FALSE;
+      //$links['purchase']['is_disable'] = TRUE;
     }
     $this->assign('links', $links);
     $this->assign('shipmentID', $shipmentID);
@@ -104,9 +125,15 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
   }
 
   /**
+   * Build Shipment tab.
    *
+   * @param int $shipmentID
+   *   Shipment id.
+   *
+   * @return array[]|null
+   *   Tabs.
    */
-  public function build($shipmentID) {
+  public function build(int $shipmentID): ?array {
     $tabs = $this->getVar('tabHeader');
     if (!$tabs || empty($_GET['reset'])) {
       $tabs = $this->process($shipmentID);
@@ -125,11 +152,16 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
   }
 
   /**
+   * Get Current tab.
    *
+   * @param array $tabs
+   *   Tab details.
+   *
+   * @return false|int|string
+   *   Current tab.
    */
-  public static function getCurrentTab($tabs) {
+  public static function getCurrentTab(array $tabs): false|int|string {
     static $current = FALSE;
-
     if ($current) {
       return $current;
     }
@@ -168,23 +200,27 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     $tabs = [
       'edit' => [
         'title' => ts('Edit'),
-          'template' => 'CRM/Inventory/Page/ShipmentDetails_edit.tpl',
+        'template' => 'CRM/Inventory/Page/ShipmentDetails_edit.tpl',
       ] + $default,
       'shipping' => [
         'title' => ts('Shipping'),
-          'template' => 'CRM/Inventory/Page/ShipmentDetails_shipping.tpl',
+        'template' => 'CRM/Inventory/Page/ShipmentDetails_shipping.tpl',
       ] + $default,
       'assign_device' => [
         'title' => ts('Assign Devices'),
-          'template' => 'CRM/Inventory/Page/ShipmentDetails_assign_device.tpl',
+        'template' => 'CRM/Inventory/Page/ShipmentDetails_assign_device.tpl',
       ] + $default,
       'move_orders' => [
         'title' => ts('Move Orders'),
-          'template' => 'CRM/Inventory/Page/ShipmentDetails_move_orders.tpl',
+        'template' => 'CRM/Inventory/Page/ShipmentDetails_move_orders.tpl',
       ] + $default,
     ];
 
     $reset = !empty($_GET['reset']) ? 'reset=1&' : '';
+    $selectedChild = CRM_Utils_Request::retrieve('selectedChild', 'Alphanumeric', $this, FALSE);
+    if ($selectedChild) {
+      $tabs[$selectedChild]['current'] = TRUE;
+    }
 
     foreach ($tabs as $key => $value) {
       if (!isset($tabs[$key]['qfKey'])) {

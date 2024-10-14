@@ -5,6 +5,11 @@ body, td, th, h3 {
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
+#crm-container p {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  line-height: 1.0em;
+  font-size: 9pt;
+}
 #crm-container h3 {
   font-weight: bold;
 }

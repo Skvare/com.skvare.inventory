@@ -4,6 +4,7 @@
  *
  */
 
+use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryShipmentLabels;
 
 /**
@@ -189,6 +190,9 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     return !empty($this->shipmentLabel->shipment['rates']);
   }
 
+  /**
+   *
+   */
   public function errorMessages() {
     return implode('. ', array_filter(array_map(function ($m) {
       return $this->isErrorMessage($m) ? $m["text"] : NULL;
@@ -317,7 +321,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @return void
    *   Nothing.
    */
-  public function pay(string $rateId = NULL): void {
+  public function pay(?string $rateId = NULL): void {
     try {
       // $this->clearMessages();
       $this->shipmentLabel->purchase = [];
@@ -807,7 +811,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  private function createCustomsDeclaration(int $saleID, string $signer = NULL): ?array {
+  private function createCustomsDeclaration(int $saleID, ?string $signer = NULL): ?array {
     if (empty($this->address)) {
       return NULL;
     }
@@ -955,6 +959,128 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     }
     catch (\Exception $e) {
     }
+  }
+
+  /**
+   * Print label.
+   *
+   * @param int $shipmentID
+   *
+   * @param string $type
+   *
+   * @return void
+   */
+  public static function printLabels(int $shipmentID, string $type): void {
+    try {
+      if ($type == 'print_2') {
+        $layout = 2;
+      }
+      else {
+        $layout = 4;
+      }
+      $labels = self::getLabelsForShipment($shipmentID);
+      // Echo '<pre>'; print_r($labels); echo '</pre>';exit;.
+      $htmlArray = [];
+      if (!empty($labels)) {
+        $arrayChunk = array_chunk($labels, $layout);
+        if ($layout == 4) {
+          foreach ($arrayChunk as $chunk) {
+            $html = '';
+            $html .= '<div class="four-up-container">' . PHP_EOL;
+            foreach (array_chunk($chunk, 2) as $labels_this_page) {
+              $html .= '<div class="four-up-row">' . PHP_EOL;
+              foreach ($labels_this_page as $item) {
+                $html .= '<div class="four-up-cell img-container">' . PHP_EOL;
+                $html .= '<img class = "four-up-image img" style="' . $item['label_style'] . '" src="' . $item['label_image'] . '" />' . PHP_EOL;
+                $html .= '</div>' . PHP_EOL;
+              }
+              $html .= '</div>' . PHP_EOL;
+            }
+            $html .= '</div>' . PHP_EOL;
+            $htmlArray[] = $html;
+          }
+        }
+        else {
+          foreach ($arrayChunk as $labels_this_page) {
+            $html = '';
+            $html .= '<div class="two-up-container">' . PHP_EOL;
+            $html .= '<div class="two-up-row">' . PHP_EOL;
+            foreach ($labels_this_page as $item) {
+              $html .= '<div class="two-up-cell">' . PHP_EOL;
+              $html .= '<img class = "two-up-image" src="' . $item['label_image'] . '" />' . PHP_EOL;
+              $html .= '</div>' . PHP_EOL;
+            }
+            $html .= '</div>' . PHP_EOL;
+
+            $html .= '</div>' . PHP_EOL;
+            $htmlArray[] = $html;
+          }
+        }
+      }
+      if (!empty($htmlArray)) {
+        $pdfFormat = [
+          'paper_size' => 'A4',
+          'stationery' => NULL,
+          'orientation' => 'portrait',
+          'metric' => 'in',
+          'margin_top' => 0.25,
+          'margin_bottom' => 0.25,
+          'margin_left' => 0.25,
+          'margin_right' => 0.25,
+          'weight' => 2,
+        ];
+        // page_size: "Letter", orientation: orientation,
+        // margin: {top: "0.25in", left: "0.25in", bottom: "0.25in", right: "0.25in"}.
+        $customCssPath = CRM_Extension_System::singleton()->getMapper()->keyToBasePath('com.skvare.inventory') . '/assets/css/label.css';
+        $customCss = file_get_contents($customCssPath);
+        CRM_Core_Region::instance('export-document-header')->add(['style' => "{$customCss}"]);
+        CRM_Utils_PDF_Utils::html2pdf($htmlArray, "Shipment_Labels_{$shipmentID}.pdf", FALSE, $pdfFormat);
+        CRM_Utils_System::civiExit();
+      }
+
+      // print_r($html); exit;.
+    }
+    catch (UnauthorizedException $e) {
+    }
+    catch (CRM_Core_Exception $e) {
+    }
+  }
+
+  /**
+   * Get shipment label for shipment id.
+   *
+   * @param int $shipmentID
+   *   Shipment ID.
+   *
+   * @return array
+   *   Labels details.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public static function getLabelsForShipment(int $shipmentID): array {
+    $inventoryShipmentLabels = InventoryShipmentLabels::get(TRUE)
+      ->addSelect('id', 'is_valid', 'is_paid', 'label_url', 'tracking_url')
+      ->addJoin('InventorySales AS inventory_sales', 'INNER')
+      ->addWhere('is_paid', '=', TRUE)
+      ->addWhere('label_url', 'IS NOT EMPTY')
+      ->addWhere('is_valid', '=', TRUE)
+      ->addWhere('inventory_sales.shipment_id', '=', $shipmentID)
+      ->setLimit(0)
+      ->execute();
+    $shipmentLabels = [];
+    foreach ($inventoryShipmentLabels as $label) {
+      if ($label['label_url']) {
+        $path = CRM_Core_Config::singleton()->customFileUploadDir . '/' . $label['label_url'];
+        if (file_exists($path)) {
+          $image = CRM_Inventory_Utils::imageEncodeBase64($path);
+          $label['label_image'] = $image;
+          $label['label_style'] = CRM_Inventory_Utils::longestSideVertical($path);
+          $shipmentLabels[] = $label;
+        }
+      }
+    }
+    return $shipmentLabels;
   }
 
 }

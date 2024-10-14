@@ -164,9 +164,35 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
   }
   $entityTypes[$lineItem]['fields_callback'][]
     = function ($class, &$fields) {
+      $fields['product_id'] = [
+        'name' => 'product_id',
+        'title' => ts('Product ID'),
+        'sql_type' => 'int unsigned',
+        'input_type' => 'EntityRef',
+        'type' => CRM_Utils_Type::T_INT,
+        'description' => ts('Product ID.'),
+        'add' => '5.75',
+        'default' => '0',
+        'input_attrs' => [
+          'label' => ts('Product ID'),
+        ],
+        'html' => [
+          'type' => 'Number',
+        ],
+        'entity_reference' => [
+          'entity' => 'InventoryProduct',
+          'key' => 'id',
+          'on_delete' => 'SET NULL',
+        ],
+        'where' => 'civicrm_line_item.product_id',
+        'table_name' => 'civicrm_line_item',
+        'entity' => 'LineItem',
+        'bao' => 'CRM_Price_BAO_LineItem',
+      ];
+
       $fields['product_variant_id'] = [
         'name' => 'product_variant_id',
-        'title' => ts('Product ID'),
+        'title' => ts('Product Variant ID'),
         'sql_type' => 'int unsigned',
         'input_type' => 'EntityRef',
         'type' => CRM_Utils_Type::T_INT,

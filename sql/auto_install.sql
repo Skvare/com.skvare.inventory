@@ -315,11 +315,12 @@ ENGINE=InnoDB;
 CREATE TABLE `civicrm_inventory_sales` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique InventorySales ID',
   `contact_id` int unsigned COMMENT 'FK to Contact',
-  `code` varchar(255) NULL COMMENT 'Random and Uniuqe ID Generated.',
+  `code` varchar(255) NULL COMMENT 'Random and Unique ID Generated.',
   `sale_date` datetime,
   `contribution_id` int unsigned NULL COMMENT 'Contribution ID Associated with product.',
   `value_amount` decimal(20,2) DEFAULT 0 COMMENT 'Fair market value.',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_active` tinyint NULL DEFAULT 1,
   `status_id` varchar(100) NOT NULL COMMENT 'Sales Status: \'placed\', \'shipped\', \'completed\'',
   `product_id` int unsigned COMMENT 'FK to product',
   `is_shipping_required` tinyint NULL DEFAULT 0,

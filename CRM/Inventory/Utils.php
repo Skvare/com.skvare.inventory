@@ -693,4 +693,54 @@ class CRM_Inventory_Utils {
     return $stats;
   }
 
+  /**
+   * Image Base 64.
+   *
+   * @param string $filePath
+   *   File path.
+   *
+   * @return string
+   *   Image Data.
+   */
+  public static function imageEncodeBase64(string $filePath): string {
+    if (file_exists($filePath)) {
+      $imageMeta = getimagesize($filePath);
+      $data = file_get_contents($filePath);
+      $base64 = base64_encode($data);
+      $base64 = preg_replace('/\s+/', '', $base64);
+      return "data:{$imageMeta['mime']};base64," . rawurlencode($base64);
+    }
+    return '';
+  }
+
+  /**
+   * Get image style based on width and height.
+   *
+   * @param string $filePath
+   *   File path.
+   *
+   * @return string
+   *   Style.
+   */
+  public static function longestSideVertical(string $filePath): string {
+    $imageMeta = getimagesize($filePath);
+    /*
+     = array(
+        [0] => 2388 // width
+        [1] => 436  // height
+        [2] => 3
+        [3] => width="2388" height="436"
+        [bits] => 8
+        [mime] => image/png
+     );
+     */
+    // If width is greater than height then transform the image by 90 degree.
+    if (isset($imageMeta['1']) && isset($imageMeta['0']) && $imageMeta['0'] > $imageMeta['1']) {
+      return "transform: rotate(90deg)";
+    }
+    else {
+      return "";
+    }
+  }
+
 }
