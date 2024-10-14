@@ -77,12 +77,12 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
    * @param array $row
    *   Row data.
    *
-   * @return CRM_Inventory_DAO_InventoryProductVariant|null
+   * @return CRM_Inventory_DAO_InventoryProductVariant|CRM_Inventory_BAO_InventoryProductVariant|null
    *   Device or null.
    *
    * @throws CRM_Core_Exception
    */
-  private function newDeviceFromActiveRow(array $row): ?CRM_Inventory_DAO_InventoryProductVariant {
+  private function newDeviceFromActiveRow(array $row): CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant|null {
     $meid = $row["MEID"];
     $phone = str_replace("-OLD", "", $row["PTN"]);
     $model_name = $row["Device"];
@@ -107,7 +107,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
   /**
    * Update phone number.
    *
-   * @param CRM_Inventory_BAO_InventoryProductVariant $device
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device
    *   Device.
    * @param array $row
    *   Row data.
@@ -115,7 +115,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
    * @return void
    *   Nothing.
    */
-  private function updatePhoneNumber(CRM_Inventory_BAO_InventoryProductVariant $device, array $row): void {
+  private function updatePhoneNumber(CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device, array $row): void {
     $phone = str_replace("-OLD", "", $row["PTN"]);
     if ($device->product_variant_phone_number != $phone) {
       $device->product_variant_phone_number = $phone;
@@ -126,7 +126,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
   /**
    * Update Status.
    *
-   * @param CRM_Inventory_BAO_InventoryProductVariant $device
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device
    *   Device.
    * @param array $row
    *   Row data.
@@ -134,7 +134,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
    * @return void
    *   Nothing.
    */
-  private function updateStatus(CRM_Inventory_BAO_InventoryProductVariant $device, array $row): void {
+  private function updateStatus(CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device, array $row): void {
     $status = $this->getStatus($row);
     if ($status == 'active') {
       if (!$device->is_active || $device->is_suspended) {
@@ -189,7 +189,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
   /**
    * Update date for device.
    *
-   * @param CRM_Inventory_BAO_InventoryProductVariant $device
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device
    *   Device object.
    * @param array $row
    *   Row data.
@@ -197,11 +197,17 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
    * @return void
    *   Nothing.
    */
-  private function updateDates(CRM_Inventory_BAO_InventoryProductVariant $device, array $row): void {
+  private function updateDates(CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device, array $row): void {
     // Our ship date is more accurate, so keep it if set.
-    $device->shipped_on = $device->shipped_on ?? $this->date($row["Ship Date"]);
-    $device->warranty_start_on = $this->date($row["Mobile Citizen Warranty Start Date"]);
-    $device->warranty_end_on = $this->date($row["Mobile Citizen Warranty End Date"]);
+    if (!empty($row["Ship Date"])) {
+      $device->shipped_on = $device->shipped_on ?? $this->date($row["Ship Date"]);
+    }
+    if (!empty($row["Mobile Citizen Warranty Start Date"])) {
+      $device->warranty_start_on = $this->date($row["Mobile Citizen Warranty Start Date"]);
+    }
+    if (!empty($row["Mobile Citizen Warranty End Date"])) {
+      $device->warranty_end_on = $this->date($row["Mobile Citizen Warranty End Date"]);
+    }
   }
 
   /**
@@ -213,7 +219,7 @@ class CRM_Inventory_UploaderHandlers_UploadDevice extends CRM_Inventory_Uploader
    * @return string
    *   Status for device.
    */
-  private function getStatus($row) {
+  private function getStatus(array $row): string {
     if ($row["Sub-Status"] == "Broken") {
       return 'terminated';
     }

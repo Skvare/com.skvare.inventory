@@ -5,6 +5,7 @@
  *
  * @see https://docs.civicrm.org/dev/en/latest/framework/quickform/
  */
+#[AllowDynamicProperties]
 class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
 
   /**
@@ -13,7 +14,6 @@ class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
    * @var array
    */
   public array $message = [];
-
 
   /**
    * @throws \CRM_Core_Exception
@@ -79,14 +79,17 @@ class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
     foreach ($handlers as $handler) {
       /** @var CRM_Inventory_Uploader $handler */
       $handler->process();
+      if (!is_array($this->messages)) {
+        $this->messages = [];
+      }
       $this->messages = array_merge($this->messages, $handler->messages);
     }
-    CRM_Core_Session::setStatus(\CRM_Inventory_ExtensionUtil::ts('You picked color "%1"', [
-      1 => $options[$values['favorite_color']],
-    ]));
-    parent::postProcess();
+    CRM_Core_Session::setStatus(\CRM_Inventory_ExtensionUtil::ts('Successfully'));
+    $redirect = CRM_Utils_System::url('civicrm/inventory/upload-device',
+      "reset=1"
+    );
+    CRM_Utils_System::redirect($redirect);
   }
-
 
   /**
    * Get the fields/elements defined in this form.

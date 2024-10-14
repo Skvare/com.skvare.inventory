@@ -129,7 +129,7 @@ class CRM_Inventory_Uploader {
    *
    * @throws Exception
    */
-  public static function create(string $filePath, string $handler = '', string $label = NULL): array {
+  public static function create(string $filePath, string $handler = '', ?string $label = NULL): array {
     $handlers = [];
     $workbook = self::loadWorkbook($filePath);
     foreach ($workbook->getSheetNames() as $sheetName) {
@@ -230,7 +230,7 @@ class CRM_Inventory_Uploader {
    *
    * @param string $str
    *   String.
-   * @param CRM_Inventory_BAO_InventoryProductVariant|null $device
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant|null $device
    *   Device.
    * @param bool|string $log
    *   Log.
@@ -240,8 +240,7 @@ class CRM_Inventory_Uploader {
    * @return void
    *   Nothing.
    */
-  public function message(string $str, CRM_Inventory_BAO_InventoryProductVariant $device = NULL, bool|string $log = TRUE, string $problem = NULL): void {
-
+  public function message(string $str, CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant|null $device = NULL, bool|string $log = TRUE, ?string $problem = NULL): void {
     $this->messages[] = new MessageString($str, $device);
     if (strpos($str, 'ERROR') !== FALSE) {
       $this->errors[] = new MessageString($str, $device);
@@ -311,13 +310,13 @@ class CRM_Inventory_Uploader {
   /**
    * Get recent changes for device.
    *
-   * @param CRM_Inventory_BAO_InventoryProductVariant $device
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device
    *   Device.
    *
    * @return bool
    *   Is recent changes present.
    */
-  public function recentChange(CRM_Inventory_BAO_InventoryProductVariant $device): bool {
+  public function recentChange(CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device): bool {
     if ($this->changeDate) {
       if ($device->updated_at && strtotime('+' . self::WINDOW . ' days', strtotime($device->updated_at)) < strtotime($this->changeDate)) {
         return FALSE;
@@ -348,9 +347,10 @@ class CRM_Inventory_Uploader {
    * @param array $params
    *   Device Parameter.
    *
-   * @return CRM_Inventory_BAO_InventoryProductVariant
+   * @return CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant
+   * @throws CRM_Core_Exception
    */
-  public function createDevice(array $params): CRM_Inventory_BAO_InventoryProductVariant {
+  public function createDevice(array $params): CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant {
     /** @var CRM_Inventory_BAO_InventoryProductVariant $device */
     $device = CRM_Inventory_BAO_InventoryProductVariant::create($params);
     if (!$device->product_id) {
@@ -395,7 +395,7 @@ class CRM_Inventory_Uploader {
     else {
       $this->message("ERROR: Could not figure out the date of the spreadsheet. " .
         "The file name must contain YYYY-MM or YYYY-MM-DD. Switching to dry run mode.");
-      $this->dryRun = TRUE;
+      $this->dryRun = FALSE;
       return NULL;
     }
   }
@@ -409,7 +409,9 @@ class MessageString extends \ArrayObject {
 
   /**
    * @param string $str
-   * @param CRM_Inventory_BAO_InventoryProductVariant $device
+   *   Message.
+   * @param CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant $device
+   *   Device object.
    */
   public function __construct($str, $device = NULL) {
     $this->device_id = $device ? $device->id : NULL;
@@ -421,6 +423,7 @@ class MessageString extends \ArrayObject {
    * Message.
    *
    * @return mixed|null
+   *   Mixed
    */
   public function message() {
     return $this[0];
