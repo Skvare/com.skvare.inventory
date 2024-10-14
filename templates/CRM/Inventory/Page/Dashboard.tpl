@@ -25,40 +25,6 @@
     {/foreach}
   </div>
   <div class="clear" style="padding-bottom: 10px;"></div>
-  <div class="row">
-    <div class="col">
-      <div class="card">
-        <div class="card-img-top bg-light">
-          <div class="h4 p-2">
-            <i class="fa fa-fw fa-address-card"></i>
-            <span class="text-secondary">Memberships</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-text">
-            <span class="card-link">12028 Active</span>
-            <span class="card-link"> 18015 Inactive</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-img-top bg-light">
-          <div class="h4 p-2">
-            <i class="fa fa-fw fa-address-card"></i>
-            <span class="text-secondary">Memberships</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-text">
-            <span class="card-link">12028 Active</span>
-            <span class="card-link"> 18015 Inactive</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="row mt-4">
     <div class="col">
       <div class="card">

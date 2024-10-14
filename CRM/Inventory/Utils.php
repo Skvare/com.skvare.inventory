@@ -166,11 +166,14 @@ class CRM_Inventory_Utils {
       $settings = Civi::settings($domainID);
       $params = [];
       foreach ($setting as $key) {
-        $customField = $settings->get('inventory_lead_time');
+        $customField = $settings->get($key);
         if (empty($customField)) {
           continue;
         }
         $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID($customField);
+        if (empty($customFieldInfo)) {
+          continue;
+        }
         [$table_name, $column_name, $custom_group_id, $cgName, $cf_name] = self::getTableColumnGroup($customFieldInfo);
         /*
         Example for output format:
