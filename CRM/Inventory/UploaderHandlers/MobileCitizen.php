@@ -29,6 +29,9 @@ class CRM_Inventory_UploaderHandlers_MobileCitizen extends CRM_Inventory_Uploade
    * @throws Exception
    */
   public function processRow(array $row): void {
+    if (count(array_filter($row)) == 0) {
+      return;
+    }
     /** @var CRM_Inventory_BAO_InventoryProductVariant $device */
     $device = $this->findEntityById('product_variant_unique_id', $row["MEID DEC"], 'InventoryProductVariant', TRUE);
     if ($device->id) {
@@ -55,11 +58,10 @@ class CRM_Inventory_UploaderHandlers_MobileCitizen extends CRM_Inventory_Uploade
         'status' => 'new_inventory',
         'shipped_on' => $ship_date,
         'created_at' => $ship_date,
-        'warranty_start_on' => $ship_date,
-        'warranty_end_on' => date('Y-m-d', strtotime('+9 months', strtotime($ship_date))),
-        // 'memo' => "Created {$this->clean($row['MEID DEC'])} ({$label})"
+        'warranty_start_date' => $ship_date,
+        'warranty_end_date' => date('Y-m-d', strtotime('+9 months', strtotime($ship_date))),
+        'memo' => "Created {$this->clean($row['MEID DEC'])} ({$this->label})",
       ];
-
       /** @var CRM_Inventory_BAO_InventoryProductVariant $device */
       $device = CRM_Inventory_BAO_InventoryProductVariant::create($params);
       if ($device->save()) {

@@ -83,6 +83,8 @@ class CRM_Inventory_Uploader {
   public bool|null|DateTime $changeDate;
 
   /**
+   * Model ids.
+   *
    * @var array
    */
   public array $modelIds;
@@ -215,11 +217,11 @@ class CRM_Inventory_Uploader {
     $sheet = $this->sheet();
     $highestRow = $sheet->getHighestRow();
     $highestColumn = $sheet->getHighestColumn();
-
     $row = 1;
     $rowHeader = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE)[0];
+
     for ($row = 2; $row <= $highestRow; $row++) {
-      $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE)[0];
+      $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, TRUE)[0];
       $rowData = array_combine($rowHeader, $rowData);
       $this->processRow($rowData);
     }
@@ -265,15 +267,19 @@ class CRM_Inventory_Uploader {
    * @param string $value
    *   Date value.
    *
-   * @return DateTime|null
+   * @return string|null
    *   Date.
    */
-  public function date(string $value): ?DateTime {
-    if (is_string($value) && !empty($value) && substr_count($value, '/') == 2) {
+  public function date(string $value): ?string {
+    if (!empty($value) && substr_count($value, '/') == 2) {
       [$month, $day, $year] = explode('/', $value);
-      return new \DateTime("$year-$month-$day");
+      return "$year-$month-$day";
     }
-    elseif ($value instanceof \DateTime) {
+    if (!empty($value) && substr_count($value, '-') == 2) {
+      [$year, $month, $day] = explode('-', $value);
+      return "$year-$month-$day";
+    }
+    elseif ($value) {
       return $value;
     }
     else {
@@ -348,6 +354,8 @@ class CRM_Inventory_Uploader {
    *   Device Parameter.
    *
    * @return CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant
+   *   Device object.
+   *
    * @throws CRM_Core_Exception
    */
   public function createDevice(array $params): CRM_Inventory_BAO_InventoryProductVariant|CRM_Inventory_DAO_InventoryProductVariant {

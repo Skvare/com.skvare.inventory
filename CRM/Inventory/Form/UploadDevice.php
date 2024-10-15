@@ -20,7 +20,7 @@ class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
    */
   public function buildQuickForm(): void {
     $list = [
-      'CRM_Inventory_UploaderHandlers_UploadDevice' => 'New Device',
+      'CRM_Inventory_UploaderHandlers_UploadDevice' => 'New/Update Device',
       'CRM_Inventory_UploaderHandlers_DeviceReplacement' => 'Replace Device',
       'CRM_Inventory_UploaderHandlers_MobileCitizen' => 'Mobile Citizen',
     ];
