@@ -71,7 +71,7 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    */
   public static function self_hook_civicrm_post(PostEvent $event): void {
     if ($event->action === 'update' || $event->action === 'edit') {
-      // CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($event->id);
+      // CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($event->id);.
     }
   }
 
@@ -114,10 +114,28 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
    */
   public static function getNewCode():string {
     do {
-      $code = self::generateCode();
-    } while (!CRM_Core_DAO::objectExists($code, 'CRM_Inventory_DAO_InventorySales', 'code'));
+      $code = self::generateCode(8);
+    } while (self::checkDuplicate($code));
 
     return $code;
+  }
+
+  /**
+   * Check order code is not duplicate.
+   *
+   * @param string $code
+   *   Order code.
+   *
+   * @return bool
+   *   Is duplicate.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public static function checkDuplicate($code):bool {
+    // This field must be indexed, it gets used heavily.
+    $sql = "select count(code) from civicrm_inventory_sales  where code = %1";
+    $count = CRM_Core_DAO::singleValueQuery($sql, [1 => [$code, 'String']]);
+    return (bool) $count;
   }
 
   /**

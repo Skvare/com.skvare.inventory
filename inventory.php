@@ -580,6 +580,10 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef, $param
   if ($objectName === 'InventorySales' && in_array($op, ['create', 'edit'])) {
     /** @var CRM_Inventory_BAO_InventorySales $saleObject */
     $saleObject = CRM_Inventory_Utils::commonRetrieveAll('CRM_Inventory_BAO_InventorySales', ['id' => $objectId], TRUE);
+    if (empty($saleObject->code)) {
+      $saleObject->code = CRM_Inventory_BAO_InventorySales::getNewCode();
+      $saleObject->save();
+    }
     // When sale order is crated andi it is paid , assign it to shipment.
     if ($saleObject->is_paid && !$saleObject->shipment_id) {
       CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($saleObject->id);
