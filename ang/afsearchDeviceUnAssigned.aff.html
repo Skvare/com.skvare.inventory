@@ -1,0 +1,13 @@
+<div af-fieldset="">
+  <div class="af-container af-layout-inline">
+    <af-field name="product_id" />
+    <af-field name="product_variant_unique_id" />
+    <af-field name="product_variant_phone_number" />
+  </div>
+  <div class="af-container af-layout-inline">
+    <af-field name="is_suspended" defn="{input_type: 'Radio'}" />
+    <af-field name="is_problem" defn="{input_type: 'Radio'}" />
+    <af-field name="is_active" defn="{input_type: 'Radio'}" />
+  </div>
+  <crm-search-display-table search-name="Inventory_Product_Variant_Unassigned_List" display-name="Inventory_Product_Variant_Unassigned_List_Table_1" filters="{status: routeParams.status}"></crm-search-display-table>
+</div>

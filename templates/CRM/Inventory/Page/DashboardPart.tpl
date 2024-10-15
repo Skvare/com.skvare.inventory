@@ -7,7 +7,7 @@
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/product" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Device Listing (tabs){/ts}</a>
     <br/>
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/device-list" q="reset=1"}'><i class="crm-i fa-list" aria-hidden="true"></i> {ts}Device List{/ts}</a>
-
+    <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/device-unassigned" q="reset=1"}'><i class="crm-i fa-list" aria-hidden="true"></i> {ts}Device Un-Assigned List{/ts}</a>
     <br/>
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/device-from" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Add Device{/ts}</a>
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/product-replacement-request?reset=1" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Device Replacement request{/ts}</a>

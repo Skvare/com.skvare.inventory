@@ -6,8 +6,9 @@
 
 use Civi\Api4\InventoryProductChangelog;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 /*
 Here lies all the code for processing spreadsheets from Mobile Citizen.
@@ -59,6 +60,9 @@ class CRM_Inventory_Uploader {
    */
   public mixed $dryRun;
 
+  /**
+   * @var workbook Worksheet
+   */
   public $workbook;
 
   /**
@@ -78,7 +82,7 @@ class CRM_Inventory_Uploader {
   /**
    * Change date.
    *
-   * @var DateTime|false|null
+   * @var \PhpOffice\PhpSpreadsheet\Shared\DateTime|false|null
    */
   public bool|null|DateTime $changeDate;
 
@@ -88,6 +92,13 @@ class CRM_Inventory_Uploader {
    * @var array
    */
   public array $modelIds;
+
+  /**
+   * @var PhpOffice\PhpSpreadsheet\Worksheet\RowIterator
+   */
+  public $handle;
+
+  public $rowNumber, $columns;
 
   /**
    * To be overridden.
@@ -133,9 +144,9 @@ class CRM_Inventory_Uploader {
    */
   public static function create(string $filePath, string $handler = '', ?string $label = NULL): array {
     $handlers = [];
+    /** @var PhpOffice\PhpSpreadsheet\Spreadsheet $workbook */
     $workbook = self::loadWorkbook($filePath);
     foreach ($workbook->getSheetNames() as $sheetName) {
-      $sheet = $workbook->getSheetByName($sheetName);
       if (class_exists($handler)) {
         $handlers[] = new $handler($workbook, $sheetName, $label);
       }
@@ -194,8 +205,8 @@ class CRM_Inventory_Uploader {
    * @return \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet|null
    *   Sheet.
    */
-  public function sheet(): ?Worksheet {
-    return $this->workbook->getSheetByName($this->sheetName);
+  public function sheet() {
+    return $this->workbook->getActiveSheet();
   }
 
   /**
@@ -207,24 +218,78 @@ class CRM_Inventory_Uploader {
    * @throws Exception
    */
   public function process(): void {
-    $search = $this->headerSearch() ?: array_merge(
-      $this->headers(),
-      array_map(function ($h) {
-        return "/{$h}|/";
-      }, $this->optionalHeaders())
-    );
     /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet */
     $sheet = $this->sheet();
+    /*
     $highestRow = $sheet->getHighestRow();
     $highestColumn = $sheet->getHighestColumn();
     $row = 1;
     $rowHeader = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE)[0];
-
-    for ($row = 2; $row <= $highestRow; $row++) {
-      $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, TRUE)[0];
-      $rowData = array_combine($rowHeader, $rowData);
-      $this->processRow($rowData);
+    */
+    $this->handle = $sheet->getRowIterator();
+    $this->handle->rewind();
+    // Because it is used in the getNextRow() function.
+    $this->columns = [];
+    $this->columns = $this->getNextRow();
+    while ($data = $this->getNextRow()) {
+      if (count(array_filter($data)) == 0) {
+        continue;
+      }
+      $dataArray = $this->dataAndHeader($data);
+      $this->processRow($dataArray);
     }
+  }
+
+  /**
+   * Get row and column.
+   *
+   * @param array $data
+   *   Row value.
+   *
+   * @return array
+   *   Row.
+   */
+  public function dataAndHeader(array $data): array {
+    $dataArray = [];
+    // Map values to column names.
+    foreach ($this->columns as $col => $name) {
+      if ($name) {
+        $dataArray[$name] = $data[$col];
+      }
+    }
+    return $dataArray;
+  }
+
+  /**
+   * Get Next row.
+   *
+   * @return array|null
+   *   Data.
+   *
+   * @throws \PhpOffice\PhpSpreadsheet\Calculation\Exception
+   */
+  public function getNextRow(): ?array {
+    if (!$this->handle->valid()) {
+      return NULL;
+    }
+    $row = $this->handle->current();
+    $this->rowNumber = $row->getRowIndex();
+
+    $cellIterator = $row->getCellIterator();
+    // This loops all cells, even if it is not set.
+    $cellIterator->setIterateOnlyExistingCells(FALSE);
+    // Read values from spreadsheet.
+    $data = [];
+    foreach ($cellIterator as $cell) {
+      if (Date::isDateTime($cell)) {
+        $data[] = NumberFormat::toFormattedString($cell->getCalculatedValue(), 'yyyymmddhhmmss');
+      }
+      else {
+        $data[] = trim($cell->getFormattedValue());
+      }
+    }
+    $this->handle->next();
+    return $data;
   }
 
   /**
@@ -273,10 +338,14 @@ class CRM_Inventory_Uploader {
   public function date(string $value): ?string {
     if (!empty($value) && substr_count($value, '/') == 2) {
       [$month, $day, $year] = explode('/', $value);
+      $day = str_pad($day, 2, "0", STR_PAD_LEFT);
+      $month = str_pad($month, 2, "0", STR_PAD_LEFT);
       return "$year-$month-$day";
     }
     if (!empty($value) && substr_count($value, '-') == 2) {
       [$year, $month, $day] = explode('-', $value);
+      $day = str_pad($day, 2, "0", STR_PAD_LEFT);
+      $month = str_pad($month, 2, "0", STR_PAD_LEFT);
       return "$year-$month-$day";
     }
     elseif ($value) {
@@ -385,7 +454,7 @@ class CRM_Inventory_Uploader {
    * @param string $label
    *   Label.
    *
-   * @return DateTime|false|null
+   * @return \PhpOffice\PhpSpreadsheet\Shared\DateTime|false|null
    *   Date time.
    *
    * @throws Exception

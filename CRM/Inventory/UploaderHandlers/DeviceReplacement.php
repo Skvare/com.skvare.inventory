@@ -67,9 +67,6 @@ class CRM_Inventory_UploaderHandlers_DeviceReplacement extends CRM_Inventory_Upl
       'old_ptn' => $this->cleanNumstr($row["Defective PTN"]),
       'internal_id' => $this->clean($row["Internal ID"]),
     ];
-    if (count(array_filter($row)) == 0) {
-      return;
-    }
 
     /** @var CRM_Inventory_BAO_InventoryProductVariant $newDevice */
     $newDevice = $this->getNewDevice($row);

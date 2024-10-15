@@ -76,6 +76,7 @@ class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
     $filePath = $params['uploadFile']['name'];
     $fileName = $_FILES['uploadFile']['name'];
     $handlers = CRM_Inventory_Uploader::create($filePath, $params['file_handler'], $fileName);
+    $messageArray = [];
     foreach ($handlers as $handler) {
       /** @var CRM_Inventory_Uploader $handler */
       $handler->process();
@@ -83,8 +84,16 @@ class CRM_Inventory_Form_UploadDevice extends CRM_Core_Form {
         $this->messages = [];
       }
       $this->messages = array_merge($this->messages, $handler->messages);
+
+      foreach ($this->messages as $message) {
+        /** @var MessageString $message */
+        $messageArray[] = $message->getArrayCopy()[0];
+      }
     }
-    CRM_Core_Session::setStatus(\CRM_Inventory_ExtensionUtil::ts('Successfully'));
+    $messageText = implode("<br/>", $messageArray);
+
+    //$message = implode('<br/>', $this->messages);
+    CRM_Core_Session::setStatus($messageText, 'Successfully');
     $redirect = CRM_Utils_System::url('civicrm/inventory/upload-device',
       "reset=1"
     );
