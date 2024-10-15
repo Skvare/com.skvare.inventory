@@ -3,7 +3,6 @@
     CRM.$(function($) {
       $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-auto_renew');
-      $('.crm-membership-type-form-block-billing_plan').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-product_mapping').insertAfter('.crm-membership-type-form-block-auto_renew');
 
     });
@@ -12,18 +11,6 @@
 
 {crmScope extensionKey='com.skvare.inventory'}
   <table class="form-layout-compressed" style="display: none">
-    <tr class="crm-membership-type-form-block-billing_plan">
-      <td class="label"><label for="period_type">Billing Plan information</label></td>
-      <td>
-        <div>
-          <div class="crm-container" id="bootstrap-theme">
-            <crm-angular-js modules='afsearchMembershipBillingPlan'>
-              <afsearch-membership-billing-plan></afsearch-membership-billing-plan>
-            </crm-angular-js>
-          </div>
-        </div>
-      </td>
-    </tr>
     <tr class="crm-membership-type-form-block-product_mapping">
       <td class="label"><label for="period_type">Product Linked</label></td>
       <td>
