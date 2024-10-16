@@ -642,13 +642,11 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
   public function assignDeviceToOrder(string $orderID, string $deviceID, bool $isPrimary = TRUE) {
     $this->sales = $this->findEntityById('code', $orderID, 'InventorySales', TRUE);
     $errors = [];
+    $lineItems = [];
     if ($this->sales->id) {
-      $lineParams = [
-        'sale_id' => $this->sales->id,
-      ];
-      /** @var CRM_Price_DAO_LineItem $lineObject */
-      $lineItems = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_DAO_LineItem', $lineParams);
+      $lineItems = CRM_Inventory_BAO_InventorySales::getLineItemBySaleID($this->sales->id);
       foreach ($lineItems as $lineObject) {
+        /** @var CRM_Price_DAO_LineItem $lineObject */
         if ($lineObject->id) {
           $membershipID = $lineObject->entity_id;
           if ($lineObject->product_variant_id) {
@@ -675,7 +673,6 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     elseif ($this->productVariant->contact_id || $this->productVariant->membership_id) {
       $errors['device_id'] = "Device already assigned";
     }
-
     // sale/order is present, product is matched, membership details present,
     // line item matched and no error.
     if ($this->sales->id && $this->productVariant->id && !empty($membershipDetail) && !empty($lineItems) && empty($errors)) {
@@ -683,7 +680,6 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       if ($this->productVariant->product_id != $expectedProductModelID) {
         $errors['device_id'] = "That device does not match that order";
       }
-
       if (empty($errors)) {
         $this->assignDeviceToContactOrder($membershipDetail, $lineItems, $isPrimary);
       }
@@ -704,7 +700,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
    * @return void
    *   Nothing.
    */
-  public function assignDeviceToContactOrder(CRM_Member_DAO_Membership $membershipDetail, CRM_Price_DAO_LineItem $lineItems, $isPrimary = TRUE): void {
+  public function assignDeviceToContactOrder(CRM_Member_DAO_Membership $membershipDetail, array $lineItems, $isPrimary = TRUE): void {
     // Assign contact ID in variant table.
     // Add variant id on the line item table.
     $this->productVariant->shipped_on = $this->productVariant->shipped_on ?? date('Y-m-d H:i:s');

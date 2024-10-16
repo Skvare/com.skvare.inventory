@@ -368,11 +368,13 @@ class CRM_Inventory_Utils {
    *   DAO object.
    * @param array $params
    *   Input params.
+   * @param bool $single
+   *   Return single or multiple rows.
    *
    * @return array|object
    *   Array of object.
    */
-  public static function commonRetrieveAll(string $daoName, array $params, $single = TRUE): array|object {
+  public static function commonRetrieveAll(string $daoName, array $params, bool $single = TRUE): array|object {
     $object = new $daoName();
     $object->copyValues($params);
     if ($single) {

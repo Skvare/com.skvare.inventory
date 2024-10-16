@@ -323,4 +323,25 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
     $this->has_assignment = 1;
   }
 
+  /**
+   * Get line item by sale id.
+   *
+   * @param int $saleID
+   *   Sale id.
+   * @return array|null
+   *   Line items.
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function getLineItemBySaleID(int $saleID): ?array {
+    $sql = "select id from civicrm_line_item where sale_id = $saleID";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    $lineItems = NULL;
+    while ($dao->fetch()) {
+      $lineObject = CRM_Price_DAO_LineItem::findById($dao->id);
+      $lineItems[$lineObject->id] = $lineObject;
+    }
+    return $lineItems;
+  }
+
 }

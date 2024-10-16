@@ -72,12 +72,12 @@ class CRM_Inventory_Page_Lineitem extends CRM_Core_Page {
       }
     }
 
-    //echo '<pre>'; print_r($salesDetails); echo '</pre>';exit;
+    // echo '<pre>'; print_r($salesDetails); echo '</pre>';exit;
 
     $this->assign('salesDetails', $salesDetails);
 
     $lineItems = LineItem::get(TRUE)
-      ->addSelect('label', 'subtitle', 'line_total', 'membership_type.fair_value', 'membership_id', 'inventory_product.label', 'sale_id', 'contribution.total_amount', 'contribution.fee_amount', 'inventory_sales.value_amount', 'contribution.net_amount', 'non_deductible_amount', 'qty')
+      ->addSelect('label', 'subtitle', 'line_total', 'membership_type.fair_value', 'membership_id', 'inventory_product.label', 'sale_id', 'contribution.total_amount', 'contribution.fee_amount', 'inventory_sales.value_amount', 'contribution.net_amount', 'non_deductible_amount', 'qty', 'inventory_product_variant.*')
       ->addJoin('InventoryProduct AS inventory_product', 'LEFT', ['product_id', '=', 'inventory_product.id'])
       ->addJoin('InventoryProductVariant AS inventory_product_variant', 'LEFT', ['product_variant_id', '=', 'inventory_product_variant.id'], ['inventory_product.id', '=', 'inventory_product_variant.product_id'])
       ->addJoin('Membership AS membership', 'LEFT', ['membership_id', '=', 'membership.id'])
@@ -86,9 +86,9 @@ class CRM_Inventory_Page_Lineitem extends CRM_Core_Page {
       ->addJoin('InventorySales AS inventory_sales', 'LEFT', ['sale_id', '=', 'inventory_sales.id'])
       ->addWhere('sale_id', '=', $saleID)
       ->setLimit(25)
-      ->execute();
+      ->execute()->getArrayCopy();
     $lineItemArray = [];
-    foreach ($lineItems as $lineItem) {
+    foreach ($lineItems as $key => $lineItem) {
       $lineItemArray[] = [
         'id' => $lineItem['id'],
         'label' => $lineItem['label'],

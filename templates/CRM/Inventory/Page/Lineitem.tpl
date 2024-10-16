@@ -90,15 +90,15 @@
       </tr>
     {/foreach}
     <tr>
-      <td colspan="4"></td>
+      <td colspan="3"></td>
       <td>Amount</td><td>{$paidAmount|crmMoney}</td>
     </tr>
     <tr>
-      <td colspan="4"></td>
+      <td colspan="3"></td>
       <td>Transaction Fee</td><td>{$feeAmount|crmMoney}</td>
     </tr>
     <tr>
-      <td colspan="4"></td>
+      <td colspan="3"></td>
       <td>Value Amount</td><td>{$fairAmount|crmMoney}</td>
     </tr>
   </table>
