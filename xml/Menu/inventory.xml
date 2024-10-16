@@ -84,4 +84,10 @@
     <title>ProductTab</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/sale-lineitems</path>
+    <page_callback>CRM_Inventory_Page_Lineitem</page_callback>
+    <title>Line Item</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

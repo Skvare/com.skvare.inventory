@@ -9,8 +9,6 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
    *
    */
   public function run() {
-    CRM_Utils_System::setTitle(\CRM_Inventory_ExtensionUtil::ts('Dashboard'));
-
     // Example: Assign a variable for use in a template.
     $this->assign('currentTime', date('Y-m-d H:i:s'));
     if (!array_key_exists('snippet', $_GET)) {
@@ -20,7 +18,7 @@ class CRM_Inventory_Page_Dashboard extends CRM_Core_Page {
     $this->assign('dashboardStats', $dashboardStats);
     $membershipDash = new CRM_Member_Page_DashBoard();
     $membershipDash->preProcess();
-
+    CRM_Utils_System::setTitle(\CRM_Inventory_ExtensionUtil::ts('Dashboard'));
     parent::run();
   }
 

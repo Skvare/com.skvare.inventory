@@ -30,7 +30,7 @@
       <div class="card">
         <div class="card-body">
           <div class="card-text">
-            {include file="CRM/Member/Page/DashBoard.tpl"}
+            {include file="CRM/Inventory/Page/DashboardMembership.tpl"}
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@
         <div class="card-img-top bg-light">
           <div class="h4 p-2">
             <i class="fa fa-fw fa-boxes"></i>
-            <span class="text-secondary">Inventory</span>
+            <span class="text-secondary"><h3>{ts}Inventory{/ts}</h3></span>
           </div>
         </div>
         <div class="card-body">
@@ -84,8 +84,6 @@
     .row {
       display: flex;
       flex-wrap: wrap;
-      margin-right: -15px;
-      margin-left: -15px;
     }
     .mt-4 {
       margin-top: 1.5rem !important;
