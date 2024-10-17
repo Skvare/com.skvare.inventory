@@ -155,4 +155,31 @@ class CRM_Inventory_BAO_InventoryProduct extends CRM_Inventory_DAO_InventoryProd
     return 'badge-default';
   }
 
+  /**
+   * Product Id list.
+   *
+   * @param $is_serialize
+   *   Is device.
+   *
+   * @return array
+   *   Product id.
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function productIds($is_serialize = 1) {
+    $sql = "SELECT id, product_code FROM `civicrm_inventory_product`";
+    if ($is_serialize) {
+      $sql .= ' WHERE is_serialize = 1';
+    }
+    else {
+      $sql .= ' WHERE is_serialize = 0';
+    }
+    $productObject = CRM_Core_DAO::executeQuery($sql);
+    $list = [];
+    while ($productObject->fetch()) {
+      $list[$productObject->product_code] = $productObject->id;
+    }
+    return $list;
+  }
+
 }

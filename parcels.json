@@ -1,13 +1,7 @@
 {
   "hotspot_with_shirt": {
     "items": {
-      "shirt": {
-        "class": "T-Shirt",
-        "names": [
-          "Apparel"
-        ]
-      },
-      "modem": {
+      "hotspot": {
         "class": "Hotspot",
         "names": [
           "mifi-x",
@@ -24,6 +18,12 @@
           "gateway6100d",
           "franklin-r910"
         ]
+      },
+      "shirt": {
+        "class": "T-Shirt",
+        "names": [
+          "Apparel"
+        ]
       }
     },
     "length": 8,
@@ -35,13 +35,7 @@
   },
   "phone_with_shirt": {
     "items": {
-      "shirt": {
-        "class": "T-Shirt",
-        "names": [
-          "Apparel"
-        ]
-      },
-      "modem": {
+      "phone": {
         "class": "Mobile",
         "names": [
           "pixel-4a-5g",
@@ -49,6 +43,12 @@
           "pixel-6",
           "pixel-6a",
           "pixel-6-pro"
+        ]
+      },
+      "shirt": {
+        "class": "T-Shirt",
+        "names": [
+          "Apparel"
         ]
       }
     },
@@ -59,9 +59,9 @@
     "weight": 1.625,
     "mass_unit": "lb"
   },
-  "hotspot_only": {
+  "hotspot": {
     "items": {
-      "modem": {
+      "hotspot": {
         "class": "Hotspot",
         "names": [
           "mifi-x",
@@ -87,9 +87,9 @@
     "weight": 1,
     "mass_unit": "lb"
   },
-  "phone_only": {
+  "phone": {
     "items": {
-      "modem": {
+      "phone": {
         "class": "Mobile",
         "names": [
           "pixel-4a-5g",
@@ -107,7 +107,7 @@
     "weight": 1.125,
     "mass_unit": "lb"
   },
-  "shirt_only": {
+  "shirt": {
     "items": {
       "shirt": {
         "class": "T-Shirt",
@@ -123,7 +123,7 @@
     "weight": 0.5,
     "mass_unit": "lb"
   },
-  "sim_only": {
+  "sim": {
     "items": {
       "sim": {
         "class": "Item",

@@ -6,6 +6,7 @@
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\InventoryShipmentLabels;
+use Civi\Api4\InventorySales;
 
 /**
  *
@@ -154,6 +155,61 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   }
 
   /**
+   * Returns a set of orders for this shipment that either have shipping.
+   *
+   * Labels that are unpaid, or have no shipping label at all.
+   *
+   * @param int $saleID
+   *   Sale ID.
+   *
+   * @return array
+   *   Sale Order list.
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  public function ordersWithUnpaidShippingLabelsUsingSaleID(int $saleID): array {
+    $inventorySales = InventorySales::get(TRUE)
+      ->addSelect('*', 'inventory_shipment_labels.*')
+      ->addJoin('InventoryShipmentLabels AS inventory_shipment_labels',
+        'LEFT', ['is_paid', '=', 1])
+      // ->addWhere('inventory_shipment_labels.id', 'IS NULL')
+      ->addWhere('id', '=', $saleID)
+      ->addWhere('is_paid', '=', 1)
+      ->addWhere('is_shipping_required', '=', 1)
+      ->setLimit(0)
+      ->execute();
+    $inventorySalesList = [];
+    foreach ($inventorySales as $inventorySale) {
+      if (empty($inventorySale['inventory_shipment_labels.is_paid'])) {
+        $inventorySalesList[] = $inventorySale;
+      }
+    }
+    return $inventorySalesList;
+  }
+
+  public function listRate($saleID): void {
+    foreach ($this->ordersWithUnpaidShippingLabelsUsingSaleID($saleID) as &$sale) {
+      // Create shipping label record.
+      if (empty($sale['inventory_shipment_labels.id'])) {
+        $paramsLabels = [
+          'sales_id' => $sale['id'],
+          'is_valid' => FALSE,
+          'is_paid' => FALSE,
+          'amount' => 0,
+        ];
+        $labelObject = CRM_Inventory_BAO_InventoryShipmentLabels::create($paramsLabels);
+        $sale['inventory_shipment_labels.id'] = $labelObject->id;
+      }
+      if ($sale['shipment_id'] && $sale['inventory_shipment_labels.id']) {
+        $shipment = new CRM_Inventory_BAO_InventoryShipmentLabels();
+        $shipment->load('id', $sale['inventory_shipment_labels.id']);
+        $shipment->getRates();
+      }
+    }
+  }
+
+  /**
    * Refund.
    *
    * @return void
@@ -268,7 +324,6 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     $saleID = $this->shipmentLabel->sales_id;
     $customsSigner = CRM_Core_Session::singleton()->getLoggedInContactID();
     $displayName = CRM_Contact_BAO_Contact::displayName($customsSigner);
-
     $parcel = CRM_Inventory_BAO_InventorySales::parcel($saleID);
     try {
       $shippoParams = [
@@ -376,6 +431,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       }
       elseif ($refund['status'] == 'SUCCESS' || $refund['status'] == 'PENDING') {
         $this->shipmentLabel->purchase = [];
+        $this->shipmentLabel->shipment = [];
         $this->shipmentLabel->is_paid = FALSE;
         $this->shipmentLabel->provider = '';
         $this->shipmentLabel->amount = 0;
@@ -833,9 +889,14 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
         'certify_signer' => $signer,
         'items' => $this->getItemsForCustoms($saleID),
       ];
-      /** @var OpenAPI\Client\Model\CustomsDeclaration $result */
-      $result = CRM_Shippo_Connect::declarations($params);
-      return json_decode(json_encode($result), TRUE);
+      try {
+        /** @var OpenAPI\Client\Model\CustomsDeclaration $result */
+        $result = CRM_Shippo_Connect::declarations($params);
+        return json_decode(json_encode($result), TRUE);
+      }
+      catch (Exception $e) {
+        return NULL;
+      }
     }
     else {
       return NULL;
@@ -979,7 +1040,6 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
         $layout = 4;
       }
       $labels = self::getLabelsForShipment($shipmentID);
-      // Echo '<pre>'; print_r($labels); echo '</pre>';exit;.
       $htmlArray = [];
       if (!empty($labels)) {
         $arrayChunk = array_chunk($labels, $layout);

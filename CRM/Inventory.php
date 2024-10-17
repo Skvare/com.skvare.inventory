@@ -301,6 +301,8 @@ trait CRM_Inventory {
    *
    * @return CRM_Price_BAO_LineItem[]
    *   Array of line item.
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
    */
   public function getSalesLineItems(&$classObject): array {
     $column = '';
@@ -318,8 +320,11 @@ trait CRM_Inventory {
       $column = 'sale_id';
     }
 
-    if ($classObject->N && !empty($value)) {
+    if ($classObject->N && !empty($value) and !empty($column)) {
+      $lineItem = CRM_Inventory_BAO_InventorySales::getLineItemBySaleID($value, $column);
+      /*
       $lineItem = CRM_Inventory_Utils::commonRetrieveAll('CRM_Price_BAO_LineItem', [$column => $value], FALSE);
+      */
     }
     else {
       $lineItem = [];

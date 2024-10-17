@@ -188,8 +188,9 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
         'INNER', ['product_variant_id', '=', 'inventory_product_variant.id'])
       ->addJoin('InventoryProduct AS inventory_product', 'INNER')
       ->addJoin('InventoryCategory AS inventory_category', 'INNER')
-      ->addJoin('InventorySales AS inventory_sales', 'INNER')
+      ->addJoin('InventorySales AS inventory_sales', 'LEFT')
       ->addWhere('sale_id', '=', $saleID)
+      ->addWhere('product_id', 'IS NOT NULL')
       ->setLimit(25)
       ->execute();
     $productDetails = [];
@@ -234,20 +235,46 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
       return $oi['product_name'] ? [$oi['product_class'], $oi['product_name']] :
         ["Item", $oi['item']];
     }, $lineItems));
-
+    $itemMatch = array_values($itemMatch);
     $filePath = __DIR__ . '/../../../parcels.json';
     $parcelData = json_decode(file_get_contents($filePath), TRUE);
-    $possible = array_filter($parcelData, function ($parcel) use ($itemMatch) {
-      $matchFound = TRUE;
-      foreach ($parcel['items'] as $label => $item) {
-        $matchFound = array_reduce($itemMatch, function ($carry, $itemMatch) use ($item) {
-          return $carry && in_array($itemMatch[1], $item["names"]) && ($item["class"] == $itemMatch[0] || $itemMatch[0] == "Item");
-        }, TRUE);
+    $keyList = [];
+    foreach ($parcelData as $mainKey => $parcelInfo) {
+      $keyList = [];
+      foreach ($parcelInfo['items'] as $type => $itemInfo) {
+        foreach ($itemMatch as $item) {
+          $result = in_array($item['1'], $itemInfo['names']) && ($itemInfo["class"] == $item[0] || $item[0] == "Item");
+          if ($result) {
+            $keyList[] = $type;
+          }
+        }
+        if (count($itemMatch) == count($keyList)) {
+          break 2;
+        }
       }
-      return $matchFound;
-    });
-    $possible = array_values($possible);
-    return empty($possible) ? NULL : array_merge($possible[0], ['items' => NULL]);
+    }
+    $parcelDetails = [];
+    if (!empty($keyList)) {
+      $matchKey = implode('_with_', $keyList);
+      if (array_key_exists($matchKey, $parcelData)) {
+        $parcelDetails = $parcelData[$matchKey];
+      }
+      else {
+        $keyList = array_reverse($keyList);
+        $matchKey = implode('_with_', $keyList);
+        if (array_key_exists($matchKey, $parcelData)) {
+          $parcelDetails = $parcelData[$matchKey];
+        }
+        else {
+          $parcelDetails = $parcelData['hotspot_with_shirt'];
+        }
+      }
+    }
+    else {
+      $parcelDetails = $parcelData['hotspot_with_shirt'];
+    }
+
+    return array_merge($parcelDetails, ['items' => NULL]);
   }
 
   /**
@@ -324,17 +351,18 @@ class CRM_Inventory_BAO_InventorySales extends CRM_Inventory_DAO_InventorySales 
   }
 
   /**
-   * Get line item by sale id.
+   * Get line item by field name and value.
    *
-   * @param int $saleID
-   *   Sale id.
+   * @param string $fieldValue
+   *   Field value.
+   * @param string $fieldName
+   *   Field name.
+   *
    * @return array|null
-   *   Line items.
-   *
    * @throws \Civi\Core\Exception\DBQueryException
    */
-  public static function getLineItemBySaleID(int $saleID): ?array {
-    $sql = "select id from civicrm_line_item where sale_id = $saleID";
+  public static function getLineItemBySaleID(string $fieldValue, string $fieldName = 'sale_id'): ?array {
+    $sql = "select id from civicrm_line_item where $fieldName = $fieldValue";
     $dao = CRM_Core_DAO::executeQuery($sql);
     $lineItems = NULL;
     while ($dao->fetch()) {

@@ -165,7 +165,7 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
       if ($productVariant['product']['has_sim']) {
         CRM_Inventory_BAO_InventoryProductChangelog::logStatusChange($productVariantID, $change);
         if (!empty($msg)) {
-          $productVariant->memo = $msg;
+          $productVariantObj->memo = $msg;
         }
         switch ($change) {
           case "REACTIVATE":

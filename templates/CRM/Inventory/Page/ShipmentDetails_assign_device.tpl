@@ -27,7 +27,7 @@
       {if $order.needs_assignment && !$order.has_assignment}
         {assign var="is_any_unassigned" value="false"}
         <tr>
-          <td>{$order.code}</td>
+          <td><a target="crm-popup" class="crm-popup" href="/civicrm/inventory/sale-lineitems?code={$order.code}">{$order.code}</a></td>
           <td>{$order.sort_name}</td>
           <td>{$order.product_label}</td>
         </tr>
@@ -46,7 +46,7 @@
       {if $order.needs_assignment && $order.has_assignment}
         {assign var="is_any_assigned" value="false"}
         <tr>
-          <td>{$order.code}</td>
+          <td><a target="crm-popup" class="crm-popup" href="/civicrm/inventory/sale-lineitems?code={$order.code}">{$order.code}</a></td>
           <td>{$order.sort_name}</td>
           <td>{$order.product_label}</td>
         </tr>

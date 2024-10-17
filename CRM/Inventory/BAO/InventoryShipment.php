@@ -643,19 +643,26 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     $this->sales = $this->findEntityById('code', $orderID, 'InventorySales', TRUE);
     $errors = [];
     $lineItems = [];
+    $membershipDetail = [];
     if ($this->sales->id) {
+      $deviceModelIds = CRM_Inventory_BAO_InventoryProduct::productIds();
       $lineItems = CRM_Inventory_BAO_InventorySales::getLineItemBySaleID($this->sales->id);
       foreach ($lineItems as $lineObject) {
         /** @var CRM_Price_DAO_LineItem $lineObject */
-        if ($lineObject->id) {
-          $membershipID = $lineObject->entity_id;
+        if ($lineObject->id && in_array($lineObject->product_id, $deviceModelIds)) {
+          $membershipID = $lineObject->membership_id;
           if ($lineObject->product_variant_id) {
             $errors['order_id'] = 'A device has already been assigned for item';
           }
-          /** @var CRM_Member_DAO_Membership $membershipDetail */
-          $membershipDetail = CRM_Inventory_BAO_Membership::findById($membershipID, TRUE);
-          if (empty($membershipDetail->id)) {
-            $errors['order_id'] = "No such membership ID";
+          if (empty($membershipID)) {
+            $errors['membership_id'] = 'Line item missing membership id';
+          }
+          else {
+            /** @var CRM_Member_DAO_Membership $membershipDetail */
+            $membershipDetail = CRM_Inventory_BAO_Membership::findById($membershipID, TRUE);
+            if (empty($membershipDetail->id)) {
+              $errors['order_id'] = "No such membership ID";
+            }
           }
         }
       }
@@ -673,6 +680,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     elseif ($this->productVariant->contact_id || $this->productVariant->membership_id) {
       $errors['device_id'] = "Device already assigned";
     }
+
     // sale/order is present, product is matched, membership details present,
     // line item matched and no error.
     if ($this->sales->id && $this->productVariant->id && !empty($membershipDetail) && !empty($lineItems) && empty($errors)) {
@@ -680,6 +688,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       if ($this->productVariant->product_id != $expectedProductModelID) {
         $errors['device_id'] = "That device does not match that order";
       }
+
       if (empty($errors)) {
         $this->assignDeviceToContactOrder($membershipDetail, $lineItems, $isPrimary);
       }
@@ -704,10 +713,19 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
     // Assign contact ID in variant table.
     // Add variant id on the line item table.
     $this->productVariant->shipped_on = $this->productVariant->shipped_on ?? date('Y-m-d H:i:s');
+    $nonDeviceProductIds = CRM_Inventory_BAO_InventoryProduct::productIds(FALSE);
     foreach ($lineItems as $lineObject) {
-      if ($lineObject->entity_table == 'civicrm_membership') {
+      // Match the line item product and update the variant id.
+      if ($lineObject->product_id == $this->productVariant->product_id) {
         $lineObject->product_variant_id = $this->productVariant->id;
         $lineObject->save();
+      }
+      if (in_array($lineObject->product_id, $nonDeviceProductIds)) {
+        $nonDeviceVariantId = CRM_Core_DAO::getFieldValue('CRM_Inventory_DAO_InventoryProductVariant', $lineObject->product_id, 'id', 'product_id');
+        if (!empty($nonDeviceVariantId)) {
+          $lineObject->product_variant_id = $nonDeviceVariantId;
+          $lineObject->save();
+        }
       }
     }
 
@@ -723,7 +741,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       try {
         $this->productVariant->changeStatus($this->productVariant->id, 'REACTIVATE', "Reactivating because assigned to [order:{$this->sales->code}]");
       }
-      catch (UnauthorizedException | CRM_Core_Exception $e) {
+      catch (UnauthorizedException|CRM_Core_Exception $e) {
 
       }
     }

@@ -31,7 +31,7 @@
       {foreach from=$shipments item=order}
         <tr>
           <td><input type="checkbox" name="sale_id[{$order.sale_id}]" value="{$order.sale_id}" /></td>
-          <td>{$order.code}</td>
+          <td><a target="crm-popup" class="crm-popup" href="/civicrm/inventory/sale-lineitems?code={$order.code}">{$order.code}</a></td>
           <td>{$order.sale_date}</td>
           <td>{$order.sort_name}</td>
           <td>{$order.product_label}</td>

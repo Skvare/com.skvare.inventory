@@ -12,7 +12,7 @@
   {foreach from=$shipmentDetails key=$model item=shipments}
     {foreach from=$shipments item=order}
       <tr>
-        <td>{$order.code}</td>
+        <td><a target="crm-popup" class="crm-popup" href="/civicrm/inventory/sale-lineitems?code={$order.code}">{$order.code}</a></td>
         <td>{$order.sale_date}</td>
         <td>{$order.sort_name}</td>
         <td>
