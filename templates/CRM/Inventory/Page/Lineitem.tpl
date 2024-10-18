@@ -50,7 +50,7 @@
                 </td>
                 <td>
                   {if !empty($salesDetails.inventory_shipment_labels.purchase.status) && $salesDetails.inventory_shipment_labels.purchase.status eq 'SUCCESS'}
-                    <span class="badge badge-success">SUCCESS</span>
+                    <span class="badge badge-success">SUCCESS</span> {if $salesDetails.inventory_shipment_labels.purchase.object_created}<br/>{$salesDetails.inventory_shipment_labels.purchase.object_created|crmDate}{/if}
                   {elseif !empty($salesDetails.inventory_shipment_labels.purchase.status) && $salesDetails.inventory_shipment_labels.purchase.status eq 'ERROR'}
                     <table>
                       <tr><th>Source</th><th>Code</th><th>Text</th></tr>
@@ -73,6 +73,12 @@
             <td><h3 class="mt-3">Paid?</h3></td>
             <td>{if $salesDetails.inventory_shipment_labels.is_paid}<span class="badge badge-success">Yes</span>{else}<span class="badge badge-danger">no</span><div class="help-text">The shipping label has not yet been purchased, or something went wrong when we tried to purchase it.</div>{/if}</td>
           </tr>
+          {if $salesDetails.inventory_shipment_labels.is_paid and $salesDetails.inventory_shipment_labels.shipment_date}
+          <tr>
+            <td><h3 class="mt-3">Shipment Date</h3></td>
+            <td>{$salesDetails.inventory_shipment_labels.shipment_date|crmDate}</td>
+          </tr>
+          {/if}
           <tr>
             <td><h3 class="mt-3">Tracking Code</h3></td>
             <td>
@@ -141,9 +147,16 @@
                           {/if}
                         </td>
                         <td>{$rateValue.provider}</td>
-                        <td>{$rateValue.estimated_days} days</td>
+                        <td>{$rateValue.estimated_days} days
+                          {if !empty($rateValue.arrives_by)}<br/> Arrive By: {$rateValue.arrives_by|date_format:'%H:%M:%S %p'}{/if}
+                          {if $rateValue.duration_terms}
+                            <br/>
+                            <span class="badge badge-warning">{$rateValue.duration_terms}</span>
+                          {/if}
+                        </td>
                         <td>{$rateValue.servicelevel.name}</td>
                         <td>{', '|implode:$rateValue.attributes}</td>
+                        {*<td>{$rateValue.object_created|crmDate:'%Y-%m-%d'}</td>*}
                       </tr>
                     {/foreach}
                   </table>

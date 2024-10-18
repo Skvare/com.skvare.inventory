@@ -5,8 +5,37 @@
  */
 
 use Civi\API\Exception\UnauthorizedException;
-use Civi\Api4\InventoryShipmentLabels;
 use Civi\Api4\InventorySales;
+use Civi\Api4\InventoryShipmentLabels;
+
+/*
+//
+// See https://goshippo.com/docs/reference
+//
+// Fields:
+//
+// is_valid         -- true if the shipping record was created successfully.
+// is_paid          -- true if the label was created successfully.
+// has_error        -- false if this label is all good.
+// provider         -- string value of the shipping provider e.g. "USPS"
+// amount           -- what we paid for this label
+// resource_id      -- the shippo API id of the 'transaction' that purchased the label
+// tracking_id      -- the carrier specific tracking code
+// rate_id          -- ID of the rate we chose (or the cheapest rate if we haven't purchased yet)
+// shipment         -- JSON of the Shippo API shipment object (not a petal Shipment)
+// purchase         -- JSON of the Shippo API transaction object
+//
+// Supported values for label_file_type:
+//
+// "PNG" "PNG_2.3x7.5" "PDF" "PDF_SINGLE_8X11" "PDF_W_PSLIP_8x11" "PDF_2.3x7.5"
+// "PDF_4x6" "PDF_4x8" "PDF_A4" "PDF_A6" "ZPLII"
+//
+// Each potential carrier has different label_file_type that are supported. See https://goshippo.com/docs/carriers
+//
+// We use PNG, so it is easy to compose them into a PDF of our choosing.
+// However, PNG look bad when printed large, and they take up more storage space.
+//
+ */
 
 /**
  *
@@ -188,7 +217,19 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     return $inventorySalesList;
   }
 
-  public function listRate($saleID): void {
+  /**
+   * List Rate for order id.
+   *
+   * @param int $saleID
+   *   Sale ID.
+   *
+   * @return void
+   *   Store in DB.
+   *
+   * @throws CRM_Core_Exception
+   * @throws UnauthorizedException
+   */
+  public function listRate(int $saleID): void {
     foreach ($this->ordersWithUnpaidShippingLabelsUsingSaleID($saleID) as &$sale) {
       // Create shipping label record.
       if (empty($sale['inventory_shipment_labels.id'])) {
@@ -375,6 +416,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    *
    * @return void
    *   Nothing.
+   *
+   * @link https://docs.goshippo.com/docs/shipments/shippinglabelsizes/
    */
   public function pay(?string $rateId = NULL): void {
     try {
@@ -654,10 +697,30 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     if (is_null(empty($address))) {
       throw new Exception('Member does not have an address');
     }
+    /*
+    For shipping, recipient is often required.
+    To comply with shipping carrier rules, we ensure the following:
+    The recipient must have at least two components.
+    Each name part must be at least two characters.
+    There must be at least two names.
+     */
     if (empty($address['name'])) {
       $displayName = CRM_Contact_BAO_Contact::displayName($this->sales->contact_id);
+      if (!empty($displayName)) {
+        $displayName = 'Current Resident';
+      }
       $address['name'] = $displayName;
     }
+    // Make sure Two word present in the name.
+    if (str_word_count($address['name']) === 1) {
+      // Add a fake last name.
+      $address['name'] .= " XX";
+    }
+    // If First name is of one char only then add additional char '_'.
+    $address['name'] = preg_replace_callback('/\S+/', function ($part) {
+      return strlen($part[0]) === 1 ? $part[0] . "_" : $part[0];
+    }, $address['name']);
+
     $fromAddress = CRM_Shippo_Utils::getFromAddress();
     if ($address['country'] == $fromAddress['country']) {
       return $address;
@@ -707,8 +770,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     if ($from && $to) {
       $fromCountry = $from['country'];
       $toCountry = $to['country'];
-      if ($fromCountry == $toCountry) {
-        if ($fromCountry == 'US' && !empty($to['state']) && !in_array($to['state'], CRM_Inventory_Utils::US_STATES)) {
+      if (in_array($fromCountry, ['USA', 'US']) && in_array($toCountry, ['USA', 'US'])) {
+        if (!empty($to['state']) && !in_array($to['state'], CRM_Inventory_Utils::US_STATES)) {
           return FALSE;
         }
         else {
@@ -780,6 +843,11 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   /**
    * Custom Declaration.
    *
+   * Customs declarations are not required between US states and US
+   * territories, and also not required between some EU countries.
+   *
+   * @todo find out which EU countries.
+   *
    * @param array $from
    *   From Address.
    * @param array $to
@@ -791,7 +859,8 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
   private function customsDeclarationRequired(array $from, array $to): bool {
     $fromCountry = $from['country'];
     $toCountry = $to['country'];
-    if ($fromCountry == 'USA' && $toCountry == 'USA') {
+    if (in_array($fromCountry, ['USA', 'US']) &&
+      in_array($toCountry, ['USA', 'US'])) {
       return FALSE;
     }
     else {
@@ -1026,10 +1095,12 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
    * Print label.
    *
    * @param int $shipmentID
-   *
+   *   Shipment id.
    * @param string $type
+   *   Print type.
    *
    * @return void
+   *   Download pdf.
    */
   public static function printLabels(int $shipmentID, string $type): void {
     try {
@@ -1141,6 +1212,32 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       }
     }
     return $shipmentLabels;
+  }
+
+  /**
+   * Track Shipment.
+   *
+   * @param array $params
+   *   Tracking parameters.
+   *
+   * @return mixed
+   *   Tracking details.
+   *
+   * @throws Exception
+   *
+   * @link https://docs.goshippo.com/docs/tracking/tracking/#event-definitions
+   */
+  public static function trackShipment(array $params): mixed {
+    if (!empty($params['tracking_id']) && !empty($params['provider'])) {
+      try {
+        $response = CRM_Shippo_Connect::track($params);
+        return json_decode(json_encode($response), TRUE);
+      }
+      catch (\Exception $e) {
+        return $e->getMessage();
+      }
+    }
+    return 'Required field missing';
   }
 
 }

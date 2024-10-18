@@ -20,7 +20,11 @@ use CRM_Inventory_ExtensionUtil as E;
 class CRM_Inventory_Utils {
 
   const US_STATES = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI',
+    'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
+    'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH',
+    'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA',
+    'WV', 'WI', 'WY',
   ];
   const US_TERRITORIES = [
     'AA', 'AE', 'AE', 'AE', 'AE', 'AP', 'AS', 'FM', 'GU', 'MH', 'MP', 'PR', 'PW', 'VI',
@@ -134,7 +138,16 @@ class CRM_Inventory_Utils {
   }
 
   /**
+   * Get Billing plan using membersihp id.
    *
+   * @param int $typeID
+   *   Membership type id.
+   *
+   * @return array
+   *   Billing plan.
+   *
+   * @throws CRM_Core_Exception
+   * @throws UnauthorizedException
    */
   public static function getBillingPlanForMemberhshipType($typeID) {
     $inventoryBillingPlanses = InventoryBillingPlans::get(TRUE)
@@ -321,10 +334,10 @@ class CRM_Inventory_Utils {
    */
   public static function shipmentAction(): void {
     $entity = CRM_Utils_Request::retrieve('entity', 'String', NULL, TRUE);
+    $params['id'] = CRM_Utils_Request::retrieve('id', 'Integer', NULL, TRUE);
+    $is_shipped = CRM_Utils_Request::retrieve('is_shipped', 'String', NULL);
+    $params = [];
     if ($entity == 'shipment') {
-      $params = [];
-      $params['id'] = CRM_Utils_Request::retrieve('id', 'Integer', NULL, TRUE);
-      $is_shipped = CRM_Utils_Request::retrieve('is_shipped', 'String', NULL);
       if (isset($is_shipped)) {
         $params['is_shipped'] = $is_shipped;
         if (!empty($params['is_shipped'])) {
@@ -340,10 +353,7 @@ class CRM_Inventory_Utils {
         "reset=1&id={$params['id']}"
       );
     }
-    if ($entity == 'shipment_label') {
-      $params = [];
-      $params['id'] = CRM_Utils_Request::retrieve('id', 'Integer', NULL, TRUE);
-      $is_shipped = CRM_Utils_Request::retrieve('is_shipped', 'String', NULL);
+    elseif ($entity == 'shipment_label') {
       if (isset($is_shipped)) {
         $params['is_shipped'] = $is_shipped;
         if (!empty($params['is_shipped'])) {
@@ -412,6 +422,7 @@ class CRM_Inventory_Utils {
       ->execute();
     $addressCorrect = [];
     foreach ($addresses->first() as $key => $value) {
+      // TODO : Clean string.
       if ($key == 'state_province_id:abbr') {
         $addressCorrect['state'] = $value;
       }
@@ -423,16 +434,6 @@ class CRM_Inventory_Utils {
       }
     }
     return $addressCorrect;
-  }
-
-  /**
-   *
-   */
-  public static function getContact(int $contactID): array {
-    $lineItems = LineItem::get(TRUE)
-      ->addWhere('sale_id', 'IS NOT NULL')
-      ->setLimit(25)
-      ->execute();
   }
 
   /**
@@ -527,13 +528,28 @@ class CRM_Inventory_Utils {
   }
 
   /**
+   * UPS doesn't like periods or commas in addresses.
+   *
+   * @param string $str
+   *   Input string.
+   *
+   * @return string
+   *   Clean string.
+   */
+  public static function removeForbiddenCharacters(string $str = ''): string {
+    return trim(preg_replace('/[.,\'"`]/', '', preg_replace('/ +/', ' ', str_replace(["\r\n", "\n\n"], "\n", $str))));
+  }
+
+  /**
    * Returns the object name of a certain object.
+   *
    * When the object is contact it will try to retrieve the contact type
    * and use this as the object name.
    *
    * @param \CRM_Core_DAO $object
-   *
+   *   Object.
    * @return array|string|null
+   *   Object name.
    */
   public static function getObjectNameFromObject(\CRM_Core_DAO $object) {
     // Array with contact ID and value the contact type.
@@ -563,6 +579,9 @@ class CRM_Inventory_Utils {
   }
 
   /**
+   * Get dashboard data for stats.
+   * @return array
+   *   Stats.
    *
    * @throws \Civi\Core\Exception\DBQueryException
    */
@@ -626,7 +645,7 @@ class CRM_Inventory_Utils {
    * @return array
    *   Stats
    */
-  public static function deviceModelStats() {
+  public static function deviceModelStats(): array {
     $stats = [];
     try {
       foreach (self::getProductModels() as $dm_id => $deviceModel) {
@@ -730,14 +749,14 @@ class CRM_Inventory_Utils {
   public static function longestSideVertical(string $filePath): string {
     $imageMeta = getimagesize($filePath);
     /*
-     = array(
-        [0] => 2388 // width
-        [1] => 436  // height
-        [2] => 3
-        [3] => width="2388" height="436"
-        [bits] => 8
-        [mime] => image/png
-     );
+    = array(
+    [0] => 2388 // width
+    [1] => 436  // height
+    [2] => 3
+    [3] => width="2388" height="436"
+    [bits] => 8
+    [mime] => image/png
+    );
      */
     // If width is greater than height then transform the image by 90 degree.
     if (isset($imageMeta['1']) && isset($imageMeta['0']) && $imageMeta['0'] > $imageMeta['1']) {
