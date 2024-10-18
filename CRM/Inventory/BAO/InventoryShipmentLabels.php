@@ -1240,4 +1240,34 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
     return 'Required field missing';
   }
 
+  /**
+   * Get shipment tracking info.
+   *
+   * @param string $trackingID
+   *   Tracking id.
+   *
+   * @return array
+   *   Details.
+   */
+  public static function getTrackShipment(string $trackingID): array {
+    $result = [
+      'valid' => FALSE,
+      'tracking_id' => '',
+      'provider' => '',
+    ];
+    if ($trackingID) {
+      $shipmentObj = new CRM_Inventory_DAO_InventoryShipmentLabels();
+      $shipmentObj->tracking_id = $trackingID;
+      $shipmentObj->find(TRUE);
+      if ($shipmentObj->N) {
+        $result = [
+          'valid' => TRUE,
+          'tracking_id' => $shipmentObj->tracking_id,
+          'provider' => $shipmentObj->provider,
+        ];
+      }
+    }
+    return $result;
+  }
+
 }

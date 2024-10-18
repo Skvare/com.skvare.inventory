@@ -90,4 +90,10 @@
     <title>Line Item</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/inventory/shipment-track</path>
+    <page_callback>CRM_Inventory_Form_TrackShipment</page_callback>
+    <title>TrackShipment</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
