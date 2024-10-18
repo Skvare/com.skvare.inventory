@@ -30,6 +30,8 @@
 {elseif $part eq 'shipping'}
   <div style="padding-bottom: 10px;padding-top: 10px;padding-left: 2%;">
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/shipments?reset=1" q="reset=1"}'><i class="crm-i fa-list" aria-hidden="true"></i> {ts}Shipment Batch{/ts}</a>
+    <br/><br/>
+    <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/shipment-track?reset=1" q="reset=1"}'><i class="crm-i fa-truck" aria-hidden="true"></i> {ts}Shipment Tracking{/ts}</a>
   </div>
 {elseif $part eq 'setting'}
   <div style="padding-bottom: 10px;padding-top: 10px;padding-left: 2%;">

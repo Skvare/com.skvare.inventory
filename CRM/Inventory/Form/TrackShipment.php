@@ -57,16 +57,16 @@ class CRM_Inventory_Form_TrackShipment extends CRM_Core_Form {
       if ($detail['valid']) {
         $params = ['tracking_id' => $detail['tracking_id'], 'provider' => $detail['provider']];
         $result = CRM_Inventory_BAO_InventoryShipmentLabels::trackShipment($params);
-        $this->assign('trackingDetails', $result);
-        // Echo '<pre>'; print_r($result); echo '</pre>';
-        // exit;.
-        if (!empty($result) and is_string($result)) {
-          CRM_Core_Session::setStatus($result, 'Result');
+        if (empty($result)) {
+          CRM_Core_Session::setStatus('Not found', 'Record');
         }
         else {
           $this->assign('trackingDetails', $result);
-          CRM_Core_Session::setStatus('Found', 'Result');
+          CRM_Core_Session::setStatus('Found', 'Record');
         }
+      }
+      else {
+        CRM_Core_Session::setStatus('Not found', 'Record');
       }
     }
     parent::postProcess();
