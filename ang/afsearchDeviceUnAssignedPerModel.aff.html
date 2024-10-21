@@ -1,0 +1,8 @@
+<div af-fieldset="">
+  <div class="af-container af-layout-inline">
+    <af-field name="product_variant_unique_id" />
+    <af-field name="product_variant_phone_number" />
+  </div>
+  <div class="af-container af-layout-inline"></div>
+  <crm-search-display-table search-name="Inventory_Product_Variant_Unassigned_List" display-name="Inventory_Product_Variant_Unassigned_List_Table_1" filters="{status: 'new_inventory', is_suspended: false, is_problem: false, product_id: routeParams.product_id, is_active: true}"></crm-search-display-table>
+</div>

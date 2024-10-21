@@ -627,6 +627,7 @@ class CRM_Inventory_Utils {
       ->addSelect('id', 'label', 'minimum_quantity_stock_level', 'maximum_quantity_stock_level', 'reorder_point', 'inventory_status')
       ->addWhere('is_serialize', '=', TRUE)
       ->addWhere('inventory_display', '=', TRUE)
+      ->addWhere('is_active', '=', TRUE)
       // Hotspot.
       ->addWhere('product_category_id', '=', 2)
       ->setLimit(150)
@@ -694,6 +695,7 @@ class CRM_Inventory_Utils {
           ->selectRowCount()
           ->addWhere('is_paid', '=', TRUE)
           ->addWhere('is_fulfilled', '=', FALSE)
+          ->addWhere('status_id', '=', 'placed')
           ->addWhere('product_id', '=', $dm_id)
           ->setLimit(25)
           ->execute()->count() ?? 0;

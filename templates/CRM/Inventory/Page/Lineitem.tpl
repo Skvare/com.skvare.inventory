@@ -31,7 +31,7 @@
       <td>
         <table>
           <tr>
-            <td colspan="2">
+            <td colspan="2" style="min-width: 600px;">
               <div class="btn-toolbar">
                 <a class="btn btn-success" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if !$salesDetails.inventory_shipment_labels.is_paid}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=getrate{else}javascript:void(0){/if}"><i class="fa fa-fw fa-repeat"></i>Get Rates</a>
                 <a class="btn btn-success" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if $salesDetails.inventory_shipment_labels.is_valid and !$salesDetails.inventory_shipment_labels.is_paid}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=pay{else}javascript:void(0){/if}"><i class="fa fa-fw fa-dollar"></i>Purchase Label</a>
