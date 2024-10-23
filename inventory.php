@@ -604,7 +604,7 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef, $param
       $saleObject->save();
     }
     // When sale order is crated andi it is paid , assign it to shipment.
-    if ($saleObject->is_paid && !$saleObject->shipment_id) {
+    if ($saleObject->is_paid && !$saleObject->shipment_id && !defined('CIVI-MIGRATION')) {
       CRM_Inventory_BAO_InventoryShipment::addShipmentToSale($saleObject->id);
     }
   }
@@ -613,7 +613,7 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef, $param
     /** @var CRM_Member_BAO_Membership $objectRef */
     $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
     // Check our status fit in current membership status list.
-    if (isset($objectRef->status_id) && in_array($objectRef->status_id, $activeMembershipStatus)) {
+    if (isset($objectRef->status_id) && in_array($objectRef->status_id, $activeMembershipStatus) && !defined('CIVI-MIGRATION')) {
       // Get the Setting field, where we mapped civicrm field with the fields.
       $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
       if (!empty($settingInfo['inventory_referral_code_key_name'])) {
@@ -638,7 +638,7 @@ function inventory_civicrm_post($op, $objectName, $objectId, &$objectRef, $param
     $machineNames = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, 'AND v.value = ' . $objectRef->activity_type_id, 'name');
     if (array_key_exists($objectRef->activity_type_id, $machineNames) &&
       $machineNames[$objectRef->activity_type_id] == 'Membership Renewal' &&
-      $objectRef->source_record_id) {
+      $objectRef->source_record_id && !defined('CIVI-MIGRATION')) {
       // source_record_id is membership ID.
       // Reactivate the device along with membership status.
       CRM_Inventory_BAO_Membership::resume($objectRef->source_record_id);

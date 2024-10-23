@@ -52,7 +52,7 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
   public static function createOpenShipment(): ?array {
     $contactID = CRM_Core_Session::getLoggedInContactID() ?? NULL;
     try {
-      $results = InventoryShipment::create(TRUE)
+      $results = InventoryShipment::create(FALSE)
         ->addValue('contact_id', $contactID)
         ->addValue('created_date', date('YmdHis'))
         ->addValue('is_shipped', FALSE)
