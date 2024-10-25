@@ -126,7 +126,7 @@ class CRM_Inventory_Utils {
     try {
       $result = civicrm_api3('MembershipType', 'getsingle', [
         'sequential' => 1,
-        'return' => ["may_renew", "shippable_to"],
+        'return' => ["may_renew", "shippable_to", "fair_value"],
         'id' => $typeID,
       ]);
       unset($result['id']);
@@ -138,7 +138,7 @@ class CRM_Inventory_Utils {
   }
 
   /**
-   * Get Billing plan using membersihp id.
+   * Get Billing plan using membership id.
    *
    * @param int $typeID
    *   Membership type id.

@@ -501,10 +501,12 @@ function inventory_civicrm_buildForm($formName, &$form) {
     $form->addElement('checkbox', 'may_renew', ts('May Renew?'));
     $form->add('select', 'shippable_to', E::ts('Product Shippable to Country(s)'),
       $shippableTo, FALSE, ['class' => 'crm-select2 huge', 'multiple' => 1]);
+    $form->add('text', 'fair_value', ts('Fair Market Value'));
+    $form->addRule('fair_value', ts('Please enter a valid amount.'), 'money');
     if ($form->_action & CRM_Core_Action::UPDATE) {
       $membershipExtras = CRM_Inventory_Utils::getMembershipTypeSettings($form->_id);
       $form->setDefaults($membershipExtras);
-      \Civi::service('angularjs.loader')->addModules('afsearchMembershipBillingPlan');
+      // \Civi::service('angularjs.loader')->addModules('afsearchMembershipBillingPlan');
       \Civi::service('angularjs.loader')->addModules('afsearchProductMembershipMappingList');
     }
   }

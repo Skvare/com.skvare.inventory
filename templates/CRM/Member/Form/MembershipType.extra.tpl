@@ -4,6 +4,7 @@
       $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-product_mapping').insertAfter('.crm-membership-type-form-block-auto_renew');
+      $('.crm-membership-type-form-block-fair_value').insertAfter('.crm-membershiptype-form-block-minimum_fee');
 
     });
   </script>
@@ -40,6 +41,10 @@
         </span>
         <br/><br/>
       </td>
+    </tr>
+    <tr class="crm-membership-type-form-block-fair_value">
+      <td class="label">{$form.fair_value.label}</td>
+      <td>{$form.fair_value.html}</td>
     </tr>
   </table>
 {/crmScope}
