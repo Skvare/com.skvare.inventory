@@ -2,7 +2,7 @@
 {literal}
   <script type="text/javascript">
     CRM.$(function($) {
-      $('#membership-device').insertAfter('.crm-info-panel');
+      $('#membership-device').insertAfter('#main_block');
     });
   </script>
 {/literal}
