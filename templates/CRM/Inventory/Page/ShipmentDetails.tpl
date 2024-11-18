@@ -5,7 +5,7 @@
   </div>
 </h2>
 
-<div class="crm-block crm-content-block">
+<div class="crm-block crm-content-block" >
   <div id="mainTabContainer">
     <ul>
       {foreach from=$tabHeader key=tabName item=tabValue}
@@ -24,7 +24,7 @@
     </ul>
     {foreach from=$tabHeader key=tabName item=tabValue}
       {if $tabValue.template}
-        <div id="panel_{$tabName}">
+        <div id="panel_{$tabName}" style="padding-top: 20px;">
           {include file=$tabValue.template}
         </div>
       {/if}

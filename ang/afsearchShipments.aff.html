@@ -4,13 +4,11 @@
   </div>
   <div class="af-container af-layout-inline">
     <af-field name="is_shipped" defn="{input_type: 'Radio'}" />
-    <af-field name="is_finished" defn="{input_type: 'Radio'}" />
+    <af-field name="is_finished" defn="{input_type: 'Radio', afform_default: '0'}" />
   </div>
   <div class="af-container">
     <div class="af-markup">
-
       <p>Shipment List</p>
-
     </div>
   </div>
   <crm-search-display-table search-name="Inventory_Shipment" display-name="Inventory_Shipment_Table_1"></crm-search-display-table>

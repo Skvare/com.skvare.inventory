@@ -361,7 +361,13 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
         `sales`.`contact_id`,
         `sales`.`needs_assignment`,
         `sales`.`has_assignment`,
+        `sales`.`is_shipping_required`,
+        `shipment_labels`.`id` AS `shipment_label_id`,
         `shipment_labels`.`label_url`,
+        `shipment_labels`.`has_error`,
+        `shipment_labels`.`is_paid`,
+        `shipment_labels`.`purchase`,
+        `shipment_labels`.`shipment`,
         `product`.`label`,
         `product`.`product_code`,
         `contact`.`sort_name`,
@@ -393,13 +399,56 @@ class CRM_Inventory_BAO_InventoryShipment extends CRM_Inventory_DAO_InventoryShi
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['contact_id'] = $resultDAO->contact_id;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['needs_assignment'] = $resultDAO->needs_assignment;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['has_assignment'] = $resultDAO->has_assignment;
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['is_shipping_required'] = $resultDAO->is_shipping_required;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['label_url'] = $resultDAO->label_url;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['product_code'] = $resultDAO->product_code;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['product_label'] = $resultDAO->label;
       $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['sort_name'] = $resultDAO->sort_name;
 
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['has_error'] = $resultDAO->has_error;
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['is_paid'] = $resultDAO->is_paid;
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['label_url'] = $resultDAO->label_url;
+      $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['shipment_label_id'] = $resultDAO->shipment_label_id;
+      if (!empty($resultDAO->purchase)) {
+        //$shipmentSalesList[$resultDAO->label][$resultDAO->sale_id
+        //]['purchase'] = json_decode($resultDAO->purchase, TRUE);
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['purchase_messages'] = self::errorMessages(json_decode($resultDAO->purchase, TRUE));
+      }
+      else {
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['purchase'] = '';
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['purchase_messages'] = '';
+      }
+      if (!empty($resultDAO->shipment)) {
+        //$shipmentSalesList[$resultDAO->label][$resultDAO->sale_id
+        //]['shipment'] = json_decode($resultDAO->shipment, TRUE);
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['shipment_messages'] = self::errorMessages(json_decode($resultDAO->shipment, TRUE));
+      }
+      else {
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['shipment'] = '';
+        $shipmentSalesList[$resultDAO->label][$resultDAO->sale_id]['shipment_messages'] = '';
+      }
+
     }
     return $shipmentSalesList;
+  }
+
+  public static function errorMessages($data) {
+    return implode('. ', array_filter(array_map(function ($m) {
+      return self::isErrorMessage($m) ? $m["text"] : NULL;
+    }, $data['messages'])));
+  }
+
+  public static function isErrorMessage(array $msg): bool {
+    if (array_key_exists('type', $msg) && $msg['type'] == 'warning') {
+      return FALSE;
+    }
+    elseif (array_key_exists('type', $msg) && $msg['type'] == 'fatal') {
+      return TRUE;
+    }
+    else {
+      return preg_match('/(error|SubmissionDateTooOld)/', $msg['code']) ||
+        preg_match('/(must|invalid|warning|not responding|hard:)/i', $msg['text']);
+    }
   }
 
   /**

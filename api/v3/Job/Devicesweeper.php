@@ -16,7 +16,6 @@ use Civi\Api4\InventoryProductVariant;
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
 function _civicrm_api3_job_Devicesweeper_spec(&$spec) {
-  $spec['magicword']['api.required'] = 1;
 }
 
 /**

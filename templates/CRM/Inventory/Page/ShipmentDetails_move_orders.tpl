@@ -26,7 +26,7 @@
       </button>
     </td>
   </table>
-  <table>
+  <table id="bootstrap-theme">
     {foreach from=$shipmentDetails key=$model item=shipments}
       {foreach from=$shipments item=order}
         <tr>

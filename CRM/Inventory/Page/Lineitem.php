@@ -177,7 +177,7 @@ class CRM_Inventory_Page_Lineitem extends CRM_Core_Page {
     foreach ($lineItems as $key => $lineItem) {
       if (!empty($lineItem['additional_details'])) {
         $lineItem['additional_details'] = json_decode($lineItem['additional_details'], TRUE);
-        $lineItem['additional_details'] = http_build_query($lineItem['additional_details'],'',',');
+        $lineItem['additional_details'] = http_build_query($lineItem['additional_details'], '', ',');
       }
       $lineItemArray[] = [
         'id' => $lineItem['id'],

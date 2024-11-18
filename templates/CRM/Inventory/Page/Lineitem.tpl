@@ -21,6 +21,7 @@
     <tr>
       <td>Shipping</td>
       <td>
+        {if $salesDetails.is_shipping_required}<span class="badge badge-warning">Shipment required</span>{else}<span class="badge badge-danger">Shipment not required</span>{/if}
         {if $salesDetails.inventory_shipment.is_shipped}<span class="badge badge-success">Shipped</span>{else}<span class="badge badge-warning">Not yet shipped</span>{/if}
         {if $salesDetails.inventory_shipment.is_finished}<span class="badge badge-success">Finished</span>{else}<span class="badge badge-warning">Not yet finished</span>{/if}
       </td>
@@ -33,7 +34,7 @@
           <tr>
             <td colspan="2" style="min-width: 600px;">
               <div class="btn-toolbar">
-                <a class="btn btn-success" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if !$salesDetails.inventory_shipment_labels.is_paid}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=getrate{else}javascript:void(0){/if}"><i class="fa fa-fw fa-repeat"></i>Get Rates</a>
+                <a class="btn btn-{if !$salesDetails.is_shipping_required}danger{else}success{/if}" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if !$salesDetails.inventory_shipment_labels.is_paid and $salesDetails.is_shipping_required}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=getrate{else}javascript:void(0){/if}"><i class="fa fa-fw fa-repeat"></i>Get Rates {if !$salesDetails.is_shipping_required}-Shipment Not required{/if}</a>
                 <a class="btn btn-success" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if $salesDetails.inventory_shipment_labels.is_valid and !$salesDetails.inventory_shipment_labels.is_paid}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=pay{else}javascript:void(0){/if}"><i class="fa fa-fw fa-dollar"></i>Purchase Label</a>
                 <a class="btn btn-warning" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="{if $salesDetails.inventory_shipment_labels.is_paid}/civicrm/inventory/sale-lineitems?code={$orderID}&operation=refund{else}javascript:void(0){/if}"><i class="fa fa-fw fa-times"></i>Request Refund</a>
                 <a class="btn btn-danger" style="color: #ffffff;border-radius: 3px;" crm-icon="fa-undo" id="change-request" href="/civicrm/inventory/sale-lineitems?code={$orderID}&operation=destroy"><i class="fa fa-fw fa-trash"></i> Destroy</a>

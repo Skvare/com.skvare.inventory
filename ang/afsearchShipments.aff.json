@@ -340,7 +340,8 @@
               "#tag": "af-field",
               "name": "is_finished",
               "defn": {
-                "input_type": "Radio"
+                "input_type": "Radio",
+                "afform_default": "0"
               }
             },
             {

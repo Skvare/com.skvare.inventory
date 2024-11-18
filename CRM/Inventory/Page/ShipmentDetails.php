@@ -220,7 +220,7 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
     ];
 
     $reset = !empty($_GET['reset']) ? 'reset=1&' : '';
-    $selectedChild = CRM_Utils_Request::retrieve('selectedChild', 'Alphanumeric', $this, FALSE);
+    $selectedChild = CRM_Utils_Request::retrieve('selectedChild', 'Alphanumeric', NULL, FALSE, 'edit');
     if ($selectedChild) {
       $tabs[$selectedChild]['current'] = TRUE;
     }

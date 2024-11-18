@@ -179,7 +179,7 @@ class CRM_Inventory_BAO_InventoryShipmentLabels extends CRM_Inventory_DAO_Invent
       $this->pay();
     }
     if ($this->shipmentLabel->has_error) {
-      throw new Exception($this->shipmentLabel->errorMessages());
+      throw new Exception($this->errorMessages());
     }
   }
 

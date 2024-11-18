@@ -1,5 +1,4 @@
 
-<h3>Shipping content</h3>
 <div>
   <div>
     {foreach from=$links item=link}
@@ -8,7 +7,7 @@
   </div>
 
 </div>
-<table>
+<table style="margin-top: 10px;" id="bootstrap-theme">
   {foreach from=$shipmentDetails key=$model item=shipments}
     {foreach from=$shipments item=order}
       <tr>
