@@ -19,6 +19,8 @@
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/device-from" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Add Device{/ts}</a>
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/product-replacement-request?reset=1" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Device Replacement request{/ts}</a>
     <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/device-model-membership?reset=1" q="reset=1"}'><i class="crm-i fa-plus" aria-hidden="true"></i> {ts}Product and Membership Mapping{/ts}</a>
+    <br/><br/>
+    <a target="_blank" class="action-item crm-hover-button" href='{crmURL p="civicrm/inventory/membership-referral" q="reset=1"}'><i class="crm-i fa-list" aria-hidden="true"></i> {ts}Membership Referrals{/ts}</a>
 
   </div>
 {elseif $part eq 'order'}

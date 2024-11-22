@@ -2351,4 +2351,159 @@ return [
       ],
     ],
   ],
+
+  //
+  // Saved Search for Inventory_Referrals.
+  [
+    'name' => 'SavedSearch_Inventory_Referrals',
+    'entity' => 'SavedSearch',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Referrals',
+        'label' => E::ts('Inventory Referrals'),
+        'api_entity' => 'InventoryReferrals',
+        'api_params' => [
+          'version' => 4,
+          'select' => [
+            'id',
+            'consumer_id',
+            'creator_id',
+            'created_date',
+            'before_end_date',
+            'after_end_date',
+            'referral_code',
+            'InventoryReferrals_Membership_creator_id_01.contact_id.sort_name',
+            'InventoryReferrals_Membership_consumer_id_01.contact_id.sort_name',
+          ],
+          'orderBy' => [],
+          'where' => [],
+          'groupBy' => [],
+          'join' => [
+            [
+              'Membership AS InventoryReferrals_Membership_creator_id_01',
+              'INNER',
+              [
+                'creator_id',
+                '=',
+                'InventoryReferrals_Membership_creator_id_01.id',
+              ],
+            ],
+            [
+              'Membership AS InventoryReferrals_Membership_consumer_id_01',
+              'INNER',
+              [
+                'consumer_id',
+                '=',
+                'InventoryReferrals_Membership_consumer_id_01.id',
+              ],
+            ],
+          ],
+          "having" => [],
+        ],
+      ],
+      'match' => [
+        'name',
+      ],
+    ],
+  ],
+
+  // Search Display for Inventory_Referrals_Table_1.
+  [
+    'name' => 'SearchDisplay_Inventory_Referrals_Table_1',
+    'entity' => 'SearchDisplay',
+    'cleanup' => 'always',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'name' => 'Inventory_Referrals_Table_1',
+        'label' => E::ts('Inventory Referrals Table 1'),
+        'saved_search_id.name' => 'Inventory_Referrals',
+        'type' => 'table',
+        'settings' => [
+          'description' => NULL,
+          'sort' => [
+            [
+              'sale_date',
+              'DESC',
+            ],
+          ],
+          'limit' => 50,
+          'pager' => [],
+          'placeholder' => 5,
+          'columns' => [
+            [
+              'type' => 'field',
+              'key' => 'InventoryReferrals_Membership_creator_id_01.contact_id.sort_name',
+              'dataType' => 'String',
+              'label' => E::ts('Created Membership'),
+              'sortable' => TRUE,
+              'link' => [
+                'path' => '',
+                'entity' => 'Contact',
+                'action' => 'view',
+                'join' => 'InventoryReferrals_Membership_creator_id_01.contact_id',
+                'target' => '',
+              ],
+              'title' => E::ts('View Contact'),
+            ],
+            [
+              'type' => 'field',
+              'key' => 'InventoryReferrals_Membership_consumer_id_01.contact_id.sort_name',
+              'dataType' => 'String',
+              'label' => E::ts('Consumer Membership'),
+              'sortable' => TRUE,
+              'link' => [
+                'path' => '',
+                'entity' => 'Contact',
+                'action' => 'view',
+                'join' => 'InventoryReferrals_Membership_consumer_id_01.contact_id',
+                'target' => '',
+              ],
+              'title' => E::ts('View Contact'),
+            ],
+            [
+              'type' => 'field',
+              'key' => 'created_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Created Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'before_end_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('Before End Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'after_end_date',
+              'dataType' => 'Timestamp',
+              'label' => E::ts('After End Date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'referral_code',
+              'dataType' => 'String',
+              'label' => E::ts('Referral Code'),
+              'sortable' => TRUE,
+            ],
+          ],
+          'actions' => TRUE,
+          'classes' => [
+            'table',
+            'table-striped',
+            'crm-sticky-header',
+          ],
+          'headerCount' => TRUE,
+        ],
+        'acl_bypass' => FALSE,
+      ],
+    ],
+  ],
 ];
