@@ -553,6 +553,10 @@ function inventory_civicrm_buildForm($formName, &$form) {
       );
     }
     $form->assign('membershipDevices', $values);
+
+    // Referral.
+    $referrals = CRM_Inventory_BAO_InventoryReferrals::getList($membershipID);
+    $form->assign('referrals', $referrals);
   }
 }
 
@@ -568,8 +572,13 @@ function inventory_civicrm_links(string $op, ?string $objectName, $objectID, arr
       }
     }
   }
-  if ($op == 'membership.tab.row' && $objectName == 'Membership') {
+  if (in_array($op,['membership.tab.row', 'membership.selector.row']) && $objectName == 'Membership') {
     // Get Device Linked with membership.
+    foreach ($links as &$link) {
+      if ($link['bit'] == CRM_Core_Action::VIEW) {
+        $link['f'] = '?mid=' . $values['id'];
+      }
+    }
     [$status, $deviceID] = CRM_Inventory_BAO_Membership::getDeviceStatus($values['id']);
     if (!empty($deviceID)) {
       $label = E::ts('Activate Device');

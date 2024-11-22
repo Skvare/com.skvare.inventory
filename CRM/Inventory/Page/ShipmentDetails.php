@@ -52,11 +52,40 @@ class CRM_Inventory_Page_ShipmentDetails extends CRM_Core_Page {
       $manifestForBatch = CRM_Inventory_BAO_InventoryShipment::manifestForBatch($shipmentID);
       CRM_Inventory_BAO_InventoryShipment::printManifestForBatch($shipmentID, $manifestForBatch);
     }
+    elseif (!empty($action) && $action & CRM_Core_Action::UPDATE && !empty($shipmentID)) {
+      $params = [];
+      if ($operation == 'is_finished_open') {
+        $params['is_finished'] = 0;
+      }
+      elseif ($operation == 'is_finished_close') {
+        $params['is_finished'] = 1;
+      }
+      if ($operation == 'is_shipped_open') {
+        $params['is_shipped'] = 0;
+      }
+      elseif ($operation == 'is_shipped_close') {
+        $params['is_shipped'] = 1;
+      }
+      if (!empty($params)) {
+        foreach ($params as $key => $value) {
+          CRM_Core_DAO::setFieldValue('CRM_Inventory_DAO_InventoryShipment', $shipmentID, $key, $value);
+        }
+      }
+    }
     elseif (!empty($action) && $action & CRM_Core_Action::RENEW && $operation == 'assigndevice' && !empty($shipmentID)) {
       // Assign Device to Order.
       $orderCode = CRM_Utils_Request::retrieve('order_id', 'String', NULL);
       $deviceID = CRM_Utils_Request::retrieve('device_id', 'String', NULL);
-      if ($orderCode && $deviceID) {
+      $is_shipped = CRM_Core_DAO::getFieldValue('CRM_Inventory_DAO_InventoryShipment',
+        $shipmentID, 'is_shipped');
+      if ($is_shipped) {
+        $viewShipment = CRM_Utils_System::url('civicrm/inventory/shipment-details',
+          "action=browser&reset=1&id={$shipmentID}&selectedChild=assign_device"
+        );
+        $error = 'Shipment already sent';
+        CRM_Core_Error::statusBounce($error, $viewShipment, 'Error');
+      }
+      elseif ($orderCode && $deviceID) {
         $inventoryShipment = new CRM_Inventory_BAO_InventoryShipment();
         $output = $inventoryShipment->assignDeviceToOrder($orderCode, $deviceID);
         $viewShipment = CRM_Utils_System::url('civicrm/inventory/shipment-details',

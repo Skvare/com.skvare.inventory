@@ -34,7 +34,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\UnauthorizedException
    */
-  public static function extendMembershipForReferral(int $membershipID):bool {
+  public static function extendMembershipForReferral(int $membershipID): bool {
     // Get Active membership status list.
     $activeMembershipStatus = CRM_Member_PseudoConstant::membershipStatus(NULL, "(is_current_member = 1)", 'id');
     $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
@@ -114,7 +114,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    *
    * @throws \Random\RandomException
    */
-  public static function generateCode():string {
+  public static function generateCode(): string {
     // Define CODE_LENGTH as needed.
     $codeLength = 5;
     return strtolower(bin2hex(random_bytes(self::CODE_LENGTH / 2)));
@@ -128,7 +128,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    *
    * @throws \Random\RandomException
    */
-  public static function getNewCode():string {
+  public static function getNewCode(): string {
     $settingInfo = CRM_Inventory_Utils::getInventorySettingInfo();
     do {
       $code = self::generateCode();
@@ -150,7 +150,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    *
    * @throws CRM_Core_Exception
    */
-  public static function checkDuplicate($code, $settingInfo):bool {
+  public static function checkDuplicate($code, $settingInfo): bool {
     if (empty($settingInfo)) {
       throw new CRM_Core_Exception('Referral Code Setting missing.');
     }
@@ -160,7 +160,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
     // This field myst be indexed, it gets used heavily.
     $sql = "select count({$settingInfo['inventory_referral_code']}) from {$settingInfo['inventory_referral_code_table']}  where {$settingInfo['inventory_referral_code']} = %1";
     $count = CRM_Core_DAO::singleValueQuery($sql, [1 => [$code, 'String']]);
-    return (bool) $count;
+    return (bool)$count;
   }
 
   /**
@@ -217,7 +217,7 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
    *
    * @todo Check consumer membership already extended end date or not.
    */
-  public static function extendMembership(int $creatorMembershipID, int $consumerMembershipID):void {
+  public static function extendMembership(int $creatorMembershipID, int $consumerMembershipID): void {
     // Extend creator membership end date.
     CRM_Inventory_BAO_Membership::extendEnrollment($creatorMembershipID, self::EXTEND_BY);
     // Extend consume membership end date.
@@ -247,6 +247,66 @@ class CRM_Inventory_BAO_InventoryReferrals extends CRM_Inventory_DAO_InventoryRe
       $errors = "You cannot refer yourself";
     }
     return $errors;
+  }
+
+  /**
+   * Get referral list for membership.
+   *
+   * @param int $membershipID
+   *   Membership id.
+   *
+   * @return array
+   *   Referral list.
+   *
+   * @throws \Civi\Core\Exception\DBQueryException
+   */
+  public static function getList(int $membershipID): array {
+    $query = "SELECT
+      `a`.`id` AS `id`,
+      `a`.`consumer_id` AS `consumer_id`,
+      `a`.`creator_id` AS `creator_id`,
+      `a`.`created_date` AS `created_date`,
+      `a`.`before_end_date` AS `before_end_date`,
+      `a`.`after_end_date` AS `after_end_date`,
+      `a`.`referral_code` AS `referral_code`,
+      `c1`.`sort_name` AS `creator_sort_name`,
+      `c2`.`sort_name` AS `consumer_sort_name`,
+      `m1`.`contact_id` AS `creator_contact_id`,
+      `m2`.`contact_id` AS `consumer_contact_id`
+
+      FROM civicrm_inventory_referrals a
+      INNER JOIN (`civicrm_membership` `m1`) ON `a`.`creator_id` = `m1`.`id`
+      INNER JOIN (`civicrm_membership` `m2`) ON `a`.`consumer_id` = `m2`.`id`
+      LEFT JOIN `civicrm_contact` `c1` ON `m1`.`contact_id` =  `c1`.`id`
+      LEFT JOIN `civicrm_contact` `c2` ON `m2`.`contact_id` =  `c2`.`id`
+      WHERE `a`.`consumer_id` = {$membershipID}  OR `a`.`creator_id` = {$membershipID}
+      order by `a`.`created_date` desc
+      LIMIT 50
+      OFFSET 0";
+
+    $referralDAO = CRM_Core_DAO::executeQuery($query);
+    $referralList = [];
+    while ($referralDAO->fetch()) {
+      if ($referralDAO->consumer_id == $membershipID) {
+        $tag = 'consumed';
+        $targetMembershipID = $referralDAO->creator_id;
+        $targetContactName = $referralDAO->creator_sort_name;
+        $targetContactID = $referralDAO->creator_contact_id;
+      }
+      else {
+        $tag = 'created';
+        $targetMembershipID = $referralDAO->consumer_id;
+        $targetContactName = $referralDAO->consumer_sort_name;
+        $targetContactID = $referralDAO->consumer_contact_id;
+      }
+      $referralList[$referralDAO->id]['id'] = $referralDAO->id;
+      $referralList[$referralDAO->id]['tag'] = $tag;
+      $referralList[$referralDAO->id]['created_date'] = $referralDAO->created_date;
+      $referralList[$referralDAO->id]['target_membership'] = $targetMembershipID;
+      $referralList[$referralDAO->id]['target_contact_name'] = $targetContactName;
+      $referralList[$referralDAO->id]['target_contact_id'] = $targetContactID;
+    }
+    return $referralList;
   }
 
 }
