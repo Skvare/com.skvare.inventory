@@ -168,6 +168,15 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   /**
+   *
+   */
+  public function upgrade_1101() {
+    $this->ctx->log->info('Applying update 1101 - Installing shipment notification message workflow templates');
+    $this->installShipmentMsgWorkflowTpls();
+    return TRUE;
+  }
+
+  /**
    * Function to install message template.
    *
    * @return void
@@ -201,6 +210,33 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
         'label' => ts('Shipping -Manifest', ['domain' => 'com.skvare.inventory']),
         'name' => 'shipping_manifest',
         'subject' => ts("Shipping : Manifest", ['domain' => 'com.skvare.inventory']),
+      ],
+    ];
+
+    $this->createMsgTpl($msgTpls, $optionGroupId);
+  }
+
+  /**
+   * Function to install message template.
+   *
+   * @return void
+   *   Nothing.
+   *
+   * @throws CRM_Core_Exception
+   */
+  public function installShipmentMsgWorkflowTpls(): void {
+    $optionGroupId = civicrm_api3('OptionGroup', 'getvalue', [
+      'name' => 'msg_tpl_workflow_manifest',
+      'return' => 'id',
+    ]);
+
+    $msgTpls = [
+      '2' =>
+      [
+        'description' => ts('Shipping - Notification', ['domain' => 'com.skvare.inventory']),
+        'label' => ts('Shipping -Notification', ['domain' => 'com.skvare.inventory']),
+        'name' => 'shipping_notification',
+        'subject' => ts("Tracking your order", ['domain' => 'com.skvare.inventory']),
       ],
     ];
 
