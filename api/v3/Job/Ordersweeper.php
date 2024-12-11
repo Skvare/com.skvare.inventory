@@ -133,7 +133,7 @@ class OrderSweeper {
       ->execute();
     $sendTemplateParams = [
       'groupName' => 'msg_tpl_workflow_manifest',
-      'valueName' => 'shipping_manifest',
+      'valueName' => 'shipping_notification',
       'isTest' => 0,
       'tplParams' => [],
     ];

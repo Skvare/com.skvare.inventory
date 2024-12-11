@@ -176,6 +176,14 @@ class CRM_Inventory_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_1102() {
+    $this->ctx->log->info('Applying update 1102 - Add Category to Membership Type.');
+    if (!CRM_Core_BAO_SchemaHandler::checkIfFieldExists('civicrm_membership_type', 'category', FALSE)) {
+      CRM_Core_DAO::executeQuery('ALTER TABLE `civicrm_membership_type` ADD `category` VARCHAR(255) NULL DEFAULT NULL');
+    }
+    return TRUE;
+  }
+
   /**
    * Function to install message template.
    *

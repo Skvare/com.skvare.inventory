@@ -1,6 +1,7 @@
 ALTER TABLE `civicrm_membership_type` ADD `shippable_to` VARCHAR(255) NOT NULL AFTER `is_active`;
 ALTER TABLE `civicrm_membership_type` ADD `may_renew` tinyint NULL DEFAULT 0;
 ALTER TABLE `civicrm_membership_type` ADD `fair_value` decimal(20,2) NULL COMMENT 'The fair market value of this item.'
+ALTER TABLE `civicrm_membership_type` ADD `category` VARCHAR(255) NULL DEFAULT NULL;
 
 ALTER TABLE `civicrm_line_item` ADD `sale_id` int unsigned DEFAULT NULL COMMENT 'sale id from inventory sale';
 ALTER TABLE `civicrm_line_item` ADD `product_id` INT UNSIGNED NULL COMMENT 'product model id';

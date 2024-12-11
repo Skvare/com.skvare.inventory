@@ -156,6 +156,29 @@ function inventory_civicrm_entityTypes(&$entityTypes) {
       ],
       'add' => NULL,
     ];
+
+    $fields['category'] = [
+      'name' => 'category',
+      'type' => CRM_Utils_Type::T_STRING,
+      'title' => ts('Category'),
+      'description' => 'Category for membership level.',
+      'localizable' => 0,
+      'maxlength' => 255,
+      'size' => CRM_Utils_Type::HUGE,
+      'import' => TRUE,
+      'where' => 'civicrm_membership_type.category',
+      'export' => TRUE,
+      'table_name' => 'civicrm_membership_type',
+      'entity' => 'MembershipType',
+      'bao' => 'CRM_Member_BAO_MembershipType',
+      'html' => [
+        'type' => 'Select',
+        'label' => ts("Category"),
+      ],
+      'pseudoconstant' => [
+        'callback' => 'CRM_Inventory_Utils::membershipTypeCategory',
+      ],
+    ];
   };
 
   $lineItem = 'CRM_Price_DAO_LineItem';
@@ -495,6 +518,9 @@ function inventory_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Member_Form_MembershipType') {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType');
     $shippableTo = CRM_Inventory_Utils::membershipTypeShippableTo();
+    $category = CRM_Inventory_Utils::membershipTypeCategory();
+    $form->add('select', 'category', E::ts('Category'),
+      $category, FALSE, ['class' => 'crm-select2 huge']);
     $form->addElement('checkbox', 'may_renew', ts('May Renew?'));
     $form->add('select', 'shippable_to', E::ts('Product Shippable to Country(s)'),
       $shippableTo, FALSE, ['class' => 'crm-select2 huge', 'multiple' => 1]);

@@ -41,6 +41,17 @@ class CRM_Inventory_Utils {
   }
 
   /**
+   * Membership Type available to limited countries.
+   *
+   * @return string[]
+   *   Country List.
+   */
+  public static function membershipTypeCategory():array {
+    return ['hotspot' => 'HotSpot', 'phone' => 'Phone', 'donation' => 'Donation'];
+  }
+
+
+  /**
    * Product Variant Status.
    *
    * @return string[]

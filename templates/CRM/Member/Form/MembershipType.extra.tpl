@@ -3,6 +3,7 @@
     CRM.$(function($) {
       $('.crm-membership-type-form-block-shippable_to').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-may_renew').insertAfter('.crm-membership-type-form-block-auto_renew');
+      $('.crm-membership-type-form-block-category').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-product_mapping').insertAfter('.crm-membership-type-form-block-auto_renew');
       $('.crm-membership-type-form-block-fair_value').insertAfter('.crm-membershiptype-form-block-minimum_fee');
 
@@ -29,6 +30,15 @@
       <td>{$form.may_renew.html}<br/>
         <span class="description">
           {ts}If true, a member may renew at this membership level.{/ts}
+        </span>
+        <br/><br/>
+      </td>
+    </tr>
+    <tr class="crm-membership-type-form-block-category">
+      <td class="label">{$form.category.label}</td>
+      <td>{$form.category.html}<br/>
+        <span class="description">
+          {ts} The category determins which other membership levels are shown and can be upgraded to.{/ts}
         </span>
         <br/><br/>
       </td>
