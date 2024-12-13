@@ -17,8 +17,8 @@ class CRM_Inventory_Page_ProductVariant extends CRM_Core_Page {
           'checkPermissions' => TRUE,
         ]);
       }
-        $viewProduct = CRM_Utils_System::url('civicrm/contact/view/inventory-productvariant',
-          "action=view&reset=1&cid={$contactID}&id={$id}"
+        $viewProduct = CRM_Utils_System::url('civicrm/contact/view',
+          "action=view&reset=1&cid={$contactID}&selectedChild=device"
         );
         CRM_Core_Error::statusBounce(ts('Product details updated.'), $viewProduct,
           'Updated');
