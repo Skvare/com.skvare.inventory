@@ -813,3 +813,30 @@ function inventory_trigger_postupdate(PostUpdate $event) {
 
   }
 }
+
+
+/**
+ * Implements hook_civicrm_queryObjects().
+ *
+ * Adds query object for legacy screens like advanced search, search builder, etc.
+ */
+function inventory_civicrm_queryObjects(&$queryObjects, $type) {
+  if ($type == 'Contact' && class_exists('CRM_Inventory_BAO_InventoryProductVariant_Query')) {
+    // $queryObjects[] = new CRM_Inventory_BAO_InventoryProductVariant_Query();
+  }
+}
+
+function inventory_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if (is_object($apiRequest) &&
+    is_a($apiRequest, 'Civi\Api4\Generic\AutocompleteAction') &&
+    $apiRequest->getFormName() === 'crmMenubar' &&
+    $apiRequest->getFieldName() === 'crm-qsearch-input'
+  ) {
+    if ($apiRequest->getEntityName() == 'Contact' &&
+      $apiRequest->getActionName() == 'autocomplete') {
+      if ($apiRequest['version'] == '4') {
+        $wrappers[] = new CRM_Inventory_APIWrapper();
+      }
+    }
+  }
+}
