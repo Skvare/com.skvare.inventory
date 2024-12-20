@@ -822,7 +822,7 @@ function inventory_trigger_postupdate(PostUpdate $event) {
  */
 function inventory_civicrm_queryObjects(&$queryObjects, $type) {
   if ($type == 'Contact' && class_exists('CRM_Inventory_BAO_InventoryProductVariant_Query')) {
-    // $queryObjects[] = new CRM_Inventory_BAO_InventoryProductVariant_Query();
+    $queryObjects[] = new CRM_Inventory_BAO_InventoryProductVariant_Query();
   }
 }
 

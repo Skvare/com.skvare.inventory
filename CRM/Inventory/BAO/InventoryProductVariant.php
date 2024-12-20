@@ -400,4 +400,18 @@ class CRM_Inventory_BAO_InventoryProductVariant extends CRM_Inventory_DAO_Invent
     return $htmlForTag;
   }
 
+  /**
+   * Combine all the exportable fields from the lower levels object.
+   *
+   * @return array
+   *   array of exportable Fields
+   */
+  public static function &exportableFields() {
+    $fields = CRM_Inventory_DAO_InventoryProductVariant::export();
+
+    return $fields;
+  }
+
+
+
 }
